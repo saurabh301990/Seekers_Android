@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-64d97e587accc475899e19b87c98b869ca2b7412.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife/6.1.0/63735f48b82bcd24cdd33821342428252eb1ca5a/butterknife-6.1.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="63735f48b82bcd24cdd33821342428252eb1ca5a">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/butterknife-6.1.0-a46ca5feb596b3cc85f0229fe1b8f434784b68ef.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-05fa16821c88989bbd60b578bc6761c9e5beee49.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-2ace1ba4bf17b55973023c48ae146599fad54e02.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-d61455b29d3def58490b200368e31dd36acbdceb.jar" />
+    </item>
+
+</items>

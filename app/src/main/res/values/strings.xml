@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Seeker</string>
+
+
+
+    <!--Login-->
+    <string name="loginText">Login</string>
+    <string name="forgotPswrdText">Forgot Password?</string>
+    <string name="emailHintText">Email</string>
+    <string name="passwordHintText">Password</string>
+</resources>
