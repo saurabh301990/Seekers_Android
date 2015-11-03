@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/searchll"
+        android:layout_width="match_parent"
+        android:background="@color/login_btn_bg_color"
+        android:padding="5dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etlandingsearch"
+            android:background="@drawable/roundedwhite"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:hint="@string/searchText"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView" />
+
+
+</LinearLayout>

@@ -8,4 +8,82 @@
     <string name="forgotPswrdText">Forgot Password?</string>
     <string name="emailHintText">Email</string>
     <string name="passwordHintText">Password</string>
+
+
+    <!--Change Password-->
+    <string name="currentPswrdText">Current Password</string>
+    <string name="newPswrdText">New Password</string>
+    <string name="confirmPswrdText">Confirm Password</string>
+    <string name="changePswrdText">Change Password</string>
+    <string name="cancelText">Cancel</string>
+
+
+    <!--Map View-->
+    <string name="searchText">Search</string>
+    <string name="twoMiles">2 Miles</string>
+    <string name="fiveMiles">5 Miles</string>
+    <string name="tenMiles">10 Miles</string>
+    <string name="twentyMiles">20 Miles</string>
+    <string name="mapText">Map</string>
+    <string name="listText">List</string>
+
+
+
+
+    <string name="nav_item_home">Home</string>
+    <string name="nav_item_friends">Friends</string>
+    <string name="nav_item_notifications">Messages</string>
+
+
+
+    <!--Menu Slider-->
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string-array name="nav_drawer_labels">
+        <item>Home</item>
+        <item>Search</item>
+        <item>Followed Profile</item>
+        <item>My Keywords</item>
+        <item>My Locations</item>
+        <item>Plot a New Area</item>
+        <item>Activity Report</item>
+        <item>Notification</item>
+        <item>Notification</item>
+        <item>My Profile</item>
+        <item>Legal Content</item>
+        <item>Help and Support</item>
+        <item>Logout</item>
+    </string-array>
+     <string name="header_title">Header</string>
+    <!--Drawer-->
+    <string name="menu">Menu</string>
+
+    <!--Filter Screen-->
+    <string name="applytext">Apply</string>
+    <string name="filtertext">Filter</string>
+    <string name="datetext">Date</string>
+    <string name="filterbydate">Filter By Date</string>
+    <string name="startdate">Start Date</string>
+    <string name="enddate">End Date</string>
+    <string name="networktext">Network</string>
+    <string name="fbtext">Facebook</string>
+    <string name="twittertext">Twitter</string>
+    <string name="youtubetext">Youtube</string>
+    <string name="Instatext">Instagram</string>
+    <string name="flicktext">Flickr</string>
+    <string name="tumblrtext">Tumblr</string>
+    <string name="vinetext">Vine</string>
+    <string name="vktext">VK</string>
+    <string name="distext">Disqux</string>
+    <string name="keywordtxt">Keywords</string>
+    <string name="filterkeyword">Filter By Keyword</string>
+
+    <!--Landing Screen-->
+    <string name="landingmiddletext">Search or select a Locations</string>
+
+
+    <!--Notification Screen-->
+    <string name="notificationtxt">Notification</string>
+    <string name="notificationlisttxt">New Message was posted by the user on FaceBook that includes word Gun in it</string>
 </resources>

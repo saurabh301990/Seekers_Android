@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="5">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/login_btn_bg_color"
+        android:padding="5dp">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundedwhite"
+            android:gravity="center"
+            android:hint="@string/searchText"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_layout"
+        android:layout_below="@+id/header">
+
+        <LinearLayout
+            android:id="@+id/map_layout"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="6">
+
+            <RelativeLayout
+
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/miles_btn_ll"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0.6"></RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/miles_btn_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+
+                android:layout_weight="5.4"
+                android:orientation="vertical">
+
+                <LinearLayout
+
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="4">
+
+                    <Button
+                        android:id="@+id/two_miles_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@android:color/white"
+                        android:text="@string/twoMiles"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/five_miles_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/miles_inactive_color"
+                        android:text="@string/fiveMiles"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/ten_miles_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/miles_inactive_color"
+                        android:text="@string/tenMiles"
+                        android:textAllCaps="false" />
+
+                    <Button
+                        android:id="@+id/twenty_miles_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/miles_inactive_color"
+                        android:text="@string/twentyMiles"
+                        android:textAllCaps="false" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/list_layout"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/map_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            android:text="@string/mapText"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/list_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/miles_inactive_color"
+            android:text="@string/listText"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</RelativeLayout>

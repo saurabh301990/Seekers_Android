@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/searchll"
+        android:layout_width="match_parent"
+        android:background="@color/login_btn_bg_color"
+        android:padding="5dp"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etlandingsearch"
+            android:background="@drawable/roundedwhite"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:hint="@string/searchText"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/sslayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/searchll"
+        android:background="@color/lightGrey"
+        android:gravity="center"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/landingmiddletext"
+            android:textSize="16sp"
+
+          />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1.5dp"
+        android:background="@color/lightGrey" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/landinglist"
+        android:dividerHeight="2dp"
+        android:background="@color/lightGrey"
+
+
+        />
+
+
+</LinearLayout>
