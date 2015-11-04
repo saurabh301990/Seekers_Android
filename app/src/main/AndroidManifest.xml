@@ -47,6 +47,17 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme"/>
 
+        <activity android:name=".activities.ChangePassword"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"/>
+
+
+        <activity android:name=".activities.FilterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar"/>
+
+
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

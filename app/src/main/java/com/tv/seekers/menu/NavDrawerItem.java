@@ -6,15 +6,17 @@ package com.tv.seekers.menu;
 public class NavDrawerItem {
     private boolean showNotify;
     private String title;
+    private int sideImg;
 
 
     public NavDrawerItem() {
 
     }
 
-    public NavDrawerItem(boolean showNotify, String title) {
+    public NavDrawerItem(boolean showNotify, String title, int sideImg) {
         this.showNotify = showNotify;
         this.title = title;
+        this.sideImg = sideImg;
     }
 
     public boolean isShowNotify() {
@@ -31,5 +33,13 @@ public class NavDrawerItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getSideImg() {
+        return sideImg;
+    }
+
+    public void setSideImg(int sideImg) {
+        this.sideImg = sideImg;
     }
 }

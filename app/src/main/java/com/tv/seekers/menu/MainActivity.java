@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,29 +12,44 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tv.seekers.R;
+import com.tv.seekers.activities.FilterActivity;
+import com.tv.seekers.constant.Constant;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
  * Created by admin1 on 3/11/15.
  */
 
-public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener{
+public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
     private static String TAG = MainActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
+
     private FragmentDrawer drawerFragment;
-    /*private ImageView _tglMenu;*/
-    /*private DrawerLayout mDrawerLayout;
-    private View containerView;*/
+
+    @Bind(R.id.tgl_menu)
+    ImageView _tglMenu;
+
+    @Bind(R.id.hdr_title)
+    TextView _header;
+
+    @Bind(R.id.hdr_fltr)
+    ImageView _rightIcon;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*_tglMenu = (ImageView) findViewById(R.id.tgl_menu);*/
+        ButterKnife.bind(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -44,12 +60,23 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
-        /*_tglMenu.setOnClickListener(new View.OnClickListener() {
+        _tglMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDrawerLayout.openDrawer(containerView);
+                drawerFragment.openDrawer();
             }
-        });*/
+        });
+
+
+        _rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String frag = (String) _header.getText();
+                if (frag.equalsIgnoreCase("Map")) {
+                    startActivity(new Intent(MainActivity.this, FilterActivity.class));
+                }
+            }
+        });
 
         // display the first navigation drawer view on app launch
         displayView(0);
@@ -75,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             return true;
         }*/
 
-        if(id == R.id.action_search){
+        if (id == R.id.action_search) {
             Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -94,20 +121,47 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         switch (position) {
             case 0:
                 fragment = new MapView();
-                title = "Home";
+                _header.setText("Map");
+                _rightIcon.setImageResource(R.drawable.filtr);
                 break;
             case 1:
+                fragment = new Track();
+                _header.setText("Track");
                 break;
             case 2:
+                fragment = new MyKeyWords();
+                _header.setText("My Keywords");
+                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 3:
-                fragment = new MyKeyWords();
-                title = "Home";
+                /*fragment = new ;
+                _header.setText("");*/
+                break;
+            case 4:
+                /*fragment = new ;
+                _header.setText("");*/
+                break;
+            case 5:
+                /*fragment = new ;
+                _header.setText("");*/
+                break;
+            case 6:
+                /*fragment = new ;
+                _header.setText("");*/
+                break;
+            case 7:
+                fragment = new MyProfile();
+                _header.setText("");
+                break;
+            case 8:
+                /*fragment = new ;
+                _header.setText("");*/
                 break;
             default:
                 break;
         }
 
+        Constant.setFont(this, _header, 0);
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

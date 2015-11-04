@@ -8,6 +8,9 @@
     <string name="forgotPswrdText">Forgot Password?</string>
     <string name="emailHintText">Email</string>
     <string name="passwordHintText">Password</string>
+    <string name="enterUsernameText">Please enter username</string>
+    <string name="enterPswrdText">Please enter password</string>
+
 
 
     <!--Change Password-->
@@ -42,13 +45,11 @@
 
     <string-array name="nav_drawer_labels">
         <item>Home</item>
-        <item>Search</item>
         <item>Followed Profile</item>
         <item>My Keywords</item>
         <item>My Locations</item>
         <item>Plot a New Area</item>
         <item>Activity Report</item>
-        <item>Notification</item>
         <item>Notification</item>
         <item>My Profile</item>
         <item>Legal Content</item>
@@ -86,4 +87,11 @@
     <!--Notification Screen-->
     <string name="notificationtxt">Notification</string>
     <string name="notificationlisttxt">New Message was posted by the user on FaceBook that includes word Gun in it</string>
+
+
+    <!--My Profile-->
+    <string name="nameText">Name</string>
+    <string name="emailText">Email</string>
+    <string name="userNameText">Username</string>
+    <string name="currentLocationText">Current Location</string>
 </resources>

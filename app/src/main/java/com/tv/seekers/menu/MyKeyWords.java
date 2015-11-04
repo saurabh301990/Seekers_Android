@@ -27,7 +27,7 @@ public class MyKeyWords extends android.support.v4.app.Fragment {
         View v = inflater.inflate(R.layout.my_keywords, container, false);
         rowItem = new ArrayList<MyKeywordsBean>();
         listview = (ListView) v.findViewById(R.id.mykeywords_list);
-
+        // Dummy Data
         for (int i=0;i<6;i++){
             MyKeywordsBean rowItemC = new MyKeywordsBean("Bomb", true);
             rowItem.add(rowItemC);

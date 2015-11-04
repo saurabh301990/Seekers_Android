@@ -212,8 +212,6 @@ public class MapView extends Fragment{
 
             try {
 
-
-
                 mapWithZooming(12);
                 addCircleToMap(2);
 

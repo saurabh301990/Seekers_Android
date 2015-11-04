@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 /**
  * Created by shoeb on 2/11/15.
  */
-public class LoginActivity  extends Activity implements View.OnClickListener, View.OnTouchListener{
+public class LoginActivity extends Activity implements View.OnClickListener, View.OnTouchListener {
 
     @Bind(R.id.email_et)
     EditText email_et;
@@ -40,6 +40,7 @@ public class LoginActivity  extends Activity implements View.OnClickListener, Vi
 
     @Bind(R.id.main_rl)
     RelativeLayout main_rl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,16 +51,27 @@ public class LoginActivity  extends Activity implements View.OnClickListener, Vi
         main_rl.setOnTouchListener(this);
         login_btn.setOnClickListener(this);
 
+        Constant.setFont(LoginActivity.this, forgot_pswd_tv, 0);
+        Constant.setFont(LoginActivity.this, login_btn, 0);
+        Constant.setFont(LoginActivity.this, email_et, 0);
+        Constant.setFont(LoginActivity.this, pswd_et, 0);
 
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Constant.hideKeyBoard(LoginActivity.this);
     }
 
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.login_btn:
-
-                if (validData()){
+                Constant.hideKeyBoard(LoginActivity.this);
+                if (validData()) {
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
                 }
@@ -78,11 +90,22 @@ public class LoginActivity  extends Activity implements View.OnClickListener, Vi
 
     private boolean validData() {
 
-        String email = email_et.getText().toString().trim();
+        String username = email_et.getText().toString().trim();
         String pswrd = pswd_et.getText().toString().trim();
+        boolean isValid = false;
+        if (username == null || username.equalsIgnoreCase("")) {
+            isValid = false;
+            Constant.showToast(getResources().getString(R.string.enterUsernameText), LoginActivity.this);
+        }/* else if (!Constant.checkEmail(email)){
+            isValid = false;
+        }*/ else if (pswrd == null || pswrd.equalsIgnoreCase("")) {
+            isValid = false;
+            Constant.showToast(getResources().getString(R.string.enterPswrdText), LoginActivity.this);
+        } else {
+            isValid = true;
+        }
 
-
-        return false;
+        return isValid;
     }
 
     @Override

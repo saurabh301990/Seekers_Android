@@ -80,24 +80,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:gravity="center_vertical"
             android:weightSum="1">
 
             <TextView
                 android:id="@+id/txtfilterbydate"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.7"
                 android:paddingLeft="5dp"
                 android:text="@string/filterbydate" />
 
 
             <ToggleButton
-                android:id="@+id/txtfilterdatetoggle"
+                android:id="@+id/filterdatetoggle"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_weight="0.3"
                 android:checked="true"
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
@@ -118,12 +119,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:weightSum="2">
 
             <TextView
+                android:id="@+id/txtstartdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -131,7 +133,7 @@
                 android:text="@string/startdate" />
 
             <TextView
-                android:id="@+id/txtstartdate"
+                android:id="@+id/txtSdatetime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.9"
@@ -150,12 +152,13 @@
             android:layout_height="match_parent"
             android:layout_below="@id/startdatell"
             android:layout_weight="1"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:weightSum="2">
 
             <TextView
+                android:id="@+id/txtenddate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -163,7 +166,7 @@
                 android:text="@string/enddate" />
 
             <TextView
-                android:id="@+id/txtenddate"
+                android:id="@+id/txtEdatetime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.9"
@@ -195,48 +198,44 @@
         android:id="@+id/socailfilterll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/networktextll"
         android:background="#ffffff"
-        android:weightSum="9"
-      >
-
-
+        android:orientation="vertical"
+        android:weightSum="9">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/fb_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fbtext"
-                    android:paddingLeft="2dp"
-                    android:layout_weight="0.5"/>
+                android:background="@mipmap/fb_icon" />
+
+            <TextView
+                android:id="@+id/fbtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:paddingLeft="2dp"
+                android:text="@string/fbtext" />
 
             <ToggleButton
                 android:id="@+id/fbtoggle"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:checked="true"
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -249,22 +248,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/twitter_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/twitter_icon" />
 
             <TextView
+                android:id="@+id/twittertxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/twittertext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/twittertext" />
 
             <ToggleButton
                 android:id="@+id/twittertoggle"
@@ -276,8 +276,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -289,22 +288,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/youtube_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/youtube_icon" />
 
             <TextView
+                android:id="@+id/youtubetxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/youtubetext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/youtubetext" />
 
             <ToggleButton
                 android:id="@+id/youtubetoggle"
@@ -316,8 +316,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -329,22 +328,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/insta_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/insta_icon" />
 
             <TextView
+                android:id="@+id/instatext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Instatext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/Instatext" />
 
             <ToggleButton
                 android:id="@+id/instatoggle"
@@ -356,8 +356,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -366,27 +365,27 @@
             android:background="@color/lightGrey" />
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/flicker_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"
+                android:background="@mipmap/flicker_icon" />
 
             <TextView
+                android:id="@+id/flickrtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/flicktext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/flicktext" />
 
             <ToggleButton
                 android:id="@+id/filkertoggle"
@@ -398,9 +397,9 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
+
         <View
             android:layout_width="fill_parent"
             android:layout_height="1.5dp"
@@ -410,22 +409,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/tumblr_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/tumblr_icon" />
 
             <TextView
+                android:id="@+id/tumblrtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tumblrtext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/tumblrtext" />
 
             <ToggleButton
                 android:id="@+id/tumbletoogle"
@@ -437,8 +437,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -451,22 +450,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/vine_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/vine_icon" />
 
             <TextView
+                android:id="@+id/vinetxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vinetext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/vinetext" />
 
             <ToggleButton
                 android:id="@+id/vinetoggle"
@@ -478,8 +478,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -491,22 +490,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/vk_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/vk_icon" />
 
             <TextView
+                android:id="@+id/vktext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/vktext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/vktext" />
 
             <ToggleButton
                 android:id="@+id/vktoggle"
@@ -518,8 +518,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -531,22 +530,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/d_icon"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp" />
+                android:layout_marginTop="2dp"
+                android:background="@mipmap/d_icon" />
 
             <TextView
+                android:id="@+id/disquxtext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/distext"
+                android:layout_weight="0.5"
                 android:paddingLeft="2dp"
-                android:layout_weight="0.5"/>
+                android:text="@string/distext" />
 
             <ToggleButton
                 android:id="@+id/disquxtoogle"
@@ -558,8 +558,7 @@
                 android:drawableRight="@drawable/toglebtn"
                 android:text=""
                 android:textOff=""
-                android:textOn=""
-                />
+                android:textOn="" />
         </LinearLayout>
 
         <View
@@ -591,9 +590,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/keywordll"
-        android:background="#FFFFFF">
+        android:background="#FFFFFF"
+        android:orientation="vertical">
 
 
         <LinearLayout
@@ -601,8 +600,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             android:weightSum="1">
 
             <TextView
@@ -626,6 +625,7 @@
 
 
         </LinearLayout>
+
         <View
             android:layout_width="fill_parent"
             android:layout_height="1.5dp"

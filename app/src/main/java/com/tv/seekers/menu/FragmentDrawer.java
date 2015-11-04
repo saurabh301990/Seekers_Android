@@ -3,6 +3,7 @@ package com.tv.seekers.menu;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -32,7 +33,7 @@ public class FragmentDrawer extends Fragment {
     private NavigationDrawerAdapter adapter;
     private View containerView;
     private static String[] titles = null;
-    private static String[] dra_img = null;
+    private static Integer[] dra_img = null;
     private FragmentDrawerListener drawerListener;
 
     public FragmentDrawer() {
@@ -51,6 +52,7 @@ public class FragmentDrawer extends Fragment {
         for (int i = 0; i < titles.length; i++) {
             NavDrawerItem navItem = new NavDrawerItem();
             navItem.setTitle(titles[i]);
+            navItem.setSideImg(dra_img[i]);
             data.add(navItem);
         }
         return data;
@@ -62,6 +64,11 @@ public class FragmentDrawer extends Fragment {
 
         // drawer labels
         titles = getActivity().getResources().getStringArray(R.array.nav_drawer_labels);
+        dra_img = new Integer[]{
+                R.mipmap.home,R.mipmap.followed_profile,
+                R.mipmap.my_keywords,R.mipmap.my_locations,R.mipmap.plot_a_new_area,
+                R.mipmap.activity_report,R.mipmap.notifications,R.mipmap.my_profile,
+                R.mipmap.legal_content,R.mipmap.helpnsupport,R.mipmap.logout};
     }
 
     @Override
@@ -88,6 +95,10 @@ public class FragmentDrawer extends Fragment {
         }));
 
         return layout;
+    }
+
+    public void openDrawer(){
+        mDrawerLayout.openDrawer(containerView);
     }
 
 
@@ -178,4 +189,5 @@ public class FragmentDrawer extends Fragment {
     public interface FragmentDrawerListener {
         public void onDrawerItemSelected(View view, int position);
     }
+
 }

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.tv.seekers.R;
+import com.tv.seekers.constant.Constant;
 
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class MyKeywordsAdaptor extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.mykeywords_row, null);
             holder = new ViewHolder();
             holder._title = (TextView) convertView.findViewById(R.id.mykeywords_title);
+            Constant.setFont(context,holder._title,0);
             holder._tglBtn = (ToggleButton) convertView.findViewById(R.id.mykeywords_tgl);
 
             convertView.setTag(holder);

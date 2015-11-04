@@ -8,14 +8,13 @@
         android:id="@+id/dra_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:src="@drawable/home"/>
+        android:padding="15dp" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="30dp"
+        android:paddingLeft="3dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:layout_toRightOf="@+id/dra_img"
