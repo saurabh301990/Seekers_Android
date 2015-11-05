@@ -81,7 +81,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
 
     private void setData() {
         hdr_title.setText(getResources().getString(R.string.changePswrdText));
-        tgl_menu.setImageResource(R.mipmap.arrow);
+        tgl_menu.setImageResource(R.mipmap.back);
         hdr_fltr.setVisibility(View.GONE);
     }
 
@@ -105,6 +105,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
             case R.id.chnge_pswd_btn:
                 break;
             case R.id.cancel_btn:
+                finish();
                 break;
             case R.id.tgl_menu:
                 finish();

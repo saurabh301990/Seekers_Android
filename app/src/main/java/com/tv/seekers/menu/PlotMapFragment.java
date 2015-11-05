@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -48,7 +49,8 @@ public class PlotMapFragment extends Fragment {
     @Bind(R.id.nameThisArea_et)
     EditText nameThisArea_et;
 
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
@@ -58,10 +60,14 @@ public class PlotMapFragment extends Fragment {
 
     }
 
+    public void saveData(Activity activity) {
+        Constant.showToast("Data Saved", activity);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.plotmap_screen, container, false);
+        view = inflater.inflate(R.layout.plotmap_screen, container, false);
         ButterKnife.bind(this, view);
         mTouchView = new TouchableWrapper(getActivity());
         mTouchView.addView(view);
@@ -73,6 +79,7 @@ public class PlotMapFragment extends Fragment {
     public View getView() {
         return view;
     }
+
     private void init() {
         gps = new GPSTracker(getActivity());
 

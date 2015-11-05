@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,7 +46,7 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 3/11/15.
  */
-public class MapView extends Fragment{
+public class MapView extends Fragment {
 
     //map Related
     private GoogleMap googleMap;
@@ -53,7 +54,7 @@ public class MapView extends Fragment{
     private SupportMapFragment fragment;
     Marker marker;
     private double latitude = 0.0;
-    private double longitude= 0.0;
+    private double longitude = 0.0;
     LatLng _latLong;
     GPSTracker gps;
     Circle mapCircle;
@@ -113,6 +114,7 @@ public class MapView extends Fragment{
             map_layout.setVisibility(View.VISIBLE);
             map_btn.setBackgroundColor(Color.WHITE);
             list_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+            header.setText("Map");
 
         }
     }
@@ -127,7 +129,7 @@ public class MapView extends Fragment{
             map_layout.setVisibility(View.GONE);
             list_btn.setBackgroundColor(Color.WHITE);
             map_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
-
+            header.setText("List");
         }
     }
 
@@ -136,40 +138,41 @@ public class MapView extends Fragment{
     LinearLayout map_layout;
 
 
-
     @Bind(R.id.list_layout)
     RelativeLayout list_layout;
 
 
-
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
 
+    TextView header;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.map_view_screen,container,false);
+        View view = inflater.inflate(R.layout.map_view_screen, container, false);
         ButterKnife.bind(this, view);
+
+        header = (TextView) getActivity().findViewById(R.id.hdr_title);
         setfont();
         return view;
     }
-
 
 
     private void init() {
         gps = new GPSTracker(getActivity());
 
 
-        if (gps.canGetLocation()){
+        if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
-            if (!String.valueOf(latitude).equalsIgnoreCase("0.0")&&
-                    !String.valueOf(longitude).equalsIgnoreCase("0.0")){
+            if (!String.valueOf(latitude).equalsIgnoreCase("0.0") &&
+                    !String.valueOf(longitude).equalsIgnoreCase("0.0")) {
 
                 try {
                     // Loading map
@@ -211,7 +214,7 @@ public class MapView extends Fragment{
 
     /**
      * function to load map. If map is not created it will create it for you
-     * */
+     */
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = fragment.getMap();
@@ -248,7 +251,7 @@ public class MapView extends Fragment{
 
         // circle settings
         double radiusM = miles * 1609.34;// your radius in meters
-        int radiusInt = (int)radiusM;
+        int radiusInt = (int) radiusM;
 
 
         CircleOptions circleOptions = new CircleOptions().center(_latLong) // set center
@@ -261,10 +264,10 @@ public class MapView extends Fragment{
         // For 0% transparency ( ie, opaque ) , specify ff
         // The remaining 6 characters(00ff00) specify the fill color
 
-        if(mapCircle!=null){
+        if (mapCircle != null) {
             mapCircle.remove();
         }
-        mapCircle=  googleMap.addCircle(circleOptions);
+        mapCircle = googleMap.addCircle(circleOptions);
 
       /*  googleMap.addGroundOverlay(new GroundOverlayOptions().
                 image(bmD).
@@ -284,9 +287,9 @@ public class MapView extends Fragment{
     }
 
 
-    private void activeMilesBtn(int  activeBtnId) {
+    private void activeMilesBtn(int activeBtnId) {
 
-        switch (activeBtnId){
+        switch (activeBtnId) {
             case 2:
                 two_miles_btn.setBackgroundColor(Color.WHITE);
                 five_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));

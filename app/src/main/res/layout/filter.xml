@@ -108,7 +108,7 @@
                     <ToggleButton
                         android:id="@+id/filterdatetoggle"
                         style="?android:attr/borderlessButtonStyle"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_weight="0.3"
@@ -209,7 +209,7 @@
                     android:text="@string/networktext"
                     android:textColor="#ffffff"
                     android:textSize="15sp"
-                     />
+                    />
             </RelativeLayout>
 
 
@@ -601,7 +601,7 @@
                     android:text="@string/keywordtxt"
                     android:textColor="#ffffff"
                     android:textSize="15sp"
-                     />
+                    />
             </RelativeLayout>
 
             <LinearLayout
@@ -633,7 +633,7 @@
                     <ToggleButton
                         android:id="@+id/filterbykeywordtoggle"
                         style="?android:attr/borderlessButtonStyle"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:layout_weight="0.3"

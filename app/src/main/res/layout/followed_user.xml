@@ -21,6 +21,7 @@
             android:gravity="center"
             android:hint="@string/searchText"
             android:paddingBottom="3dp"
+
             android:paddingTop="3dp"
             android:singleLine="true" />
     </LinearLayout>

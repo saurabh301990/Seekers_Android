@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     ImageView _rightIcon;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +73,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             @Override
             public void onClick(View v) {
                 String frag = (String) _header.getText();
-                if (frag.equalsIgnoreCase("Map")) {
+                if (frag.equalsIgnoreCase("Map")||frag.equalsIgnoreCase("List")
+                        ||frag.equalsIgnoreCase("Followed Profile")
+                        ||frag.equalsIgnoreCase("Activity Report")) {
                     startActivity(new Intent(MainActivity.this, FilterActivity.class));
+                } else if (frag.equalsIgnoreCase("Draw")) {
+                    PlotMapFragment plotMapFragment = new PlotMapFragment();
+                    plotMapFragment.saveData(MainActivity.this);
                 }
             }
         });
@@ -122,15 +128,19 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             case 0:
                 fragment = new MapView();
                 _header.setText("Map");
+                _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.drawable.filtr);
                 break;
             case 1:
                 fragment = new Track();
                 _header.setText("Followed Profile");
+                _rightIcon.setVisibility(View.VISIBLE);
+                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 2:
                 fragment = new MyKeyWords();
                 _header.setText("My Keywords");
+                _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 3:
@@ -140,26 +150,34 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             case 4:
                 fragment = new PlotMapFragment();
                 _header.setText("Draw");
+                _rightIcon.setVisibility(View.VISIBLE);
+                _rightIcon.setImageResource(R.mipmap.save);
                 break;
             case 5:
                 fragment = new ActivityReport();
                 _header.setText("Activity Report");
+                _rightIcon.setVisibility(View.VISIBLE);
+                _rightIcon.setImageResource(R.drawable.filtr);
                 break;
             case 6:
                 fragment = new Notification();
                 _header.setText("Notification");
+                _rightIcon.setVisibility(View.GONE);
                 break;
             case 7:
                 fragment = new MyProfile();
                 _header.setText("Profile");
+                _rightIcon.setVisibility(View.GONE);
                 break;
             case 8:
                 fragment = new LegalContent();
                 _header.setText("Legal Content");
+                _rightIcon.setVisibility(View.GONE);
                 break;
             case 9:
                 fragment = new HelpAndSupport();
                 _header.setText("Help & Support");
+                _rightIcon.setVisibility(View.GONE);
                 break;
             case 10:
 
@@ -182,5 +200,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             // getSupportActionBar().set
 
         }
+    }
+
+    public void changeHeaderText(String msg) {
+        _header.setText(msg);
     }
 }

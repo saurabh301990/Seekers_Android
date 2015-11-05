@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.TrackAdapter;
 import com.tv.seekers.bean.TrackBean;
+import com.tv.seekers.constant.Constant;
 
 import java.util.ArrayList;
 
@@ -62,7 +63,13 @@ public class Track extends Fragment {
                 replaceFragment();
             }
         });
+
+        setFont();
         return view;
+    }
+
+    private void setFont() {
+        Constant.setFont(getActivity(), etlandingsearch, 0);
     }
 
     private void replaceFragment() {
