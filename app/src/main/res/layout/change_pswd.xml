@@ -80,6 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:gravity="center_horizontal"
+                    android:textSize="15sp"
                     android:text="@string/newPswrdText"
                     android:textColor="#000" />
 
@@ -97,6 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:textSize="15sp"
                     android:gravity="center_horizontal"
                     android:text="@string/confirmPswrdText"
                     android:textColor="#000" />

@@ -1,4 +1,4 @@
-package com.tv.seekers.menu;
+package com.tv.seekers.bean;
 
 /**
  * Created by admin1 on 3/11/15.

@@ -1,4 +1,4 @@
-package com.tv.seekers.menu;
+package com.tv.seekers.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.tv.seekers.R;
+import com.tv.seekers.bean.MyKeywordsBean;
 import com.tv.seekers.constant.Constant;
 
 import java.util.List;

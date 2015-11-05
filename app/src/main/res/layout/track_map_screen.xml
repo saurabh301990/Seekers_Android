@@ -96,14 +96,16 @@
                         android:id="@+id/name_info_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/nameTextWithColon" />
+                        android:text="@string/nameTextWithColon"
+                        android:textSize="15sp"/>
 
                     <TextView
                         android:id="@+id/loc_info_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="@string/locationTextWithColon" />
+                        android:text="@string/locationTextWithColon"
+                        android:textSize="15sp"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -116,14 +118,16 @@
                         android:id="@+id/name_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="John Doe" />
+                        android:text="John Doe"
+                        android:textSize="15sp"/>
 
                     <TextView
                         android:id="@+id/loc_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="US" />
+                        android:text="US"
+                        android:textSize="15sp"/>
 
                 </LinearLayout>
             </LinearLayout>

@@ -98,4 +98,8 @@
     <!--Followed Profile -->
     <string name="nameTextWithColon">Name:</string>
     <string name="locationTextWithColon">Location:</string>
+
+
+    <!--Plot Map-->
+    <string name="nameThisAreaText">Name this Area</string>
 </resources>

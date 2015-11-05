@@ -14,5 +14,6 @@
         android:layout_height="wrap_content"
         android:text="@string/notificationlisttxt"
         android:paddingLeft="5dp"
+        android:textSize="15sp"
         />
 </LinearLayout>

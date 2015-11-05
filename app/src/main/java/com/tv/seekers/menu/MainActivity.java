@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _header.setText("My Locations");
                 break;
             case 4:
-                /*fragment = new ;
-                _header.setText("");*/
+                fragment = new PlotMapFragment();
+                _header.setText("Draw");
                 break;
             case 5:
                 fragment = new ActivityReport();
@@ -154,6 +154,15 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _header.setText("Profile");
                 break;
             case 8:
+                fragment = new LegalContent();
+                _header.setText("Legal Content");
+                break;
+            case 9:
+                fragment = new HelpAndSupport();
+                _header.setText("Help & Support");
+                break;
+            case 10:
+
                 /*fragment = new ;
                 _header.setText("");*/
                 break;

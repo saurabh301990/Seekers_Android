@@ -34,18 +34,21 @@
                 android:id="@+id/txtfolloweduser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 android:text="Followed User" />
 
             <TextView
                 android:id="@+id/txtnooffollowed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 android:text="0 Followed" />
 
             <TextView
                 android:id="@+id/txttrackuser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 android:text="1 Track" />
 
         </LinearLayout>

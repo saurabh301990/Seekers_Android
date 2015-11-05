@@ -76,7 +76,7 @@
                     android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
-
+                    android:textSize="15sp"
                     android:text="@string/nameText" />
 
                 <EditText
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
-
+                    android:textSize="15sp"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
 
@@ -140,7 +140,7 @@
                     android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
-
+                    android:textSize="15sp"
                     android:text="@string/userNameText" />
 
                 <EditText

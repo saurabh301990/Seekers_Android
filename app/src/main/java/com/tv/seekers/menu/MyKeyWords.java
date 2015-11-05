@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.tv.seekers.R;
+import com.tv.seekers.adapter.MyKeywordsAdaptor;
+import com.tv.seekers.bean.MyKeywordsBean;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,14 +1,21 @@
 package com.tv.seekers.constant;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.tv.seekers.R;
 
 import java.util.regex.Pattern;
 
@@ -16,7 +23,7 @@ import java.util.regex.Pattern;
  * Created by shoeb on 2/11/15.
  */
 public class Constant {
-
+    public static Dialog dialog;
 
     ///////// key board hide
     public static void hideKeyBoard(Activity context) {
@@ -59,4 +66,19 @@ public class Constant {
         }
     }
 
+    public static void hideLoader(){
+        if(dialog.isShowing()){
+            dialog.dismiss();
+        }
+    }
+
+    public static void showLoader(Context c){
+        Dialog builder = new Dialog(c,R.style.mydialogstyle);
+        builder.setContentView(R.layout.loader);
+        WebView view = (WebView) builder.findViewById(R.id.wb);
+        view.setBackgroundColor(Color.TRANSPARENT);
+        view.loadUrl("file:///android_asset/loader.gif");
+        builder.setCancelable(false);
+        builder.show();
+    }
 }

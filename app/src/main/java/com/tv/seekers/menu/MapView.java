@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -100,6 +101,10 @@ public class MapView extends Fragment{
 
     @Bind(R.id.map_btn)
     Button map_btn;
+
+
+    @Bind(R.id.search_et)
+    EditText search_et;
 
     @OnClick(R.id.map_btn)
     public void map_btn(View view) {
@@ -275,6 +280,7 @@ public class MapView extends Fragment{
         Constant.setFont(getActivity(), twenty_miles_btn, 0);
         Constant.setFont(getActivity(), map_btn, 0);
         Constant.setFont(getActivity(), list_btn, 0);
+        Constant.setFont(getActivity(), search_et, 0);
     }
 
 

@@ -18,7 +18,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:layout_toRightOf="@+id/dra_img"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="bold" />
 
     <ImageView
