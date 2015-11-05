@@ -2,7 +2,6 @@
     <string name="app_name">Seeker</string>
 
 
-
     <!--Login-->
     <string name="loginText">Login</string>
     <string name="forgotPswrdText">Forgot Password?</string>
@@ -10,7 +9,6 @@
     <string name="passwordHintText">Password</string>
     <string name="enterUsernameText">Please enter username</string>
     <string name="enterPswrdText">Please enter password</string>
-
 
 
     <!--Change Password-->
@@ -31,12 +29,9 @@
     <string name="listText">List</string>
 
 
-
-
     <string name="nav_item_home">Home</string>
     <string name="nav_item_friends">Friends</string>
     <string name="nav_item_notifications">Messages</string>
-
 
 
     <!--Menu Slider-->
@@ -56,7 +51,7 @@
         <item>Help and Support</item>
         <item>Logout</item>
     </string-array>
-     <string name="header_title">Header</string>
+    <string name="header_title">Header</string>
     <!--Drawer-->
     <string name="menu">Menu</string>
 
@@ -94,4 +89,13 @@
     <string name="emailText">Email</string>
     <string name="userNameText">Username</string>
     <string name="currentLocationText">Current Location</string>
+
+    <!--Forgot Password-->
+    <string name="forgotPassText">Forgot Password? No worry Enter your Registered Email to Receive further Instructions</string>
+    <string name="submitText">Submit</string>
+    <string name="backToLoginText">Back To Login</string>
+
+    <!--Followed Profile -->
+    <string name="nameTextWithColon">Name:</string>
+    <string name="locationTextWithColon">Location:</string>
 </resources>

@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 1:
                 fragment = new Track();
-                _header.setText("Track");
+                _header.setText("Followed Profile");
                 break;
             case 2:
                 fragment = new MyKeyWords();
@@ -134,24 +134,24 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 3:
-                /*fragment = new ;
-                _header.setText("");*/
+                fragment = new Landing();
+                _header.setText("My Locations");
                 break;
             case 4:
                 /*fragment = new ;
                 _header.setText("");*/
                 break;
             case 5:
-                /*fragment = new ;
-                _header.setText("");*/
+                fragment = new ActivityReport();
+                _header.setText("Activity Report");
                 break;
             case 6:
-                /*fragment = new ;
-                _header.setText("");*/
+                fragment = new Notification();
+                _header.setText("Notification");
                 break;
             case 7:
                 fragment = new MyProfile();
-                _header.setText("");
+                _header.setText("Profile");
                 break;
             case 8:
                 /*fragment = new ;

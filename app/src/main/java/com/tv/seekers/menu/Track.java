@@ -4,9 +4,12 @@ package com.tv.seekers.menu;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -24,8 +27,8 @@ import butterknife.ButterKnife;
  */
 public class Track extends Fragment {
     @Nullable
-    private  ArrayList<TrackBean> userlist = new ArrayList<TrackBean>();
-    TrackBean trackBean ;
+    private ArrayList<TrackBean> userlist = new ArrayList<TrackBean>();
+    TrackBean trackBean;
     TrackAdapter trackAdapter;
 
 
@@ -36,19 +39,49 @@ public class Track extends Fragment {
     ListView listuser;
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.track,container,false);
+        View view = inflater.inflate(R.layout.track, container, false);
         ButterKnife.bind(this, view);
-        adddate();
-        trackAdapter = new TrackAdapter(userlist,getActivity());
+        addData();
+
+
+        trackAdapter = new TrackAdapter(userlist, getActivity());
         listuser.setAdapter(trackAdapter);
+
+        listuser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                replaceFragment();
+            }
+        });
         return view;
     }
 
-    public void adddate(){
+    private void replaceFragment() {
 
-        for (int i =0 ;i<=20 ; i++){
+        TrackMapFragment fragment = new TrackMapFragment();
+        if (fragment != null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.container_body, fragment);
+            fragmentTransaction.commit();
+
+
+        }
+    }
+
+    public void addData() {
+
+        for (int i = 0; i <= 20; i++) {
 
             trackBean = new TrackBean();
             trackBean.setUsername("Demo");

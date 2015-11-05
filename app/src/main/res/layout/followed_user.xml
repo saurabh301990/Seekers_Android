@@ -2,29 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGrey"
     android:orientation="vertical">
 
 
     <LinearLayout
         android:id="@+id/searchll"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
-        android:padding="5dp"
-        android:layout_height="wrap_content">
+        android:padding="5dp">
 
         <EditText
             android:id="@+id/etlandingsearch"
-            android:background="@drawable/roundedwhite"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundedwhite"
             android:gravity="center"
             android:hint="@string/searchText"
-            android:layout_height="wrap_content" />
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:singleLine="true" />
     </LinearLayout>
 
     <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView" />
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>

@@ -44,595 +44,602 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/datetextll"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/filterheaderll"
-        android:background="@color/login_btn_bg_color"
-
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/datetext"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/filterheaderll">
 
 
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/datefilterll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/datetextll"
-        android:background="#ffffff"
-        android:orientation="vertical"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:weightSum="3">
-
-        <LinearLayout
-            android:id="@+id/filterbydatell"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:weightSum="1">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/txtfilterbydate"
+
+            <RelativeLayout
+                android:id="@+id/datetextll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.7"
-                android:paddingLeft="5dp"
-                android:text="@string/filterbydate" />
+
+                android:background="@color/login_btn_bg_color"
+
+                >
+
+                <TextView
+                    android:id="@+id/txtdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/datetext"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp" />
 
 
-            <ToggleButton
-                android:id="@+id/filterdatetoggle"
-                style="?android:attr/borderlessButtonStyle"
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/datefilterll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="0.3"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-
-
-        </LinearLayout>
-
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:id="@+id/startdatell"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/txtstartdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:text="@string/startdate" />
-
-            <TextView
-                android:id="@+id/txtSdatetime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.9"
-                android:gravity="right"
-                android:text="25 Oct 2015 05:00 AM" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/startdatell"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/txtenddate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:text="@string/enddate" />
-
-            <TextView
-                android:id="@+id/txtEdatetime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.9"
-                android:gravity="right"
-                android:text="25 Oct 2015 05:00 AM" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/networktextll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/datefilterll"
-        android:background="@color/login_btn_bg_color"
-
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/networktext"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-
-    <LinearLayout
-        android:id="@+id/socailfilterll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/networktextll"
-        android:background="#ffffff"
-        android:orientation="vertical"
-        android:weightSum="9">
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-
-                android:background="@mipmap/fb_icon" />
-
-            <TextView
-                android:id="@+id/fbtext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/fbtext" />
-
-            <ToggleButton
-                android:id="@+id/fbtoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/twitter_icon" />
-
-            <TextView
-                android:id="@+id/twittertxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/twittertext" />
-
-            <ToggleButton
-                android:id="@+id/twittertoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/youtube_icon" />
-
-            <TextView
-                android:id="@+id/youtubetxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/youtubetext" />
-
-            <ToggleButton
-                android:id="@+id/youtubetoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/insta_icon" />
-
-            <TextView
-                android:id="@+id/instatext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/Instatext" />
-
-            <ToggleButton
-                android:id="@+id/instatoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@mipmap/flicker_icon" />
-
-            <TextView
-                android:id="@+id/flickrtext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/flicktext" />
-
-            <ToggleButton
-                android:id="@+id/filkertoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/tumblr_icon" />
-
-            <TextView
-                android:id="@+id/tumblrtext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/tumblrtext" />
-
-            <ToggleButton
-                android:id="@+id/tumbletoogle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="false"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/vine_icon" />
-
-            <TextView
-                android:id="@+id/vinetxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/vinetext" />
-
-            <ToggleButton
-                android:id="@+id/vinetoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/vk_icon" />
-
-            <TextView
-                android:id="@+id/vktext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/vktext" />
-
-            <ToggleButton
-                android:id="@+id/vktoggle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="2dp"
-                android:background="@mipmap/d_icon" />
-
-            <TextView
-                android:id="@+id/disquxtext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:paddingLeft="2dp"
-                android:text="@string/distext" />
-
-            <ToggleButton
-                android:id="@+id/disquxtoogle"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
-
-
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/keywordll"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/socailfilterll"
-        android:background="@color/login_btn_bg_color"
-
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/keywordtxt"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/keywordll"
-        android:background="#FFFFFF"
-        android:orientation="vertical">
-
-
-        <LinearLayout
-            android:id="@+id/filterbykeywordll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"
-            android:paddingTop="8dp"
-            android:weightSum="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text="@string/filterkeyword" />
-
-
-            <ToggleButton
-                android:id="@+id/filterbykeywordtoggle"
-                style="?android:attr/borderlessButtonStyle"
+                android:layout_below="@id/datetextll"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:id="@+id/filterbydatell"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/txtfilterbydate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:paddingLeft="5dp"
+                        android:text="@string/filterbydate" />
+
+
+                    <ToggleButton
+                        android:id="@+id/filterdatetoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="0.3"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:id="@+id/startdatell"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/txtstartdate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="5dp"
+                        android:text="@string/startdate" />
+
+                    <TextView
+                        android:id="@+id/txtSdatetime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:gravity="right"
+                        android:text="25 Oct 2015 05:00 AM" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/startdatell"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/txtenddate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="5dp"
+                        android:text="@string/enddate" />
+
+                    <TextView
+                        android:id="@+id/txtEdatetime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:gravity="right"
+                        android:text="25 Oct 2015 05:00 AM" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/networktextll"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:checked="true"
-                android:drawableRight="@drawable/toglebtn"
-                android:text=""
-                android:textOff=""
-                android:textOn="" />
+                android:layout_height="wrap_content"
+                android:layout_below="@id/datefilterll"
+                android:background="@color/login_btn_bg_color"
+
+                >
+
+                <TextView
+                    android:id="@+id/txtnetwork"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/networktext"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/socailfilterll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/networktextll"
+                android:background="#ffffff"
+                android:orientation="vertical"
+                android:weightSum="9">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1.5dp"
-            android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@mipmap/fb_icon" />
+
+                    <TextView
+                        android:id="@+id/fbtext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/fbtext" />
+
+                    <ToggleButton
+                        android:id="@+id/fbtoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
 
 
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@mipmap/twitter_icon" />
+
+                    <TextView
+                        android:id="@+id/twittertxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/twittertext" />
+
+                    <ToggleButton
+                        android:id="@+id/twittertoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@mipmap/youtube_icon" />
+
+                    <TextView
+                        android:id="@+id/youtubetxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/youtubetext" />
+
+                    <ToggleButton
+                        android:id="@+id/youtubetoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@mipmap/insta_icon" />
+
+                    <TextView
+                        android:id="@+id/instatext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/Instatext" />
+
+                    <ToggleButton
+                        android:id="@+id/instatoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+
+                        android:background="@mipmap/flicker_icon" />
+
+                    <TextView
+                        android:id="@+id/flickrtext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/flicktext" />
+
+                    <ToggleButton
+                        android:id="@+id/filkertoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+
+                        android:background="@mipmap/tumblr_icon" />
+
+                    <TextView
+                        android:id="@+id/tumblrtext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/tumblrtext" />
+
+                    <ToggleButton
+                        android:id="@+id/tumbletoogle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="false"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+
+                        android:background="@mipmap/vine_icon" />
+
+                    <TextView
+                        android:id="@+id/vinetxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/vinetext" />
+
+                    <ToggleButton
+                        android:id="@+id/vinetoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="@mipmap/vk_icon" />
+
+                    <TextView
+                        android:id="@+id/vktext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/vktext" />
+
+                    <ToggleButton
+                        android:id="@+id/vktoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:background="@mipmap/d_icon" />
+
+                    <TextView
+                        android:id="@+id/disquxtext"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:paddingLeft="2dp"
+                        android:text="@string/distext" />
+
+                    <ToggleButton
+                        android:id="@+id/disquxtoogle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/keywordll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/socailfilterll"
+                android:background="@color/login_btn_bg_color"
+
+                >
+
+                <TextView
+                    android:id="@+id/txtkeyword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="@string/keywordtxt"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/keywordll"
+                android:background="#FFFFFF"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/filterbykeyword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/txtfilterbykeyword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:paddingLeft="5dp"
+                        android:text="@string/filterkeyword" />
+
+
+                    <ToggleButton
+                        android:id="@+id/filterbykeywordtoggle"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="0.3"
+                        android:checked="true"
+                        android:drawableRight="@drawable/toglebtn"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn="" />
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1.5dp"
+                    android:background="@color/lightGrey" />
+
+
+            </LinearLayout>
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>

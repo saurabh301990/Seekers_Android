@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.tv.seekers.R;
-
+import com.tv.seekers.constant.Constant;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -67,6 +67,19 @@ public class FilterActivity extends Activity implements View.OnClickListener {
     @Bind(R.id.disquxtext)
     TextView disquxtext;
 
+    @Bind(R.id.txtfilterbykeyword)
+    TextView filterbykeywordtxt;
+
+    @Bind(R.id.txtdate)
+    TextView datetxt;
+
+    @Bind(R.id.txtnetwork)
+    TextView networktxt;
+
+    @Bind(R.id.txtkeyword)
+    TextView keywordtxt;
+
+
     @Bind(R.id.filterdatetoggle)
     ToggleButton filterbydatetgl;
 
@@ -108,8 +121,40 @@ public class FilterActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter);
         ButterKnife.bind(this);
+
+        setfont();
+        setonclick();
     }
 
+    public void setonclick(){
+        txtheadercancel.setOnClickListener(this);
+        txtheaderapply.setOnClickListener(this);
+    }
+
+    public void setfont() {
+        Constant.setFont(FilterActivity.this, txtheadercancel, 0);
+        Constant.setFont(FilterActivity.this, txtheaderfilter, 0);
+        Constant.setFont(FilterActivity.this, txtheaderapply, 0);
+        Constant.setFont(FilterActivity.this, filterbydatetxt, 0);
+        Constant.setFont(FilterActivity.this, startdatetext, 0);
+        Constant.setFont(FilterActivity.this, enddatetext, 0);
+        Constant.setFont(FilterActivity.this, Sdatetime, 0);
+        Constant.setFont(FilterActivity.this, Edatetime, 0);
+        Constant.setFont(FilterActivity.this, fbtext, 0);
+        Constant.setFont(FilterActivity.this, twittertext, 0);
+        Constant.setFont(FilterActivity.this, youtubetxt, 0);
+        Constant.setFont(FilterActivity.this, instatext, 0);
+        Constant.setFont(FilterActivity.this, tumblrtxt, 0);
+        Constant.setFont(FilterActivity.this, vinetxt, 0);
+        Constant.setFont(FilterActivity.this, vktext, 0);
+        Constant.setFont(FilterActivity.this, disquxtext, 0);
+        Constant.setFont(FilterActivity.this, filterbykeywordtxt, 0);
+        Constant.setFont(FilterActivity.this, datetxt, 0);
+        Constant.setFont(FilterActivity.this, networktxt, 0);
+        Constant.setFont(FilterActivity.this, keywordtxt, 0);
+
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -149,6 +194,14 @@ public class FilterActivity extends Activity implements View.OnClickListener {
 
             case R.id.filterbykeywordtoggle:
 
+                break;
+            case R.id.txtcancel:
+                finish();
+
+                break;
+            case R.id.txtapply:
+
+                finish();
                 break;
 
 

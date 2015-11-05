@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
+import com.tv.seekers.constant.Constant;
 import com.tv.seekers.gpsservice.GPSTracker;
 
 import butterknife.Bind;
@@ -148,6 +149,7 @@ public class MapView extends Fragment{
 
         View view = inflater.inflate(R.layout.map_view_screen,container,false);
         ButterKnife.bind(this, view);
+        setfont();
         return view;
     }
 
@@ -266,6 +268,14 @@ public class MapView extends Fragment{
     }
 
 
+    public void setfont() {
+        Constant.setFont(getActivity(), two_miles_btn, 0);
+        Constant.setFont(getActivity(), five_miles_btn, 0);
+        Constant.setFont(getActivity(), ten_miles_btn, 0);
+        Constant.setFont(getActivity(), twenty_miles_btn, 0);
+        Constant.setFont(getActivity(), map_btn, 0);
+        Constant.setFont(getActivity(), list_btn, 0);
+    }
 
 
     private void activeMilesBtn(int  activeBtnId) {

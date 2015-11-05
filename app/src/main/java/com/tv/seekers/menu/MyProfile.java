@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.ChangePassword;
+import com.tv.seekers.constant.Constant;
 import com.tv.seekers.gpsservice.GPSTracker;
 
 import butterknife.Bind;
@@ -96,7 +97,19 @@ public class MyProfile extends Fragment {
         View view = inflater.inflate(R.layout.my_profile_screen, container, false);
 
         ButterKnife.bind(this, view);
+        setFont();
         return view;
+    }
+
+    private void setFont() {
+        Constant.setFont(getActivity(), nameInfo_tv, 0);
+        Constant.setFont(getActivity(), name_et, 0);
+        Constant.setFont(getActivity(), emailInfo_tv, 0);
+        Constant.setFont(getActivity(), email_et, 0);
+        Constant.setFont(getActivity(), userNameInfo_tv, 0);
+        Constant.setFont(getActivity(), username_et, 0);
+        Constant.setFont(getActivity(), change_pswrd_btn, 0);
+        Constant.setFont(getActivity(), current_loc_btn, 0);
     }
 
     @Override

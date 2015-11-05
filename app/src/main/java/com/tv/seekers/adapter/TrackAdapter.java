@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.bean.TrackBean;
+import com.tv.seekers.constant.Constant;
 
 import java.util.ArrayList;
 
@@ -67,6 +68,10 @@ public class TrackAdapter extends BaseAdapter {
             view_holder.txtfolloweduser = (TextView) view.findViewById(R.id.txtfolloweduser);
             view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
             view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);
+            Constant.setFont(context, view_holder.txtfolloweduser , 0);
+            Constant.setFont(context, view_holder.txtnofolloweduser , 0);
+            Constant.setFont(context, view_holder.txtnotrackuser , 0);
+
             view.setTag(view_holder);
 
         } else {

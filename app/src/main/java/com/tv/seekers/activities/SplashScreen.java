@@ -26,6 +26,7 @@ public class SplashScreen extends Activity {
             public void run() {
 
                 startActivity(new Intent(SplashScreen.this, LoginActivity.class));
+                finish();
             }
         }, SPLASH_TIME_OUT);
     }

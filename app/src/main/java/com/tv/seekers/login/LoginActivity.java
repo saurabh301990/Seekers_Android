@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 
 import com.tv.seekers.R;
+import com.tv.seekers.activities.ForgotPass;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.menu.MainActivity;
 
@@ -50,6 +51,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
         main_rl.setOnTouchListener(this);
         login_btn.setOnClickListener(this);
+        forgot_pswd_tv.setOnClickListener(this);
 
         Constant.setFont(LoginActivity.this, forgot_pswd_tv, 0);
         Constant.setFont(LoginActivity.this, login_btn, 0);
@@ -74,11 +76,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                 if (validData()) {
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
+                    finish();
                 }
 
 
                 break;
             case R.id.forgot_pswd_tv:
+                startActivity(new Intent(LoginActivity.this, ForgotPass.class));
 
 
                 break;

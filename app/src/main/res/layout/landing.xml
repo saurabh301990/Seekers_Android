@@ -2,60 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGrey"
     android:orientation="vertical">
-
-
 
 
     <LinearLayout
         android:id="@+id/searchll"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
-        android:padding="5dp"
-        android:layout_height="wrap_content">
+        android:padding="5dp">
 
         <EditText
-            android:id="@+id/etlandingsearch"
-            android:background="@drawable/roundedwhite"
+            android:id="@+id/etlandingsearchitem"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/roundedwhite"
             android:gravity="center"
             android:hint="@string/searchText"
-            android:layout_height="wrap_content" />
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            android:singleLine="true" />
     </LinearLayout>
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/sslayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+
         android:layout_below="@id/searchll"
-        android:background="@color/lightGrey"
+
         android:gravity="center"
         android:paddingBottom="20dp"
         android:paddingTop="20dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/txtserachselctlo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/landingmiddletext"
             android:textSize="16sp"
 
-          />
+            />
 
-    </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.5dp"
+            android:background="@color/lightGrey" />
+    </RelativeLayout>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1.5dp"
-        android:background="@color/lightGrey" />
 
     <ListView
+        android:id="@+id/landinglist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/landinglist"
-        android:dividerHeight="2dp"
         android:background="@color/lightGrey"
+        android:dividerHeight="2dp"
 
 
         />
