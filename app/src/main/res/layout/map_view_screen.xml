@@ -3,26 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@android:color/white"
     android:weightSum="5">
 
-    <LinearLayout
+
+    <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
-        android:padding="5dp">
+        android:padding="8dp">
 
-        <EditText
-            android:id="@+id/search_et"
+        <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/roundedwhite"
             android:gravity="center"
-            android:hint="@string/searchText"
             android:paddingBottom="3dp"
-            android:paddingTop="3dp"
-            android:singleLine="true" />
-    </LinearLayout>
+            android:paddingTop="3dp">
+
+            <EditText
+                android:singleLine="true"
+                android:id="@+id/search_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableLeft="@mipmap/search_icon"
+                android:drawablePadding="3dp"
+                android:gravity="center"
+                android:hint="@string/searchText" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/main_layout"
@@ -47,13 +60,13 @@
                 android:layout_above="@+id/miles_btn_ll"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_weight="0.6"></RelativeLayout>
+                android:layout_weight="0.4"></RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/miles_btn_ll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="5.4"
+                android:layout_weight="5.6"
                 android:orientation="vertical">
 
                 <ImageView
@@ -146,6 +159,7 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:text="@string/mapText"
+            android:textSize="18sp"
             android:textAllCaps="false" />
 
         <Button
@@ -155,6 +169,7 @@
             android:layout_weight="1"
             android:background="@color/miles_inactive_color"
             android:text="@string/listText"
+            android:textSize="18sp"
             android:textAllCaps="false" />
     </LinearLayout>
 </RelativeLayout>

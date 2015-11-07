@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp"
+        android:padding="8dp"
         android:weightSum="3">
 
         <TextView
@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:text="@string/cancelText"
             android:textColor="#4C94BF"
-            android:textSize="15sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/txtfilter"
@@ -30,7 +30,7 @@
             android:gravity="center"
             android:text="@string/filtertext"
 
-            android:textSize="15sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/txtapply"
@@ -40,7 +40,7 @@
             android:gravity="right"
             android:text="@string/applytext"
             android:textColor="#4C94BF"
-            android:textSize="15sp"/>
+            android:textSize="18sp" />
 
     </LinearLayout>
 
@@ -101,8 +101,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.7"
                         android:paddingLeft="5dp"
-                        android:textSize="15sp"
-                        android:text="@string/filterbydate" />
+                        android:text="@string/filterbydate"
+                        android:textSize="15sp" />
 
 
                     <ToggleButton
@@ -144,7 +144,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="5dp"
                         android:text="@string/startdate"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtSdatetime"
@@ -152,8 +152,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.9"
                         android:gravity="right"
-                        android:text="25 Oct 2015 05:00 AM"
-                        android:textSize="15sp"/>
+                        android:text="25 october 2015 05:00 AM"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -179,7 +179,7 @@
                         android:layout_weight="1"
                         android:paddingLeft="5dp"
                         android:text="@string/enddate"
-                        android:textSize="15sp"/>
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/txtEdatetime"
@@ -187,8 +187,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.9"
                         android:gravity="right"
-                        android:text="25 Oct 2015 05:00 AM"
-                        android:textSize="15sp"/>
+                        android:text="25 october 2015 05:00 AM"
+                        android:textSize="15sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -208,8 +208,7 @@
                     android:padding="5dp"
                     android:text="@string/networktext"
                     android:textColor="#ffffff"
-                    android:textSize="15sp"
-                    />
+                    android:textSize="15sp" />
             </RelativeLayout>
 
 
@@ -241,8 +240,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/fbtext" />
+                        android:text="@string/fbtext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/fbtoggle"
@@ -281,8 +280,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/twittertext" />
+                        android:text="@string/twittertext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/twittertoggle"
@@ -320,8 +319,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/youtubetext" />
+                        android:text="@string/youtubetext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/youtubetoggle"
@@ -360,8 +359,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/Instatext" />
+                        android:text="@string/Instatext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/instatoggle"
@@ -401,8 +400,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/flicktext" />
+                        android:text="@string/flicktext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/filkertoggle"
@@ -441,8 +440,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/tumblrtext" />
+                        android:text="@string/tumblrtext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/tumbletoogle"
@@ -482,8 +481,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/vinetext" />
+                        android:text="@string/vinetext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/vinetoggle"
@@ -522,8 +521,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/vktext" />
+                        android:text="@string/vktext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/vktoggle"
@@ -537,6 +536,7 @@
                         android:textOff=""
                         android:textOn="" />
                 </LinearLayout>
+
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1.5dp"
@@ -560,8 +560,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.5"
                         android:paddingLeft="2dp"
-                        android:textSize="15sp"
-                        android:text="@string/distext" />
+                        android:text="@string/distext"
+                        android:textSize="15sp" />
 
                     <ToggleButton
                         android:id="@+id/disquxtoogle"
@@ -600,8 +600,7 @@
                     android:padding="5dp"
                     android:text="@string/keywordtxt"
                     android:textColor="#ffffff"
-                    android:textSize="15sp"
-                    />
+                    android:textSize="15sp" />
             </RelativeLayout>
 
             <LinearLayout
@@ -626,8 +625,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.7"
                         android:paddingLeft="5dp"
-                        android:textSize="15sp"
-                        android:text="@string/filterkeyword" />
+                        android:text="@string/filterkeyword"
+                        android:textSize="15sp" />
 
 
                     <ToggleButton

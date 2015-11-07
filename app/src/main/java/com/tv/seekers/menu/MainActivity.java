@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             public void onClick(View v) {
                 String frag = (String) _header.getText();
                 if (frag.equalsIgnoreCase("Map")||frag.equalsIgnoreCase("List")
-                        ||frag.equalsIgnoreCase("Followed Profile")
+                        ||frag.equalsIgnoreCase("Followed")
                         ||frag.equalsIgnoreCase("Activity Report")) {
                     startActivity(new Intent(MainActivity.this, FilterActivity.class));
                 } else if (frag.equalsIgnoreCase("Draw")) {
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         });
 
         // display the first navigation drawer view on app launch
-        displayView(0);
+        displayView(3);
     }
 
 
@@ -133,22 +133,23 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 1:
                 fragment = new Track();
-                _header.setText("Followed Profile");
-                _rightIcon.setVisibility(View.VISIBLE);
-                _rightIcon.setImageResource(R.mipmap.plus);
+                _header.setText("Followed");
+                _rightIcon.setVisibility(View.GONE);
+//                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 2:
                 fragment = new MyKeyWords();
                 _header.setText("My Keywords");
-                _rightIcon.setVisibility(View.VISIBLE);
-                _rightIcon.setImageResource(R.mipmap.plus);
+                _rightIcon.setVisibility(View.GONE);
+//                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 3:
                 fragment = new Landing();
                 _header.setText("My Locations");
+                _rightIcon.setVisibility(View.GONE);
                 break;
             case 4:
-                fragment = new PlotMapFragment();
+                fragment = new DemoMapFrag();
                 _header.setText("Draw");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.mipmap.save);
@@ -161,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 6:
                 fragment = new Notification();
-                _header.setText("Notification");
+                _header.setText("Notifications");
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 7:

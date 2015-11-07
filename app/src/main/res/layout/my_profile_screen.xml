@@ -11,6 +11,7 @@
 
 
         <LinearLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -44,12 +45,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical"
-                android:paddingLeft="85dp"
-                android:paddingRight="85dp">
+                android:paddingLeft="95dp"
+
+                android:paddingRight="95dp">
 
 
                 <Button
                     android:id="@+id/change_pswrd_btn"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/changepassword"
@@ -73,18 +76,21 @@
                     android:id="@+id/nameInfo_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
                     android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
-                    android:textSize="15sp"
-                    android:text="@string/nameText" />
+                    android:text="@string/nameText"
+                    android:textSize="15sp" />
 
                 <EditText
+                    android:padding="3dp"
                     android:id="@+id/name_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/nameInfo_tv"
                     android:layout_weight="0.3"
+                    android:paddingLeft="5dp"
                     android:background="@drawable/profile_field_right"
                     android:drawableRight="@mipmap/edit"
                     android:ems="8"
@@ -107,17 +113,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
-                    android:textSize="15sp"
+                    android:paddingLeft="5dp"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
+                    android:text="@string/emailText"
 
-                    android:text="@string/emailText" />
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/email_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="3dp"
                     android:layout_weight="0.3"
+                    android:paddingLeft="5dp"
                     android:background="@drawable/profile_field_right"
                     android:enabled="false"
                     android:singleLine="true" />
@@ -138,18 +147,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.7"
+                    android:paddingLeft="5dp"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
-                    android:textSize="15sp"
-                    android:text="@string/userNameText" />
+                    android:text="@string/userNameText"
+                    android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/username_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
+                    android:paddingLeft="5dp"
                     android:background="@drawable/profile_field_right"
                     android:enabled="false"
+                    android:padding="3dp"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -158,12 +170,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical"
-                android:paddingLeft="85dp"
-                android:paddingRight="85dp">
+                android:paddingLeft="95dp"
+                android:paddingRight="95dp">
 
 
                 <Button
                     android:id="@+id/current_loc_btn"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/changepassword"
@@ -175,6 +188,7 @@
             <RelativeLayout
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
+
                 android:layout_height="200dp"></RelativeLayout>
         </LinearLayout>
 

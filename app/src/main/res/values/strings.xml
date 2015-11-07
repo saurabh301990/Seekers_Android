@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Seeker</string>
+    <string name="internet">Please check your Internet Connection!</string>
 
 
     <!--Login-->
@@ -17,6 +18,10 @@
     <string name="confirmPswrdText">Confirm Password</string>
     <string name="changePswrdText">Change Password</string>
     <string name="cancelText">Cancel</string>
+    <string name="enterCurrentPass">Please enter current password</string>
+    <string name="enterNewPass">Please enter new password</string>
+    <string name="enterConfirmPass">Please enter confirm password</string>
+    <string name="passwordNotMatch">Password not matched.</string>
 
 
     <!--Map View-->
@@ -40,15 +45,15 @@
 
     <string-array name="nav_drawer_labels">
         <item>Home</item>
-        <item>Followed Profile</item>
+        <item>Followed</item>
         <item>My Keywords</item>
         <item>My Locations</item>
         <item>Plot a New Area</item>
         <item>Activity Report</item>
-        <item>Notification</item>
+        <item>Notifications</item>
         <item>My Profile</item>
         <item>Legal Content</item>
-        <item>Help and Support</item>
+        <item>Help &amp; Support</item>
         <item>Logout</item>
     </string-array>
     <string name="header_title">Header</string>
@@ -71,16 +76,16 @@
     <string name="tumblrtext">Tumblr</string>
     <string name="vinetext">Vine</string>
     <string name="vktext">VK</string>
-    <string name="distext">Disqux</string>
+    <string name="distext">Disqus</string>
     <string name="keywordtxt">Keywords</string>
     <string name="filterkeyword">Filter By Keyword</string>
 
     <!--Landing Screen-->
-    <string name="landingmiddletext">Search or select a Locations</string>
+    <string name="landingmiddletext">Search or select a Location</string>
 
 
     <!--Notification Screen-->
-    <string name="notificationtxt">Notification</string>
+    <string name="notificationtxt">Notifications</string>
     <string name="notificationlisttxt">New Message was posted by the user on FaceBook that includes word Gun in it</string>
 
 
@@ -94,6 +99,8 @@
     <string name="forgotPassText">Forgot Password? No worry Enter your Registered Email to Receive further Instructions</string>
     <string name="submitText">Submit</string>
     <string name="backToLoginText">Back To Login</string>
+    <string name="pleaseEnterEmail">Please enter email</string>
+    <string name="pleaseEnterValidEmail">Please enter valid email</string>
 
     <!--Followed Profile -->
     <string name="nameTextWithColon">Name:</string>

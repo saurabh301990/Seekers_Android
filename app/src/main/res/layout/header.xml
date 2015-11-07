@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/header"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
-    <ImageView
-        android:id="@+id/tgl_menu"
-        android:layout_weight=".1"
-        android:layout_width="wrap_content"
+
+
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:src="@drawable/menu"/>
-    <TextView
-        android:id="@+id/hdr_title"
-        android:layout_weight=".8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textColor="#000"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:text="@string/header_title"/>
-    <ImageView
-        android:id="@+id/hdr_fltr"
-        android:layout_weight=".1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:src="@drawable/filtr"/>
-</LinearLayout>
+        android:background="@android:color/white">
+
+        <ImageView
+
+            android:id="@+id/tgl_menu"
+            android:layout_width="wrap_content"
+
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:padding="10dp"
+            android:src="@drawable/menu" />
+
+        <TextView
+            android:id="@+id/hdr_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+
+            android:text="@string/header_title"
+            android:textColor="#000"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/hdr_fltr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:src="@drawable/filtr" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGrey"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
 
     <LinearLayout
+        android:focusableInTouchMode="true"
+        android:focusable="true"
         android:id="@+id/searchll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,8 +32,8 @@
         android:id="@+id/sslayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_below="@id/searchll"
+        android:background="@color/lightGrey"
 
         android:gravity="center"
         android:paddingBottom="20dp"
@@ -58,7 +60,7 @@
         android:id="@+id/landinglist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lightGrey"
+        android:background="@android:color/white"
         android:dividerHeight="2dp"
 
 

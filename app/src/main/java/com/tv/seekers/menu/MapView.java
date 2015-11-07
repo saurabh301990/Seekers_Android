@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,6 +161,49 @@ public class MapView extends Fragment {
 
         header = (TextView) getActivity().findViewById(R.id.hdr_title);
         setfont();
+
+        search_et.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (search_et.getText().length() == 0) {
+                    search_et.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.search_icon, 0, 0, 0);
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (search_et.getText().length() == 0) {
+                    search_et.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.search_icon, 0, 0, 0);
+                } else {
+                    search_et.setCompoundDrawables(null, null, null, null);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (search_et.getText().length() == 0) {
+                    search_et.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.search_icon, 0, 0, 0);
+                }
+
+            }
+        });
+
+      /*  search_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View arg0, boolean gotfocus) {
+                // TODO Auto-generated method stub
+                if (gotfocus) {
+                    search_et.setCompoundDrawables(null, null, null, null);
+                } else if (!gotfocus) {
+                    if (search_et.getText().length() == 0)
+                        search_et.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_search, 0, 0, 0);
+                }
+
+
+            }
+        });*/
         return view;
     }
 

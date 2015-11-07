@@ -7,6 +7,7 @@
 
     <RelativeLayout
         android:id="@+id/main_rl"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,9 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/ets_rl"
             android:layout_marginBottom="15dp"
-            android:src="@mipmap/login_logo"
-
-            />
+            android:src="@mipmap/logo" />
 
         <RelativeLayout
             android:id="@+id/ets_rl"
@@ -28,17 +27,17 @@
             android:layout_gravity="center"
             android:orientation="vertical"
 
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp">
+            android:paddingLeft="45dp"
+            android:paddingRight="45dp">
 
             <EditText
                 android:id="@+id/email_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/loginuser"
-                android:hint="@string/emailHintText"
-                android:inputType="textEmailAddress"
-                android:paddingLeft="35dp"
+                android:hint="@string/userNameText"
+
+                android:paddingLeft="40dp"
                 android:singleLine="true"
                 android:textColor="#000" />
 
@@ -51,7 +50,7 @@
                 android:background="@drawable/loginpass"
                 android:hint="@string/passwordHintText"
                 android:inputType="textPassword"
-                android:paddingLeft="35dp"
+                android:paddingLeft="40dp"
                 android:singleLine="true"
                 android:textColor="#000" />
 
@@ -79,16 +78,16 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ets_rl"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:text="@string/forgotPswrdText"
-            android:textSize="15sp"
-            android:textColor="#000" />
+            android:textColor="#666"
+            android:textSize="15sp" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="10dp"
-            android:src="@mipmap/login_powered_by" />
+            android:src="@mipmap/powered" />
     </RelativeLayout>
 </RelativeLayout>
