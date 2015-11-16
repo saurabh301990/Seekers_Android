@@ -73,6 +73,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
     Button cancel_btn;
 
 
+    /*Header*/
     @Bind(R.id.tgl_menu)
     ImageView tgl_menu;
 
@@ -280,6 +281,9 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                         int status = _JsonObject.getInt("status");
                         String message = _JsonObject.getString("message");
                         Constant.showToast(message, ChangePassword.this);
+                        if (status==1){
+                            finish();
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         Constant.showToast("Server Error ", ChangePassword.this);

@@ -134,6 +134,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
 
                             urlConnection.setRequestMethod("POST");
+                            urlConnection.setReadTimeout(5000);
                             urlConnection.connect();
 
                             //Write
@@ -216,6 +217,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                                     editor.putString("firstname", firstname);
                                     editor.putString("lastname", lastname);
                                     editor.putString("image", image);
+                                    editor.putBoolean("ISLOGIN",true);
                                     editor.commit();
 
 

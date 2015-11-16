@@ -1,6 +1,10 @@
 package com.tv.seekers.menu;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     @Bind(R.id.hdr_fltr)
     ImageView _rightIcon;
 
+    private SharedPreferences sPref;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -73,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             @Override
             public void onClick(View v) {
                 String frag = (String) _header.getText();
-                if (frag.equalsIgnoreCase("Map")||frag.equalsIgnoreCase("List")
-                        ||frag.equalsIgnoreCase("Followed")
-                        ||frag.equalsIgnoreCase("Activity Report")) {
+                if (frag.equalsIgnoreCase("Map") || frag.equalsIgnoreCase("List")
+                        /*|| frag.equalsIgnoreCase("Followed")*/
+                        || frag.equalsIgnoreCase("Activity Report")) {
                     startActivity(new Intent(MainActivity.this, FilterActivity.class));
                 } else if (frag.equalsIgnoreCase("Draw")) {
                     PlotMapFragment plotMapFragment = new PlotMapFragment();
@@ -84,10 +90,18 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             }
         });
 
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
+
         // display the first navigation drawer view on app launch
         displayView(3);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -134,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             case 1:
                 fragment = new Track();
                 _header.setText("Followed");
-                _rightIcon.setVisibility(View.GONE);
-//                _rightIcon.setImageResource(R.mipmap.plus);
+                _rightIcon.setVisibility(View.VISIBLE);
+                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 2:
                 fragment = new MyKeyWords();
@@ -181,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 10:
-
+                logout();
                 /*fragment = new ;
                 _header.setText("");*/
                 break;
@@ -201,6 +215,41 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             // getSupportActionBar().set
 
         }
+    }
+
+    private void logout() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+
+
+        alertDialog.setMessage("Are you sure want to Logout!");
+
+
+        // Setting Positive "Yes" Button
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                clearData();
+            }
+        });
+
+        // Setting Positive "Yes" Button
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+
+
+    }
+
+    private void clearData() {
+        editor.clear();
+        editor.commit();
+        finish();
     }
 
     public void changeHeaderText(String msg) {

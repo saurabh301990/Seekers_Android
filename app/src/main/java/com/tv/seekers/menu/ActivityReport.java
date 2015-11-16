@@ -44,6 +44,7 @@ public class ActivityReport extends Fragment{
         chart.animateXY(2000, 2000);
         chart.getAxisLeft().setDrawGridLines(false);
         chart.getXAxis().setDrawGridLines(false);
+        chart.setScaleEnabled(false);
         chart.invalidate();
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {

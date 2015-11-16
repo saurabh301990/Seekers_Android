@@ -6,12 +6,14 @@ package com.tv.seekers.bean;
 public class MyKeywordsBean {
     private String _title;
     private boolean _tglState;
+    private String _tglID;
 
 
-    public MyKeywordsBean(String _title, boolean _tglState) {
+    public MyKeywordsBean(String _title, boolean _tglState, String _tglID) {
         super();
         this._title = _title;
         this._tglState = _tglState;
+        this._tglID = _tglID;
     }
 
 
@@ -31,5 +33,12 @@ public class MyKeywordsBean {
         this._tglState = _tglState;
     }
 
+    public String get_tglID() {
+        return _tglID;
+    }
+
+    public void set_tglID(String _title) {
+        this._tglID = _tglID;
+    }
 
 }

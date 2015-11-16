@@ -48,6 +48,12 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="@mipmap/top_divider" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -103,7 +109,7 @@
                         android:id="@+id/loc_info_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="@string/locationTextWithColon"
                         android:textSize="15sp" />
                 </LinearLayout>
@@ -125,7 +131,7 @@
                         android:id="@+id/loc_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text=" US"
                         android:textSize="15sp" />
 
@@ -154,6 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@android:color/black"
                 android:background="@android:color/white"
                 android:text="@string/mapText"
                 android:textAllCaps="false" />
@@ -163,6 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/grey_color"
                 android:background="@color/miles_inactive_color"
                 android:text="@string/listText"
                 android:textAllCaps="false"

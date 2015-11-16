@@ -109,4 +109,10 @@
 
     <!--Plot Map-->
     <string name="nameThisAreaText">Name this Area</string>
+
+
+    <!--Add Followed-->
+    <string name="addFollowedtext">Add Followed</string>
+
+    <string name="entrkeyword">Enter keyword</string>
 </resources>

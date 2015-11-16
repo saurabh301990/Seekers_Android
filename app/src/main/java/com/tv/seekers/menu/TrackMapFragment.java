@@ -73,12 +73,18 @@ public class TrackMapFragment extends Fragment {
     @Bind(R.id.map_btn)
     Button map_btn;
 
+
+    TextView _header;
+
     @OnClick(R.id.map_btn)
     public void map_btnClick(View view) {
         map_view.setVisibility(View.VISIBLE);
         list.setVisibility(View.GONE);
         list_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
         map_btn.setBackgroundColor(Color.WHITE);
+
+        map_btn.setTextColor(Color.BLACK);
+        list_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
     }
 
     @Bind(R.id.list_btn)
@@ -90,6 +96,9 @@ public class TrackMapFragment extends Fragment {
         list.setVisibility(View.VISIBLE);
         map_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
         list_btn.setBackgroundColor(Color.WHITE);
+
+        list_btn.setTextColor(Color.BLACK);
+        map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
     }
 
@@ -106,6 +115,7 @@ public class TrackMapFragment extends Fragment {
         Constant.setFont(getActivity(), loc_tv, 0);
         Constant.setFont(getActivity(), map_btn, 0);
         Constant.setFont(getActivity(), list_btn, 0);
+        Constant.setFont(getActivity(), _header, 0);
     }
 
     @Nullable
@@ -115,7 +125,8 @@ public class TrackMapFragment extends Fragment {
 
         ButterKnife.bind(this, view);
         setfont();
-
+        _header = (TextView) getActivity().findViewById(R.id.hdr_title);
+        _header.setText("Followed Profile");
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         view.setOnKeyListener(new View.OnKeyListener() {

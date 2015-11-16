@@ -58,13 +58,15 @@ public class LandingAdapter extends BaseAdapter {
             view_holder = new ViewHolder();
             view = inflater.inflate(R.layout.landing_resource_row, null);
             view_holder.landinglocation = (TextView) view.findViewById(R.id.listtext);
-            Constant.setFont(context, view_holder.landinglocation, 0);
+
             view.setTag(view_holder);
 
         } else {
             view_holder = (ViewHolder) view.getTag();
         }
 
+
+        Constant.setFont(context, view_holder.landinglocation, 0);
         final LandingBean landingBean = landinglist.get(position);
         view_holder.landinglocation.setText(landingBean.getLandingplace());
 

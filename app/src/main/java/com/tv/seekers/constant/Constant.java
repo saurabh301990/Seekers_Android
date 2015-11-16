@@ -6,12 +6,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,7 +72,6 @@ public class Constant {
         if (builder != null) {
             builder.cancel();
         }
-
     }
 
     public static Dialog builder;
@@ -78,9 +79,10 @@ public class Constant {
     public static void showLoader(Context c) {
         builder = new Dialog(c, R.style.mydialogstyle);
         builder.setContentView(R.layout.loader);
-        WebView view = (WebView) builder.findViewById(R.id.wb);
-        view.setBackgroundColor(Color.TRANSPARENT);
-        view.loadUrl("file:///android_asset/loader.gif");
+        ImageView iw = (ImageView) builder.findViewById(R.id.runImg);
+        iw.setBackgroundResource(R.drawable.spin_animation);
+        AnimationDrawable frameAnimation = (AnimationDrawable) iw.getBackground();
+        frameAnimation.start();
         builder.setCancelable(false);
         builder.show();
     }

@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/white"
+    android:orientation="vertical"
     android:weightSum="5">
 
 
@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:padding="8dp">
 
         <RelativeLayout
@@ -24,15 +26,15 @@
             android:paddingTop="3dp">
 
             <EditText
-                android:singleLine="true"
                 android:id="@+id/search_et"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:drawableLeft="@mipmap/search_icon"
-                android:drawablePadding="3dp"
+                android:drawablePadding="8dp"
                 android:gravity="center"
-                android:hint="@string/searchText" />
+                android:hint="@string/searchText"
+                android:singleLine="true" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -90,7 +92,8 @@
                         android:layout_weight="1"
                         android:background="@android:color/white"
                         android:text="@string/twoMiles"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/black" />
 
                     <Button
                         android:id="@+id/five_miles_btn"
@@ -99,7 +102,8 @@
                         android:layout_weight="1"
                         android:background="@color/miles_inactive_color"
                         android:text="@string/fiveMiles"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textColor="#333" />
 
                     <Button
                         android:id="@+id/ten_miles_btn"
@@ -108,7 +112,8 @@
                         android:layout_weight="1"
                         android:background="@color/miles_inactive_color"
                         android:text="@string/tenMiles"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textColor="#333" />
 
                     <Button
                         android:id="@+id/twenty_miles_btn"
@@ -117,7 +122,8 @@
                         android:layout_weight="1"
                         android:background="@color/miles_inactive_color"
                         android:text="@string/twentyMiles"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:textColor="#333" />
                 </LinearLayout>
 
 
@@ -159,8 +165,9 @@
             android:layout_weight="1"
             android:background="@android:color/white"
             android:text="@string/mapText"
-            android:textSize="18sp"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/list_btn"
@@ -169,7 +176,8 @@
             android:layout_weight="1"
             android:background="@color/miles_inactive_color"
             android:text="@string/listText"
-            android:textSize="18sp"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textColor="#333"
+            android:textSize="18sp" />
     </LinearLayout>
 </RelativeLayout>

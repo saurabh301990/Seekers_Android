@@ -117,6 +117,8 @@ public class MapView extends Fragment {
             map_btn.setBackgroundColor(Color.WHITE);
             list_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
             header.setText("Map");
+            list_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+            map_btn.setTextColor(Color.BLACK);
 
         }
     }
@@ -132,6 +134,8 @@ public class MapView extends Fragment {
             list_btn.setBackgroundColor(Color.WHITE);
             map_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
             header.setText("List");
+            map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+            list_btn.setTextColor(Color.BLACK);
         }
     }
 
@@ -340,6 +344,13 @@ public class MapView extends Fragment {
                 five_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 ten_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 twenty_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+
+                two_miles_btn.setTextColor(Color.BLACK);
+                five_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                ten_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+
+
                 addCircleToMap(2);
                 mapWithZooming(12);
                 break;
@@ -348,6 +359,12 @@ public class MapView extends Fragment {
                 two_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 ten_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 twenty_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+
+                two_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                five_miles_btn.setTextColor(Color.BLACK);
+                ten_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+
                 addCircleToMap(5);
                 mapWithZooming(11);
                 break;
@@ -356,6 +373,13 @@ public class MapView extends Fragment {
                 five_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 two_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 twenty_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+
+                two_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                five_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                ten_miles_btn.setTextColor(Color.BLACK);
+                twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+
+
                 addCircleToMap(10);
                 mapWithZooming(10);
                 break;
@@ -365,6 +389,13 @@ public class MapView extends Fragment {
                 five_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 two_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
                 ten_miles_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+
+
+                two_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                five_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                ten_miles_btn.setTextColor(Color.BLACK);
+                twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+
                 addCircleToMap(20);
                 mapWithZooming(9);
                 break;

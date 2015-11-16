@@ -11,4 +11,5 @@
     <color name="cancel_btn_bg_color">#333333</color>
     <color name="map_circle_color">#fe9f9f</color>
     <color name="miles_inactive_color">#eee</color>
+    <color name="grey_color">#333</color>
 </resources>

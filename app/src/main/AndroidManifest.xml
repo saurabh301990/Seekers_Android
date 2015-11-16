@@ -44,7 +44,7 @@
         <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@style/MyMaterialTheme" />
 
         <activity
             android:name=".menu.MainActivity"
@@ -54,7 +54,7 @@
         <activity
             android:name=".activities.ChangePassword"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@style/MyMaterialTheme" />
 
 
         <activity
@@ -65,13 +65,13 @@
         <activity
             android:name=".activities.ForgotPass"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
+            android:theme="@style/MyMaterialTheme" />
+
 
         <activity
-            android:name=".activities.TrackMapFragment"
+            android:name=".activities.AddFollowedActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" />
-
+            android:theme="@style/MyMaterialTheme" />
 
         <meta-data
             android:name="com.google.android.gms.version"

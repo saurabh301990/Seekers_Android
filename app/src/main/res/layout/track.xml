@@ -2,30 +2,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGrey"
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:id="@+id/searchll"
+    <RelativeLayout
+
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
-        android:padding="5dp">
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:padding="8dp">
 
-        <EditText
-            android:id="@+id/etlandingsearch"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
             android:background="@drawable/roundedwhite"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center"
-            android:hint="@string/searchText"
-            android:singleLine="true" />
-    </LinearLayout>
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp">
+
+            <EditText
+                android:id="@+id/search_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableLeft="@mipmap/search_icon"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:hint="@string/searchText"
+                android:singleLine="true" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 
     <ListView
         android:id="@+id/lvtrack"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/white" />
 
 
 </LinearLayout>
