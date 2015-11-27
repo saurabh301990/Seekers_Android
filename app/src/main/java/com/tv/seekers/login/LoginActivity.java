@@ -217,7 +217,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                                     editor.putString("firstname", firstname);
                                     editor.putString("lastname", lastname);
                                     editor.putString("image", image);
-                                    editor.putBoolean("ISLOGIN",true);
+                                    editor.putBoolean("ISLOGIN", true);
                                     editor.commit();
 
 
@@ -301,6 +301,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         }*/ else if (pswrd == null || pswrd.equalsIgnoreCase("")) {
             isValid = false;
             Constant.showToast(getResources().getString(R.string.enterPswrdText), LoginActivity.this);
+        } else if (pswrd.length() < 8 || pswrd.length() > 32) {
+            Constant.showToast(getResources().getString(R.string.pswrdMustContainsText), LoginActivity.this);
+            isValid = false;
         } else {
             isValid = true;
         }

@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.06"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
 
         <ImageView
             android:id="@+id/trackprofileimage"
@@ -26,29 +26,29 @@
             android:id="@+id/detailll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="3dp"
             android:layout_toRightOf="@+id/trackprofileimage"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="3dp">
 
             <TextView
                 android:id="@+id/txtfolloweduser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+
                 android:text="Followed User" />
 
             <TextView
                 android:id="@+id/txtnooffollowed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+
                 android:text="0 Followed" />
 
             <TextView
                 android:id="@+id/txttrackuser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+
                 android:text="1 Track" />
 
         </LinearLayout>

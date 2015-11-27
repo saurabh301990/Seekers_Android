@@ -16,6 +16,8 @@ public class WebServiceConstants {
     public static final String GET_USER_SAVED_KEYWORDS = "getUserSavedKeywords";
     public static final String DELETE_SAVE_KEYWORD = "deleteSaveKeyword";
     public static final String TGL_SAVE_KEYWORD = "toggleSaveKeyword";
+    public static final String LEGAL_CONTENT = "privacy";
+    public static final String HELP = "help";
 
 
     public static final String IMAGE_URL = "http://198.12.150.220/Seeker/uploads/profileImage/";

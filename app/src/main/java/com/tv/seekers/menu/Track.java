@@ -1,6 +1,7 @@
 package com.tv.seekers.menu;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,12 +55,15 @@ public class Track extends Fragment {
     private TextView _header;
     private ImageView rightIcon;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.track, container, false);
         ButterKnife.bind(this, view);
         addData();
+
+        System.out.println("onCreateView Called");
 
         _header = (TextView) getActivity().findViewById(R.id.hdr_title);
         _header.setText("Followed");
@@ -68,6 +72,8 @@ public class Track extends Fragment {
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 startActivity(new Intent(getActivity(), AddFollowedActivity.class));
 
             }

@@ -15,6 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:padding="5dp"
         android:weightSum="1">
 
@@ -26,26 +28,31 @@
             android:background="@android:color/white"
             android:ems="10"
             android:gravity="left"
-            android:paddingLeft="8dp"
             android:hint="@string/entrkeyword"
-            android:singleLine="true" />
+            android:paddingBottom="3dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="3dp"
+            android:singleLine="true"
+            android:textColor="@color/grey_color"
+            android:textColorHint="#b3b3b3" />
 
         <ImageView
             android:id="@+id/addKeywords"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingLeft="5dp"
+            android:layout_weight=".05"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_weight=".05"
+            android:paddingLeft="5dp"
             android:src="@mipmap/add_keywords" />
     </LinearLayout>
 
-   <com.tv.seekers.swipemenulistview.SwipeMenuListView
+    <com.tv.seekers.swipemenulistview.SwipeMenuListView
         android:id="@+id/mykeywords_list"
-        android:background="@android:color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:divider="@color/lightGrey"
+        android:dividerHeight="2dp" />
 </LinearLayout>

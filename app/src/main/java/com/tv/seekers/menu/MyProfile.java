@@ -84,7 +84,7 @@ public class MyProfile extends Fragment {
     EditText username_et;
 
     @Bind(R.id.current_loc_btn)
-    Button current_loc_btn;
+    ImageView current_loc_btn;
 
     @OnClick(R.id.current_loc_btn)
     public void current_loc_btn(View view) {
@@ -93,9 +93,8 @@ public class MyProfile extends Fragment {
 
     @Bind(R.id.main_layout)
     LinearLayout main_layout;
-
     @Bind(R.id.change_pswrd_btn)
-    Button change_pswrd_btn;
+    ImageView change_pswrd_btn;
 
     @OnClick(R.id.change_pswrd_btn)
     public void change_pswrd_btn(View view) {
@@ -153,8 +152,6 @@ public class MyProfile extends Fragment {
         Constant.setFont(getActivity(), email_et, 0);
         Constant.setFont(getActivity(), userNameInfo_tv, 0);
         Constant.setFont(getActivity(), username_et, 0);
-        Constant.setFont(getActivity(), change_pswrd_btn, 0);
-        Constant.setFont(getActivity(), current_loc_btn, 0);
     }
 
     @Override
@@ -164,91 +161,57 @@ public class MyProfile extends Fragment {
     }
 
     private void callGetMyProfile() {
-
-
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-
         {
             String _responseMain = "";
             Uri.Builder builder;
 
             @Override
             protected void onPreExecute() {
-
-
                 Constant.showLoader(getActivity());
-
                 builder = new Uri.Builder()
-                        .appendQueryParameter("user_id", user_id)
-                ;
+                        .appendQueryParameter("user_id", user_id);
             }
 
             @Override
             protected String doInBackground(String... arg0) {
-
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-
                     try {
-
                         HttpURLConnection urlConnection;
+                        String query = builder.build().getEncodedQuery();
+                        //String temp=URLEncoder.encode(uri, "UTF-8");
+                        URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_USER_PROFILE));
+                        urlConnection = (HttpURLConnection) ((url.openConnection()));
+                        urlConnection.setDoInput(true);
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setUseCaches(false);
+                        urlConnection.setChunkedStreamingMode(1024);
+                        urlConnection.setRequestMethod("POST");
+                        urlConnection.connect();
 
-                        try {
+                        //Write
+                        OutputStream outputStream = urlConnection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                        writer.write(query);
+                        writer.close();
+                        outputStream.close();
 
-                            String query = builder.build().getEncodedQuery();
-                            //			String temp=URLEncoder.encode(uri, "UTF-8");
-                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_USER_PROFILE));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-
-
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-                            //Write
-                            OutputStream outputStream = urlConnection.getOutputStream();
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                            writer.write(query);
-                            writer.close();
-                            outputStream.close();
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
-                            }
-
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of My Profile : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        //Read
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+                        String line = null;
+                        StringBuilder sb = new StringBuilder();
+                        while ((line = bufferedReader.readLine()) != null) {
+                            //System.out.println("Uploading............");
+                            sb.append(line);
                         }
-
-                    } catch (Exception e) {
-                        // TODO: handle exception
+                        bufferedReader.close();
+                        _responseMain = sb.toString();
+                        System.out.println("Response of My Profile : " + _responseMain);
+                    } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
-
-                        getActivity().runOnUiThread(new Runnable() {
-                            public void run() {
-                                Constant.showToast("Server Error ", getActivity());
-                            }
-                        });
-
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
-
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -259,17 +222,14 @@ public class MyProfile extends Fragment {
                     });
                 }
                 return null;
-
             }
 
             @Override
             protected void onPostExecute(String result) {
                 Constant.hideLoader();
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
-
                     try {
                         JSONObject _JsonObject = new JSONObject(_responseMain);
-
                         int status = _JsonObject.getInt("status");
                         if (status == 1) {
                             JSONObject user_details = _JsonObject.getJSONObject("user_details");
@@ -299,9 +259,7 @@ public class MyProfile extends Fragment {
                                 longitude = Double.parseDouble(_long);
                                 showMap();
                             }
-
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                         Constant.showToast("Server Error ", getActivity());
@@ -313,14 +271,11 @@ public class MyProfile extends Fragment {
                 }
             }
         };
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
         } else {
             _Task.execute((String[]) null);
         }
-
-
     }
 
     @Override
@@ -333,18 +288,13 @@ public class MyProfile extends Fragment {
             fragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.map_view, fragment).commit();
         }
-
-
     }
 
     private void initMap() {
         gps = new GPSTracker(getActivity());
-
-
         if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
-
             if (!String.valueOf(latitude).equalsIgnoreCase("0.0") &&
                     !String.valueOf(longitude).equalsIgnoreCase("0.0")) {
 
@@ -352,31 +302,18 @@ public class MyProfile extends Fragment {
                     // Loading map
                     if (googleMap == null) {
                         googleMap = fragment.getMap();
-//            googleMap.setMyLocationEnabled(false);
-
-                        try {
-
-
-                            showMap();
-
-                        } catch (Exception e) {
-                            System.out.println("exception " + e);
-                        }
-
+                        //googleMap.setMyLocationEnabled(false);
+                        showMap();
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             } else {
                 gps.showSettingsAlert();
             }
         } else {
             gps.showSettingsAlert();
         }
-
-
     }
 
     private void showMap() {

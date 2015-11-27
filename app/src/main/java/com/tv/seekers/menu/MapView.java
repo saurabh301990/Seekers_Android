@@ -1,6 +1,7 @@
 package com.tv.seekers.menu;
 
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,6 +39,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
+import com.tv.seekers.activities.AddFollowedActivity;
+import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.gpsservice.GPSTracker;
 
@@ -154,7 +158,8 @@ public class MapView extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    TextView header;
+    private TextView header;
+    private ImageView rightIcon;
 
     @Nullable
     @Override
@@ -193,16 +198,26 @@ public class MapView extends Fragment {
             }
         });
 
-      /*  search_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        rightIcon.setImageResource(R.drawable.filtr);
+        rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(), FilterActivity.class));
+
+            }
+        });
+
+    /*    search_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
             public void onFocusChange(View arg0, boolean gotfocus) {
                 // TODO Auto-generated method stub
                 if (gotfocus) {
-                    search_et.setCompoundDrawables(null, null, null, null);
-                } else if (!gotfocus) {
-                    if (search_et.getText().length() == 0)
-                        search_et.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_action_search, 0, 0, 0);
+                    search_et.setCursorVisible(true);
+                } else {
+                    search_et.setCursorVisible(false);
                 }
 
 
@@ -393,8 +408,8 @@ public class MapView extends Fragment {
 
                 two_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
                 five_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
-                ten_miles_btn.setTextColor(Color.BLACK);
-                twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+                twenty_miles_btn.setTextColor(Color.BLACK);
+                ten_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
                 addCircleToMap(20);
                 mapWithZooming(9);

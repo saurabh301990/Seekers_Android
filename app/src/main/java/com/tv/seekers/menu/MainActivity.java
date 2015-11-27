@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.constant.Constant;
+import com.tv.seekers.login.LoginActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -75,12 +76,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         });
 
 
-        _rightIcon.setOnClickListener(new View.OnClickListener() {
+        /*_rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String frag = (String) _header.getText();
                 if (frag.equalsIgnoreCase("Map") || frag.equalsIgnoreCase("List")
-                        /*|| frag.equalsIgnoreCase("Followed")*/
+                        *//*|| frag.equalsIgnoreCase("Followed")*//*
                         || frag.equalsIgnoreCase("Activity Report")) {
                     startActivity(new Intent(MainActivity.this, FilterActivity.class));
                 } else if (frag.equalsIgnoreCase("Draw")) {
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                     plotMapFragment.saveData(MainActivity.this);
                 }
             }
-        });
+        });*/
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
@@ -158,7 +159,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 //                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 3:
-                fragment = new Landing();
+                fragment = new MyAreasFrag();
+//                fragment = new Landing();
                 _header.setText("My Locations");
                 _rightIcon.setVisibility(View.GONE);
                 break;
@@ -190,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 9:
-                fragment = new HelpAndSupport();
+                fragment = new ListScreenDemo();
                 _header.setText("Help & Support");
                 _rightIcon.setVisibility(View.GONE);
                 break;
@@ -221,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
 
-        alertDialog.setMessage("Are you sure want to Logout!");
+        alertDialog.setMessage("Are you sure want to Logout ?");
 
 
         // Setting Positive "Yes" Button
@@ -249,6 +251,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private void clearData() {
         editor.clear();
         editor.commit();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
         finish();
     }
 

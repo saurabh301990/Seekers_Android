@@ -103,7 +103,7 @@
                         android:background="@color/miles_inactive_color"
                         android:text="@string/fiveMiles"
                         android:textAllCaps="false"
-                        android:textColor="#333" />
+                        android:textColor="#7e7e7e" />
 
                     <Button
                         android:id="@+id/ten_miles_btn"
@@ -113,7 +113,7 @@
                         android:background="@color/miles_inactive_color"
                         android:text="@string/tenMiles"
                         android:textAllCaps="false"
-                        android:textColor="#333" />
+                        android:textColor="#7e7e7e" />
 
                     <Button
                         android:id="@+id/twenty_miles_btn"
@@ -123,7 +123,7 @@
                         android:background="@color/miles_inactive_color"
                         android:text="@string/twentyMiles"
                         android:textAllCaps="false"
-                        android:textColor="#333" />
+                        android:textColor="#7e7e7e" />
                 </LinearLayout>
 
 
@@ -177,7 +177,7 @@
             android:background="@color/miles_inactive_color"
             android:text="@string/listText"
             android:textAllCaps="false"
-            android:textColor="#333"
+            android:textColor="#7e7e7e"
             android:textSize="18sp" />
     </LinearLayout>
 </RelativeLayout>

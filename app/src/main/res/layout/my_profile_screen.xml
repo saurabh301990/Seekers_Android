@@ -8,33 +8,26 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
         <LinearLayout
             android:id="@+id/main_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <ImageView
                     android:id="@+id/blue_bg"
                     android:layout_width="match_parent"
-
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/profile" />
-
                 <ImageView
                     android:id="@+id/user_img_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-
                     android:layout_marginTop="120dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/profile_pic" />
@@ -47,18 +40,11 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-
-                <Button
+                <ImageView
                     android:id="@+id/change_pswrd_btn"
-                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/changepassword"
-                    android:gravity="center"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:text="@string/changePswrdText"
-                    android:textAllCaps="false" />
+                    android:background="@mipmap/changepassword" />
 
             </LinearLayout>
 
@@ -73,31 +59,32 @@
                 android:weightSum="1">
 
                 <TextView
+                    android:layout_weight="0.75"
                     android:id="@+id/nameInfo_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
                     android:paddingLeft="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/nameText"
                     android:textSize="15sp" />
 
                 <EditText
+                    android:layout_weight="0.25"
                     android:id="@+id/name_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/nameInfo_tv"
-                    android:layout_weight="0.3"
                     android:background="@drawable/profile_field_right"
                     android:drawableRight="@mipmap/edit"
                     android:ems="8"
-                    android:paddingBottom="3dp"
+                    android:paddingBottom="6dp"
                     android:paddingLeft="7dp"
-                    android:paddingRight="3dp"
-                    android:paddingTop="3dp"
+                    android:paddingRight="11dp"
+                    android:paddingTop="6dp"
                     android:singleLine="true" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -111,28 +98,29 @@
                 android:weightSum="1">
 
                 <TextView
+                    android:layout_weight="0.75"
                     android:id="@+id/emailInfo_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
                     android:paddingLeft="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/emailText"
-
                     android:textSize="15sp" />
 
                 <EditText
+                    android:layout_weight="0.25"
                     android:id="@+id/email_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
                     android:background="@drawable/profile_field_right"
                     android:enabled="false"
-                    android:paddingBottom="3dp"
+                    android:paddingBottom="6dp"
                     android:paddingLeft="7dp"
                     android:paddingRight="3dp"
-                    android:paddingTop="3dp"
+                    android:paddingTop="6dp"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -147,27 +135,29 @@
                 android:weightSum="1">
 
                 <TextView
+                    android:layout_weight="0.75"
                     android:id="@+id/userNameInfo_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.7"
                     android:background="@drawable/profile_field_left"
                     android:gravity="start|center_vertical"
                     android:paddingLeft="10dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
                     android:text="@string/userNameText"
                     android:textSize="15sp" />
 
                 <EditText
+                    android:layout_weight="0.25"
                     android:id="@+id/username_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
                     android:background="@drawable/profile_field_right"
                     android:enabled="false"
-                    android:paddingBottom="3dp"
+                    android:paddingBottom="6dp"
                     android:paddingLeft="7dp"
                     android:paddingRight="3dp"
-                    android:paddingTop="3dp"
+                    android:paddingTop="6dp"
                     android:singleLine="true" />
             </LinearLayout>
 
@@ -178,25 +168,19 @@
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-
-                <Button
+                <ImageView
                     android:id="@+id/current_loc_btn"
-                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/changepassword"
-                    android:gravity="center"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:text="@string/currentLocationText"
-                    android:textAllCaps="false" />
+                    android:background="@mipmap/currentlocation"
+                    android:gravity="center" />
             </LinearLayout>
 
             <RelativeLayout
                 android:id="@+id/map_view"
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-
-                android:layout_height="200dp"></RelativeLayout>
+                android:layout_height="200dp"/>
         </LinearLayout>
 
     </ScrollView>

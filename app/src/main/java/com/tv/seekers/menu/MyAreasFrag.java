@@ -1,6 +1,5 @@
 package com.tv.seekers.menu;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,15 +13,24 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.Filter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.LandingAdapter;
+import com.tv.seekers.adapter.MyAreaAdapter;
 import com.tv.seekers.bean.LandingBean;
+import com.tv.seekers.bean.MyAreasBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.utils.CustomAutoCompletetextview;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONArray;
@@ -38,41 +46,43 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by Saurabh on 4/11/15.
+ * Created by shoeb on 21/11/15.
  */
-public class Landing extends Fragment {
+public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickListener {
 
-    LandingAdapter landingAdapter;
-
-    ArrayList<LandingBean> listlanding = new ArrayList<LandingBean>();
+    @Bind(R.id.my_area_grid)
+    GridView my_area_grid;
 
     @Bind(R.id.search_et)
-    EditText search_et;
+    CustomAutoCompletetextview search_et;
 
-    @Bind(R.id.txtserachselctlo)
-    TextView txtserachselectloc;
+    @Bind(R.id.search_iv)
+    ImageView search_iv;
 
-    @Bind(R.id.landinglist)
-    ListView landinglist;
+    private MyAreaAdapter areasAdapter;
+    private ArrayList<MyAreasBean> myAreasList = new ArrayList<MyAreasBean>();
 
-    SharedPreferences sPref;
+    private SharedPreferences sPref;
     private String user_id = "";
 
+    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.my_areas_screen, container, false);
 
-        View view = inflater.inflate(R.layout.landing, container, false);
+
         ButterKnife.bind(this, view);
-//        getdata();
-
-        setfont();
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         user_id = sPref.getString("id", "");
+
+        setFont();
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callsavedLocationWS();
@@ -80,7 +90,16 @@ public class Landing extends Fragment {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
 
-        search_et.addTextChangedListener(new TextWatcher() {
+        my_area_grid.setOnItemClickListener(this);
+
+//        search_et.setThreshold(1);
+      /*  search_et.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Constant.hideKeyBoard(getActivity());
+            }
+        });*/
+        /*search_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 if (search_et.getText().length() == 0) {
@@ -103,27 +122,20 @@ public class Landing extends Fragment {
                 if (search_et.getText().length() == 0) {
                     search_et.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.search_icon, 0, 0, 0);
                 }
+                *//**
+                 * Coding for smart Search
+                 *//*
 
             }
-        });
+        });*/
 
 
         return view;
     }
 
-  /*  public void getdata() {
-        for (int i = 0; i <= 20; i++) {
-            landingBean = new LandingBean();
-            landingBean.setLandingplace("Hudson valley");
-            listlanding.add(landingBean);
-        }
-    }*/
-
-    public void setfont() {
-        Constant.setFont(getActivity(), txtserachselectloc, 0);
+    private void setFont() {
         Constant.setFont(getActivity(), search_et, 0);
     }
-
 
     private void callsavedLocationWS() {
 
@@ -240,24 +252,77 @@ public class Landing extends Fragment {
 
                                 JSONArray user_locations = jsonObject.getJSONArray("user_locations");
                                 if (user_locations.length() > 0) {
+                                    if (myAreasList.size() > 0) {
+                                        myAreasList.clear();
+                                    }
+                                    MyAreasBean beanDemo = new MyAreasBean();
+                                    beanDemo.setLoc_name("");
+                                    beanDemo.setLoc_add("");
+                                    myAreasList.add(beanDemo);
                                     for (int i = 0; i < user_locations.length(); i++) {
                                         JSONObject jsonobj = user_locations.getJSONObject(i);
-                                        String userlocation = jsonobj.getString("loc_name");
+                                        String loc_name = jsonobj.getString("loc_name");
+                                        String loc_address = jsonobj.getString("loc_address");
                                         String userlat = jsonobj.getString("loc_lat");
                                         String userlong = jsonobj.getString("loc_long");
-                                        String userradius = jsonobj.getString("loc_name");
-                                        LandingBean landingBean = new LandingBean();
-                                        landingBean.setLandingplace(userlocation);
-                                        landingBean.set_long(userlong);
-                                        landingBean.setLat(userlat);
-                                        landingBean.setRadius(userradius);
-                                        listlanding.add(landingBean);
+                                        String loc_radius = jsonobj.getString("loc_radius");
+                                        String id = jsonobj.getString("id");
+
+                                        MyAreasBean bean = new MyAreasBean();
+                                        bean.setLoc_name(loc_name);
+                                        bean.setLoc_add(loc_address);
+
+                                        myAreasList.add(bean);
+
+
                                     }
+
+                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity());
+                                    my_area_grid.setAdapter(areasAdapter);
+
+                                    /** Setting data for Auto Complete
+                                     *
+                                     */
+
+                                   /* AreaAdapterAutoComplete adapter = new AreaAdapterAutoComplete(getActivity(),
+                                            R.layout.landing_resource_row, R.id.listtext, myAreasList);
+                                    search_et.setAdapter(adapter);*/
+
+                                    // Each row in the list stores country name, currency and flag
+                                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                                    for (int i = 0; i < myAreasList.size(); i++) {
+                                        HashMap<String, String> hm = new HashMap<String, String>();
+                                        MyAreasBean bean = myAreasList.get(i);
+                                        hm.put("loc", bean.getLoc_name());
+                                        aList.add(hm);
+                                    }
+
+                                    String[] from = {"loc"};
+                                    int[] to = {R.id.listtext};
+                                    // Instantiating an adapter to store each items
+                                    // R.layout.listview_layout defines the layout of each item
+                                    SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+                                            aList, R.layout.landing_resource_row, from, to) {};
+                                   /*     @Override
+                                        public View getView(int position, View convertView, ViewGroup parent) {
+                                            View v = super.getView(position, convertView, parent);
+
+                                            TextView _tvData = (TextView) v.findViewById(R.id.listtext);
+                                            Constant.setFont(getActivity(), _tvData, 0);
+
+
+                                            return v;
+                                        }
+                                    };*//*
+
+
+                                    *//** Setting the adapter to the listView */
+                                    search_et.setAdapter(adapter);
+
+
                                 }
 
 
-                                landingAdapter = new LandingAdapter(listlanding, getActivity());
-                                landinglist.setAdapter(landingAdapter);
                             }
 
                         }
@@ -280,5 +345,14 @@ public class Landing extends Fragment {
             _Task.execute((String[]) null);
         }
 
+    }
+
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position == 0) {
+//            Constant.showToast("New ACtivity", getActivity());
+        }
     }
 }

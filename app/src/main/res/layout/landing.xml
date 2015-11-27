@@ -6,38 +6,49 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
-        android:id="@+id/searchll"
+    <RelativeLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:padding="5dp">
+        android:padding="8dp">
 
-        <EditText
-            android:id="@+id/etlandingsearchitem"
+        <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/roundedwhite"
             android:gravity="center"
-            android:hint="@string/searchText"
             android:paddingBottom="3dp"
-            android:paddingTop="3dp"
-            android:singleLine="true" />
-    </LinearLayout>
+            android:paddingTop="3dp">
+
+            <EditText
+                android:id="@+id/search_et"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableLeft="@mipmap/search_icon"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:hint="@string/searchText"
+                android:singleLine="true" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 
 
     <RelativeLayout
         android:id="@+id/sslayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/searchll"
+
         android:background="#efefef"
 
         android:gravity="center"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp">
+        android:paddingBottom="27dp"
+        android:paddingTop="27dp">
 
         <TextView
             android:id="@+id/txtserachselctlo"

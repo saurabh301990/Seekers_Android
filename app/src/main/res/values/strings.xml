@@ -8,8 +8,9 @@
     <string name="forgotPswrdText">Forgot Password?</string>
     <string name="emailHintText">Email</string>
     <string name="passwordHintText">Password</string>
-    <string name="enterUsernameText">Please enter username</string>
-    <string name="enterPswrdText">Please enter password</string>
+    <string name="enterUsernameText">Please enter your username.</string>
+    <string name="enterPswrdText">Please enter your password.</string>
+    <string name="pswrdMustContainsText">The password must contain 8-32 characters </string>
 
 
     <!--Change Password-->
@@ -81,7 +82,7 @@
     <string name="filterkeyword">Filter By Keyword</string>
 
     <!--Landing Screen-->
-    <string name="landingmiddletext">Search or select a Location</string>
+    <string name="landingmiddletext">Search or Select a Location.</string>
 
 
     <!--Notification Screen-->
@@ -113,6 +114,6 @@
 
     <!--Add Followed-->
     <string name="addFollowedtext">Add Followed</string>
-
+    <string name="usertext">User</string>
     <string name="entrkeyword">Enter keyword</string>
 </resources>

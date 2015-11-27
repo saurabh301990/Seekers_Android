@@ -1,7 +1,9 @@
 package com.tv.seekers.menu;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,12 +13,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.MyKeywordsAdaptor;
@@ -112,9 +116,34 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
         // step 2. listener item click event
         listview.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                MyKeywordsBean bean = rowItem.get(position);
-                delete_keyword(bean.get_tglID(),position);
+            public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        getActivity());
+
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage("Are you sure ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                MyKeywordsBean bean = rowItem.get(position);
+                                delete_keyword(bean.get_tglID(),position);
+                            }
+                        })
+                        .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
                 return false;
             }
         });
@@ -188,7 +217,6 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
 
                             bufferedReader.close();
                             _responseMain = sb.toString();
-                            System.out.println("Response of GetKeyWord : " + _responseMain);
 
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -313,7 +341,6 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
 
                             bufferedReader.close();
                             _responseMain = sb.toString();
-                            System.out.println("Response of saveKeyWord : " + _responseMain);
 
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -348,7 +375,6 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
                     try {
                         JSONObject jo = new JSONObject(_responseMain);
                         String id = jo.getString("insert_id");
-                        System.out.println("ID : "+id);
                         MyKeywordsBean rowItemC = new MyKeywordsBean(keyword,false,id);
                         rowItem.add(rowItemC);
                         getActivity().runOnUiThread(new Runnable() {
@@ -424,7 +450,6 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
 
                             bufferedReader.close();
                             _responseMain = sb.toString();
-                            System.out.println("Response of saveKeyWord : " + _responseMain);
 
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
@@ -458,7 +483,6 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
                     try {
                         JSONObject jo = new JSONObject(_responseMain);
-                        System.out.println("After Del: "+_responseMain);
                         rowItem.remove(posi);
                         custombaseadapter.notifyDataSetChanged();
                     } catch (Exception e) {

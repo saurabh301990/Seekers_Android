@@ -48,6 +48,7 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,6 +104,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/nameTextWithColon"
+                        android:textColor="@android:color/black"
                         android:textSize="15sp" />
 
                     <TextView
@@ -111,6 +113,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="@string/locationTextWithColon"
+                        android:textColor="@android:color/black"
                         android:textSize="15sp" />
                 </LinearLayout>
 
@@ -160,20 +163,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@android:color/black"
                 android:background="@android:color/white"
                 android:text="@string/mapText"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/list_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/grey_color"
                 android:background="@color/miles_inactive_color"
                 android:text="@string/listText"
                 android:textAllCaps="false"
+                android:textColor="@color/grey_color"
+                android:textSize="18sp"
 
                 />
         </LinearLayout>

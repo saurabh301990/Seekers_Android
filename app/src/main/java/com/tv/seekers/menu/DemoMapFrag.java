@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -54,6 +56,9 @@ public class DemoMapFrag extends Fragment {
     @Bind(R.id.nameThisArea_et)
     EditText nameThisArea_et;
 
+
+    ImageView _rightIcon;
+
     /**
      * function to load map. If map is not created it will create it for you
      */
@@ -88,6 +93,10 @@ public class DemoMapFrag extends Fragment {
     }*//*
     }*/
 
+    public void saveData(Activity activity) {
+        Constant.showToast("Data Saved", activity);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,6 +106,7 @@ public class DemoMapFrag extends Fragment {
         Constant.setFont(getActivity(), nameThisArea_et, 0);
         fram_map = (FrameLayout) view.findViewById(R.id.fram_map);
         btn_draw_State = (Button) view.findViewById(R.id.btn_draw_State);
+        _rightIcon = (ImageView) view.findViewById(R.id.hdr_fltr);
         val = new HashSet<LatLng>();
         // Button will change Map movable state
         btn_draw_State.setOnClickListener(new View.OnClickListener() {
@@ -110,7 +120,13 @@ public class DemoMapFrag extends Fragment {
                 }
             }
         });
+        _rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveData(getActivity());
 
+            }
+        });
 //        Touch Click of Frame Layout and with the help of the do some task
         fram_map.setOnTouchListener(new View.OnTouchListener() {
             @Override

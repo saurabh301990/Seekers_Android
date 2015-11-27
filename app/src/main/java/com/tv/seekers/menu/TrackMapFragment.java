@@ -74,7 +74,9 @@ public class TrackMapFragment extends Fragment {
     Button map_btn;
 
 
-    TextView _header;
+    private TextView _header;
+    private ImageView _ivRight;
+
 
     @OnClick(R.id.map_btn)
     public void map_btnClick(View view) {
@@ -125,6 +127,9 @@ public class TrackMapFragment extends Fragment {
 
         ButterKnife.bind(this, view);
         setfont();
+
+        _ivRight = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        _ivRight.setVisibility(View.GONE);
         _header = (TextView) getActivity().findViewById(R.id.hdr_title);
         _header.setText("Followed Profile");
         view.setFocusableInTouchMode(true);

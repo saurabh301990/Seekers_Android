@@ -52,7 +52,7 @@ public class Notification extends Fragment {
 
     public void adddata(){
 
-        for (int i = 0 ; i<=20 ; i++){
+        for (int i = 0 ; i<=5 ; i++){
             notificationbean = new Notificationbean();
             notificationbean.setNotificationtxt("It is A Dummy Data ");
             notifydata.add(notificationbean);
