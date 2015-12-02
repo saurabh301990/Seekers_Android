@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 9:
-                fragment = new ListScreenDemo();
+                fragment = new HelpAndSupport();
                 _header.setText("Help & Support");
                 _rightIcon.setVisibility(View.GONE);
                 break;
