@@ -1,12 +1,17 @@
 package com.tv.seekers.menu;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,8 +47,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.AddFollowedActivity;
 import com.tv.seekers.activities.FilterActivity;
+import com.tv.seekers.adapter.HomeListAdapter;
+import com.tv.seekers.adapter.LandingAdapter;
+import com.tv.seekers.bean.HomeBean;
+import com.tv.seekers.bean.LandingBean;
 import com.tv.seekers.constant.Constant;
+import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
+import com.tv.seekers.utils.NetworkAvailablity;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,6 +87,9 @@ public class MapView extends Fragment {
     Marker marker;
     private double latitude = 0.0;
     private double longitude = 0.0;
+    private ArrayList<HomeBean> _mainList = new ArrayList<HomeBean>();
+
+
     LatLng _latLong;
     GPSTracker gps;
     Circle mapCircle;
@@ -71,6 +100,8 @@ public class MapView extends Fragment {
     @OnClick(R.id.two_miles_btn)
     public void two_miles_btn(View view) {
         activeMilesBtn(2);
+        _radiusForWS = "2";
+        callGetAllPostsWS(_radiusForWS);
     }
 
     @Bind(R.id.five_miles_btn)
@@ -80,18 +111,23 @@ public class MapView extends Fragment {
     public void five_miles_btn(View view) {
         if (view.getId() == R.id.five_miles_btn) {
             activeMilesBtn(5);
+            _radiusForWS = "5";
+            callGetAllPostsWS(_radiusForWS);
 
         }
     }
 
     @Bind(R.id.ten_miles_btn)
     Button ten_miles_btn;
+    private String _radiusForWS = "2";
 
     @OnClick(R.id.ten_miles_btn)
     public void ten_miles_btn(View view) {
         if (view.getId() == R.id.ten_miles_btn) {
 
             activeMilesBtn(10);
+            _radiusForWS = "10";
+            callGetAllPostsWS(_radiusForWS);
         }
     }
 
@@ -102,6 +138,8 @@ public class MapView extends Fragment {
     public void twenty_miles_btn(View view) {
         if (view.getId() == R.id.twenty_miles_btn) {
             activeMilesBtn(20);
+            _radiusForWS = "20";
+            callGetAllPostsWS(_radiusForWS);
 
         }
     }
@@ -123,12 +161,15 @@ public class MapView extends Fragment {
             header.setText("Map");
             list_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
             map_btn.setTextColor(Color.BLACK);
+            list_layout.setVisibility(View.GONE);
 
+            _isList = false;
         }
     }
 
     @Bind(R.id.list_btn)
     Button list_btn;
+
 
     @OnClick(R.id.list_btn)
     public void list_btn(View view) {
@@ -140,6 +181,14 @@ public class MapView extends Fragment {
             header.setText("List");
             map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
             list_btn.setTextColor(Color.BLACK);
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                _isList = true;
+                callGetAllPostsWS(_radiusForWS);
+            } else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
+            list_layout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -151,6 +200,12 @@ public class MapView extends Fragment {
     @Bind(R.id.list_layout)
     RelativeLayout list_layout;
 
+    @Bind(R.id.listView_home)
+    ListView listView_home;
+    HomeListAdapter adapterList;
+
+    private boolean _isList = false;
+
 
     @Override
     public void onDestroyView() {
@@ -160,6 +215,8 @@ public class MapView extends Fragment {
 
     private TextView header;
     private ImageView rightIcon;
+    SharedPreferences sPref;
+    private String user_id = "";
 
     @Nullable
     @Override
@@ -170,6 +227,8 @@ public class MapView extends Fragment {
 
         header = (TextView) getActivity().findViewById(R.id.hdr_title);
         setfont();
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        user_id = sPref.getString("id", "");
 
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
@@ -209,21 +268,192 @@ public class MapView extends Fragment {
             }
         });
 
-    /*    search_et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            callGetAllPostsWS(_radiusForWS);
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+        }
+
+
+        return view;
+    }
+
+    private void callGetAllPostsWS(final String radius) {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+            Uri.Builder builder;
 
             @Override
-            public void onFocusChange(View arg0, boolean gotfocus) {
-                // TODO Auto-generated method stub
-                if (gotfocus) {
-                    search_et.setCursorVisible(true);
-                } else {
-                    search_et.setCursorVisible(false);
-                }
+            protected void onPreExecute() {
 
+
+                Constant.showLoader(getActivity());
+
+                builder = new Uri.Builder()
+                        .appendQueryParameter("user_id", user_id)
+                        .appendQueryParameter("radius", radius)
+                        .appendQueryParameter("source", "1,2,3,4");
 
             }
-        });*/
-        return view;
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+
+                        try {
+
+                            String query = builder.build().getEncodedQuery();
+
+                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_ALL_POSTS));
+                            urlConnection = (HttpURLConnection) ((url.openConnection()));
+                            urlConnection.setDoInput(true);
+                            urlConnection.setDoOutput(true);
+                            urlConnection.setUseCaches(false);
+                            urlConnection.setChunkedStreamingMode(1024);
+
+
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.setReadTimeout(5000);
+                            urlConnection.connect();
+
+                            //Write
+                            OutputStream outputStream = urlConnection.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                            writer.write(query);
+                            writer.close();
+                            outputStream.close();
+
+                            //Read
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                            String line = null;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((line = bufferedReader.readLine()) != null) {
+
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+                            _responseMain = sb.toString();
+                            System.out.println("Response of GetAllPosts : " + _responseMain);
+
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", getActivity());
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", getActivity());
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(_responseMain);
+                        int status = jsonObject.getInt("status");
+                        if (status == 1) {
+
+                            if (_mainList.size() > 0) {
+                                _mainList.clear();
+                            }
+                            JSONObject _jObject = jsonObject.getJSONObject("social_post");
+                            JSONArray _resultJSONArray = _jObject.getJSONArray("result");
+                            if (_resultJSONArray.length() > 0) {
+                                int length = _resultJSONArray.length();
+
+                                for (int i = 0; i < length; i++) {
+                                    JSONObject _jSubObject = _resultJSONArray.getJSONObject(i);
+                                    HomeBean bean = new HomeBean();
+                                    bean.setPost_lat(_jSubObject.getString("post_lat"));
+                                    bean.setPost_long(_jSubObject.getString("post_long"));
+                                    bean.setPost_text(_jSubObject.getString("post_text"));
+                                    bean.setSource(_jSubObject.getString("source"));
+                                    bean.setUser_address(_jSubObject.getString("user_address"));
+                                    bean.setUser_image(_jSubObject.getString("user_image"));
+                                    _mainList.add(bean);
+
+                                }
+
+                                if (_isList) {
+                                    //todo setting Adapter here
+                                    adapterList = new HomeListAdapter(_mainList, getActivity());
+                                    listView_home.setAdapter(adapterList);
+
+                                } else {
+
+                                    // TODO: 4/12/15 setting Map here
+                                    if (radius.equalsIgnoreCase("2")) {
+                                        mapWithZooming(12);
+                                    } else if (radius.equalsIgnoreCase("5")) {
+                                        mapWithZooming(11);
+                                    } else if (radius.equalsIgnoreCase("10")) {
+                                        mapWithZooming(10);
+                                    } else if (radius.equalsIgnoreCase("20")) {
+                                        mapWithZooming(9);
+                                    }
+
+                                    addCircleToMap(Integer.parseInt(radius));
+                                }
+
+
+                            }
+                        }
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        Constant.hideLoader();
+                    }
+                } else {
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+
     }
 
 
@@ -298,7 +528,7 @@ public class MapView extends Fragment {
     }
 
     private void mapWithZooming(int zoom) {
-        _latLong = new LatLng(latitude, longitude);
+      /*  _latLong = new LatLng(latitude, longitude);
         cameraPosition = new CameraPosition.Builder().target(_latLong)
                 .zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -307,7 +537,30 @@ public class MapView extends Fragment {
         }
         marker = googleMap.addMarker(new MarkerOptions()
                 .position(_latLong).icon(BitmapDescriptorFactory.
-                        defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
+        int _length = _mainList.size();
+        _latLong = new LatLng(latitude, longitude);
+        if (_length > 0) {
+
+            cameraPosition = new CameraPosition.Builder().target(_latLong)
+                    .zoom(zoom).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            for (int i = 0; i < _length; i++) {
+                HomeBean bean = _mainList.get(i);
+                double _lat = Double.parseDouble(bean.getPost_lat());
+                double _long = Double.parseDouble(bean.getPost_long());
+                LatLng ll = new LatLng(_lat, _long);
+                BitmapDescriptor bitmapMarker;
+                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                googleMap.addMarker(new MarkerOptions().position(ll)
+                        .title("")
+                        .icon(bitmapMarker));
+
+
+            }
+        }
+
+
     }
 
 
@@ -366,8 +619,6 @@ public class MapView extends Fragment {
                 twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
 
-                addCircleToMap(2);
-                mapWithZooming(12);
                 break;
             case 5:
                 five_miles_btn.setBackgroundColor(Color.WHITE);
@@ -380,8 +631,7 @@ public class MapView extends Fragment {
                 ten_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
                 twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
-                addCircleToMap(5);
-                mapWithZooming(11);
+
                 break;
             case 10:
                 ten_miles_btn.setBackgroundColor(Color.WHITE);
@@ -395,8 +645,6 @@ public class MapView extends Fragment {
                 twenty_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
 
-                addCircleToMap(10);
-                mapWithZooming(10);
                 break;
 
             case 20:
@@ -411,8 +659,6 @@ public class MapView extends Fragment {
                 twenty_miles_btn.setTextColor(Color.BLACK);
                 ten_miles_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
-                addCircleToMap(20);
-                mapWithZooming(9);
                 break;
             default:
                 break;

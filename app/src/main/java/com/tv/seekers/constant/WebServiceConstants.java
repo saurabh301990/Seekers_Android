@@ -18,6 +18,7 @@ public class WebServiceConstants {
     public static final String TGL_SAVE_KEYWORD = "toggleSaveKeyword";
     public static final String LEGAL_CONTENT = "privacy";
     public static final String HELP = "help";
+    public static final String GET_ALL_POSTS = "get_all_posts";
 
 
     public static final String IMAGE_URL = "http://198.12.150.220/Seeker/uploads/profileImage/";
