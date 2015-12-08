@@ -55,11 +55,20 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <GridView
-        android:id="@+id/my_area_grid"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="2">
+        android:background="@color/lightGrey"
+        android:padding="12dp">
 
-    </GridView>
+
+        <GridView
+            android:id="@+id/my_area_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:numColumns="2">
+
+        </GridView>
+    </RelativeLayout>
 </LinearLayout>

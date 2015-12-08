@@ -12,4 +12,5 @@
     <color name="map_circle_color">#fe9f9f</color>
     <color name="miles_inactive_color">#eee</color>
     <color name="grey_color">#7e7e7e</color>
+    <color name="divider">#E8E8E8</color>
 </resources>
