@@ -1,25 +1,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/divider">
 
     <RelativeLayout
         android:id="@+id/nav_header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:layout_alignParentTop="true"
-        android:background="@color/login_btn_bg_color">
+        android:background="@color/login_btn_bg_color"
+        android:padding="4dp">
 
         <TextView
             android:id="@+id/onlyMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="fitCenter"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
             android:layout_centerInParent="true"
-            android:text="@string/menu" />
+            android:scaleType="fitCenter"
+            android:text="@string/menu"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

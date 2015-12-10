@@ -17,7 +17,7 @@
         android:padding="8dp">
 
         <RelativeLayout
-
+            android:id="@+id/et_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/roundedwhite"
@@ -62,7 +62,67 @@
                 android:layout_above="@+id/miles_btn_ll"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:layout_weight="0.4"></RelativeLayout>
+                android:layout_weight="0.4"
+                android:visibility="visible"></RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+
+                android:visibility="gone">
+
+                <ListView
+                    android:id="@+id/listView_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></ListView>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/no_post_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:background="@color/colorPrimary"
+
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/no_loc_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:src="@mipmap/no_loc_icon" />
+
+                <TextView
+                    android:id="@+id/sorry_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/no_loc_iv"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:text="Sorry!"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
+
+                <TextView
+                    android:id="@+id/no_post_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/sorry_tv"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:text="No post found!"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/miles_btn_ll"
@@ -130,20 +190,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/list_layout"
 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <ListView
-                android:id="@+id/listView_home"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
-
-
-        </RelativeLayout>
     </RelativeLayout>
 
     <ImageView

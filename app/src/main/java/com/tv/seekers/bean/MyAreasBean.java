@@ -11,6 +11,24 @@ public class MyAreasBean {
     private String loc_name = "";
     private String loc_add = "";
     private String img_url = "";
+    private String _lat = "";
+    private String _long= "";
+
+    public String get_lat() {
+        return _lat;
+    }
+
+    public void set_lat(String _lat) {
+        this._lat = _lat;
+    }
+
+    public String get_long() {
+        return _long;
+    }
+
+    public void set_long(String _long) {
+        this._long = _long;
+    }
 
     public String getLoc_name() {
         return loc_name;

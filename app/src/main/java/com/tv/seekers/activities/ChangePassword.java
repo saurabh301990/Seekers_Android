@@ -211,7 +211,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                             urlConnection.setDoOutput(true);
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);
-
+                            urlConnection.setReadTimeout(5000);
 
                             urlConnection.setRequestMethod("POST");
                             urlConnection.connect();

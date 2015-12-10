@@ -330,7 +330,13 @@ public class TrackMapFragment extends Fragment {
                 polyLineOptions.color(Color.BLACK);
             }
 
-            googleMap.addPolyline(polyLineOptions);
+            try {
+                googleMap.addPolyline(polyLineOptions);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+
         }
     }
 }

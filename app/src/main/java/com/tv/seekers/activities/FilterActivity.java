@@ -1,13 +1,35 @@
 package com.tv.seekers.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
+import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.utils.NetworkAvailablity;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -115,18 +137,200 @@ public class FilterActivity extends Activity implements View.OnClickListener {
     @Bind(R.id.filterbykeywordtoggle)
     ToggleButton filterbykeywordtgl;
 
+    private String user_id = "";
+    private SharedPreferences sPref;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.filter);
         ButterKnife.bind(this);
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        user_id = sPref.getString("id", "");
 
         setfont();
         setonclick();
+
+        if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
+            callGetUserFilterWS();
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), FilterActivity.this);
+        }
     }
 
-    public void setonclick(){
+    private void callGetUserFilterWS() {
+
+
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+
+
+                Constant.showLoader(FilterActivity.this);
+
+                builder = new Uri.Builder()
+                        .appendQueryParameter("user_id", user_id);
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+                        try {
+
+                            String query = builder.build().getEncodedQuery();
+                            //			String temp=URLEncoder.encode(uri, "UTF-8");
+                            URL url = new URL(WebServiceConstants.getMethodUrl(
+                                    WebServiceConstants.GET_USER_FILTER));
+                            urlConnection = (HttpURLConnection) ((url.openConnection()));
+                            urlConnection.setDoInput(true);
+                            urlConnection.setDoOutput(true);
+                            urlConnection.setUseCaches(false);
+                            urlConnection.setChunkedStreamingMode(1024);
+                            urlConnection.setReadTimeout(5000);
+
+
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.connect();
+
+                            //Write
+                            OutputStream outputStream = urlConnection.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                            writer.write(query);
+                            writer.close();
+                            outputStream.close();
+
+                            //Read
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                            String line = null;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((line = bufferedReader.readLine()) != null) {
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+                            _responseMain = sb.toString();
+//                            System.out.println("Response of Get User Filter : " + _responseMain);
+
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", FilterActivity.this);
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", FilterActivity.this);
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(_responseMain);
+                        if (jsonObject.has("status")) {
+                            int _status = jsonObject.getInt("status");
+                            if (_status == 1) {
+                                JSONArray jsonArray = jsonObject.getJSONArray("user_filter");
+                                if (jsonArray.length() > 0) {
+                                    JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                                    String id = jsonObject1.getString("id");
+                                    String user_id = jsonObject1.getString("user_id");
+                                    String facebook = jsonObject1.getString("facebook");
+                                    String twitter = jsonObject1.getString("twitter");
+                                    String instagram = jsonObject1.getString("instagram");
+                                    String youtube = jsonObject1.getString("youtube");
+
+                                    if (!facebook.equalsIgnoreCase("0") && !facebook.equalsIgnoreCase("")) {
+                                        fbtgl.setChecked(true);
+                                    } else {
+                                        fbtgl.setChecked(false);
+                                    }
+
+                                    if (!twitter.equalsIgnoreCase("0") && !twitter.equalsIgnoreCase("")) {
+
+                                        twittertoggle.setChecked(true);
+                                    } else {
+                                        twittertoggle.setChecked(false);
+                                    }
+
+                                    if (!instagram.equalsIgnoreCase("0") && !instagram.equalsIgnoreCase("")) {
+
+                                        instatgl.setChecked(true);
+                                    } else {
+                                        instatgl.setChecked(false);
+                                    }
+
+                                    if (!youtube.equalsIgnoreCase("0") && !youtube.equalsIgnoreCase("")) {
+
+                                        youtubetoggle.setChecked(true);
+                                    } else {
+                                        youtubetoggle.setChecked(false);
+                                    }
+                                }
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        Constant.hideLoader();
+                    }
+                } else {
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+
+
+    }
+
+    public void setonclick() {
         txtheadercancel.setOnClickListener(this);
         txtheaderapply.setOnClickListener(this);
     }
@@ -201,10 +405,184 @@ public class FilterActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.txtapply:
 
-                finish();
+                if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
+                    callupdateUserFilterWS();
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), FilterActivity.this);
+                }
+
+
                 break;
 
 
         }
+    }
+
+    private void callupdateUserFilterWS() {
+
+
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+            String fb = "";
+            String tw = "";
+            String yt = "";
+            String insta = "";
+            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+
+
+                Constant.showLoader(FilterActivity.this);
+
+                if (fbtgl.isChecked()) {
+                    fb = "1";
+                } else {
+                    fb = "0";
+                }
+                if (twittertoggle.isChecked()) {
+                    tw = "2";
+                } else {
+                    tw = "0";
+                }
+                if (instatgl.isChecked()) {
+                    insta = "3";
+                } else {
+                    insta = "0";
+                }
+                if (youtubetoggle.isChecked()) {
+                    yt = "3";
+                } else {
+                    yt = "0";
+                }
+
+                builder = new Uri.Builder()
+                        .appendQueryParameter("user_id", user_id)
+                        .appendQueryParameter("facebook", fb)
+                        .appendQueryParameter("twitter", tw)
+                        .appendQueryParameter("instagram", insta)
+                        .appendQueryParameter("youtube", yt)
+                ;
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+                        try {
+
+                            String query = builder.build().getEncodedQuery();
+                            //			String temp=URLEncoder.encode(uri, "UTF-8");
+                            URL url = new URL(WebServiceConstants.getMethodUrl(
+                                    WebServiceConstants.UPDATE_USER_FILTER));
+                            urlConnection = (HttpURLConnection) ((url.openConnection()));
+                            urlConnection.setDoInput(true);
+                            urlConnection.setDoOutput(true);
+                            urlConnection.setUseCaches(false);
+                            urlConnection.setChunkedStreamingMode(1024);
+                            urlConnection.setReadTimeout(5000);
+
+
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.connect();
+
+                            //Write
+                            OutputStream outputStream = urlConnection.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                            writer.write(query);
+                            writer.close();
+                            outputStream.close();
+
+                            //Read
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                            String line = null;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((line = bufferedReader.readLine()) != null) {
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+                            _responseMain = sb.toString();
+                            System.out.println("Response of UPDATE_USER_FILTER : " + _responseMain);
+
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", FilterActivity.this);
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", FilterActivity.this);
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(_responseMain);
+                        if (jsonObject.has("status")) {
+                            int _status = jsonObject.getInt("status");
+                            if (_status == 1) {
+
+                                String message = jsonObject.getString("message");
+                                Constant.showToast(message, FilterActivity.this);
+                                finish();
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        Constant.hideLoader();
+                    }
+                } else {
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+
+
     }
 }

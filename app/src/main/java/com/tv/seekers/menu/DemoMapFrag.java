@@ -106,7 +106,7 @@ public class DemoMapFrag extends Fragment {
         Constant.setFont(getActivity(), nameThisArea_et, 0);
         fram_map = (FrameLayout) view.findViewById(R.id.fram_map);
         btn_draw_State = (Button) view.findViewById(R.id.btn_draw_State);
-        _rightIcon = (ImageView) view.findViewById(R.id.hdr_fltr);
+        _rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         val = new HashSet<LatLng>();
         // Button will change Map movable state
         btn_draw_State.setOnClickListener(new View.OnClickListener() {

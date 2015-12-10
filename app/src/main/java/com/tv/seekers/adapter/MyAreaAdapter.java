@@ -22,10 +22,12 @@ import java.util.ArrayList;
 public class MyAreaAdapter extends BaseAdapter {
     private ArrayList<MyAreasBean> list = new ArrayList<MyAreasBean>();
     Activity context;
+    boolean isDrawOption = false;
 
-    public MyAreaAdapter(ArrayList<MyAreasBean> list, Activity context) {
+    public MyAreaAdapter(ArrayList<MyAreasBean> list, Activity context, boolean _isDrawOption) {
         this.list = list;
         this.context = context;
+        this.isDrawOption = _isDrawOption;
     }
 
     @Override
@@ -82,10 +84,13 @@ public class MyAreaAdapter extends BaseAdapter {
 
         Constant.setFont(context, view_holder.loc_name_tv, 0);
         Constant.setFont(context, view_holder.loc_add_tv, 0);
-        if (position == 0) {
-            view_holder.loc_rl.setVisibility(View.GONE);
-            view_holder.add_area_img.setVisibility(View.VISIBLE);
+        if (isDrawOption) {
+            if (position == 0) {
+                view_holder.loc_rl.setVisibility(View.GONE);
+                view_holder.add_area_img.setVisibility(View.VISIBLE);
+            }
         }
+
 
         final MyAreasBean bean = list.get(position);
         view_holder.loc_name_tv.setText(bean.getLoc_name());

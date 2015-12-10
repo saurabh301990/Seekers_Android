@@ -32,9 +32,9 @@
                 android:completionThreshold="1"
                 android:gravity="center"
                 android:hint="@string/searchText"
-
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
+                android:singleLine="true"
                 android:textColor="@android:color/black" />
 
             <RelativeLayout
@@ -58,7 +58,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lightGrey"
+        android:background="@color/divider"
         android:padding="12dp">
 
 

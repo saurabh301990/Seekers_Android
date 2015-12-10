@@ -112,6 +112,10 @@ public class HomeListAdapter extends BaseAdapter {
 
         if (bean.getSource().equalsIgnoreCase("Twitter")) {
             view_holder.userTypeImage.setImageResource(R.mipmap.twit_top_corner);
+        } else if (bean.getSource().equalsIgnoreCase("Instagram")) {
+            view_holder.userTypeImage.setImageResource(R.mipmap.instagr_top_corner);
+        } else if (bean.getSource().equalsIgnoreCase("Youtube")) {
+            view_holder.userTypeImage.setImageResource(R.mipmap.youtube_top_corner);
         }
 
         imageLoaderNew.displayImage(bean.getUser_image(), view_holder.userImage,

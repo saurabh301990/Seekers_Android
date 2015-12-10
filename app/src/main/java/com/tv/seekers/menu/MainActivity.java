@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         editor = sPref.edit();
 
         // display the first navigation drawer view on app launch
-        displayView(3);
+        displayView(3, false);
     }
 
     @Override
@@ -133,10 +133,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     public void onDrawerItemSelected(View view, int position) {
-        displayView(position);
+        displayView(position, true);
     }
 
-    private void displayView(int position) {
+    private void displayView(int position, boolean isDrawOption) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
@@ -160,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 3:
                 fragment = new MyAreasFrag();
+                Bundle mBundle = new Bundle();
+                mBundle.putBoolean("isDrawOption", isDrawOption);
+                fragment.setArguments(mBundle);
 //                fragment = new Landing();
                 _header.setText("My Locations");
                 _rightIcon.setVisibility(View.GONE);
