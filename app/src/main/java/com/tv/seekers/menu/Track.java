@@ -119,6 +119,11 @@ public class Track extends Fragment {
 
             }
         });
+
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+        MainActivity.drawerFragment.setDrawerState(true);
         return view;
     }
 

@@ -16,10 +16,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.menu.MainActivity;
+import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONObject;
@@ -92,6 +96,8 @@ public class ChangePassword extends Activity implements View.OnClickListener {
     private String confirmPass = "";
     private String user_id = "";
     private SharedPreferences sPref;
+    private DisplayImageOptions options;
+    com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
 
     @Override
@@ -105,6 +111,33 @@ public class ChangePassword extends Activity implements View.OnClickListener {
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         user_id = sPref.getString("id", "");
+
+        try {
+            ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this));
+            imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+
+            options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.profile_pic)
+                    .showImageForEmptyUri(R.drawable.profile_pic)
+                    .showImageOnFail(R.drawable.profile_pic)
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .considerExifParams(true)
+                    .displayer(new CircleBitmapDisplayer())
+                            //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
+                    .build();
+
+
+            String imgUrl = getIntent().getStringExtra("IMG_URL");
+
+
+            imageLoaderNew.displayImage(imgUrl, user_img_iv,
+                    options,
+                    null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -276,12 +309,12 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                 Constant.hideLoader();
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
 
-                    try{
+                    try {
                         JSONObject _JsonObject = new JSONObject(_responseMain);
                         int status = _JsonObject.getInt("status");
                         String message = _JsonObject.getString("message");
                         Constant.showToast(message, ChangePassword.this);
-                        if (status==1){
+                        if (status == 1) {
                             finish();
                         }
                     } catch (Exception e) {

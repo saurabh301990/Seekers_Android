@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ImageView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.LandingAdapter;
@@ -57,6 +58,11 @@ public class LegalContent extends Fragment {
         } else {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
+
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+        MainActivity.drawerFragment.setDrawerState(true);
         return view;
     }
 

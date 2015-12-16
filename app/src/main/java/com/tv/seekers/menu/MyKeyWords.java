@@ -148,6 +148,10 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
             }
         });
 
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+        MainActivity.drawerFragment.setDrawerState(true);
         return v;
     }
 

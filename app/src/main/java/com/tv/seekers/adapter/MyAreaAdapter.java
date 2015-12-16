@@ -1,6 +1,7 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.MyAreasBean;
 import com.tv.seekers.bean.Notificationbean;
@@ -23,11 +27,25 @@ public class MyAreaAdapter extends BaseAdapter {
     private ArrayList<MyAreasBean> list = new ArrayList<MyAreasBean>();
     Activity context;
     boolean isDrawOption = false;
+    private SparseBooleanArray mSelectedItemsIds;
+    private DisplayImageOptions options;
+    com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
     public MyAreaAdapter(ArrayList<MyAreasBean> list, Activity context, boolean _isDrawOption) {
         this.list = list;
         this.context = context;
         this.isDrawOption = _isDrawOption;
+        mSelectedItemsIds = new SparseBooleanArray();
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
+        imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.demo_loc_img)
+                .showImageForEmptyUri(R.drawable.demo_loc_img)
+                .showImageOnFail(R.drawable.demo_loc_img)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true).build();
     }
 
     @Override
@@ -46,13 +64,14 @@ public class MyAreaAdapter extends BaseAdapter {
         return position;
     }
 
-    public static class ViewHolder {
+    public class ViewHolder {
 
         public TextView loc_name_tv = null;
         public TextView loc_add_tv = null;
         public ImageView area_img = null;
         public ImageView add_area_img = null;
         public RelativeLayout loc_rl = null;
+        public RelativeLayout selectedlayout = null;
 
     }
 
@@ -73,6 +92,7 @@ public class MyAreaAdapter extends BaseAdapter {
             view_holder.area_img = (ImageView) view.findViewById(R.id.area_img);
             view_holder.add_area_img = (ImageView) view.findViewById(R.id.add_area_img);
             view_holder.loc_rl = (RelativeLayout) view.findViewById(R.id.loc_rl);
+            view_holder.selectedlayout = (RelativeLayout) view.findViewById(R.id.selectedlayout);
 
 
             view.setTag(view_holder);
@@ -88,6 +108,9 @@ public class MyAreaAdapter extends BaseAdapter {
             if (position == 0) {
                 view_holder.loc_rl.setVisibility(View.GONE);
                 view_holder.add_area_img.setVisibility(View.VISIBLE);
+            } else {
+                view_holder.loc_rl.setVisibility(View.VISIBLE);
+                view_holder.add_area_img.setVisibility(View.GONE);
             }
         }
 
@@ -96,7 +119,39 @@ public class MyAreaAdapter extends BaseAdapter {
         view_holder.loc_name_tv.setText(bean.getLoc_name());
         view_holder.loc_add_tv.setText(bean.getLoc_add());
 
+        if (bean.isSelected()) {
+            view_holder.selectedlayout.setVisibility(View.VISIBLE);
+        } else {
+            view_holder.selectedlayout.setVisibility(View.GONE);
+        }
+
+        imageLoaderNew.displayImage(bean.getImg_url(), view_holder.area_img,
+                options,
+                null);
 
         return view;
+    }
+
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
+
+    private void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+
+    }
+
+    public SparseBooleanArray getSelectedIds() {
+        return mSelectedItemsIds;
+
     }
 }

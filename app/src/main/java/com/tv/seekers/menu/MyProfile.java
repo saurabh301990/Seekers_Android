@@ -29,11 +29,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.ChangePassword;
+import com.tv.seekers.activities.TermsAndConditions;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
+import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONObject;
@@ -56,6 +61,43 @@ import butterknife.OnClick;
  * Created by shoeb on 4/11/15.
  */
 public class MyProfile extends Fragment {
+
+    private boolean isChecked = false;
+    @Bind(R.id.checkbox_terms)
+    ImageView checkbox_terms;
+
+    @OnClick(R.id.checkbox_terms)
+    public void checkbox_click(View view) {
+        if (isChecked) {
+            isChecked = false;
+            checkbox_terms.setImageResource(R.mipmap.unchecked_box);
+        } else {
+            isChecked = true;
+            checkbox_terms.setImageResource(R.mipmap.checked_box);
+        }
+
+    }
+
+    @Bind(R.id.term_tv)
+    TextView term_tv;
+
+    @OnClick(R.id.term_tv)
+    public void term_tv(View view) {
+        startActivity(new Intent(getActivity(), TermsAndConditions.class));
+    }
+
+    @Bind(R.id.sav_prof_iv)
+    ImageView sav_prof_iv;
+
+    @OnClick(R.id.sav_prof_iv)
+    public void sav_prof_iv(View view) {
+        if (isChecked) {
+
+        } else {
+            Constant.showToast(getActivity().getResources().getString(R.string.pleaseAgreeTermsText), getActivity());
+        }
+    }
+
 
     @Bind(R.id.user_img_iv)
     ImageView user_img_iv;
@@ -83,13 +125,6 @@ public class MyProfile extends Fragment {
     @Bind(R.id.username_et)
     EditText username_et;
 
-    @Bind(R.id.current_loc_btn)
-    ImageView current_loc_btn;
-
-    @OnClick(R.id.current_loc_btn)
-    public void current_loc_btn(View view) {
-
-    }
 
     @Bind(R.id.main_layout)
     LinearLayout main_layout;
@@ -98,7 +133,10 @@ public class MyProfile extends Fragment {
 
     @OnClick(R.id.change_pswrd_btn)
     public void change_pswrd_btn(View view) {
-        startActivity(new Intent(getActivity(), ChangePassword.class));
+        Intent intent = new Intent(getActivity(), ChangePassword.class);
+        intent.putExtra("IMG_URL", imageURL);
+        startActivity(intent);
+
     }
 
     @Bind(R.id.map_view)
@@ -116,6 +154,8 @@ public class MyProfile extends Fragment {
 
     private String user_id = "";
     private SharedPreferences sPref;
+    private DisplayImageOptions options;
+    com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
     @Nullable
     @Override
@@ -124,6 +164,20 @@ public class MyProfile extends Fragment {
 
         ButterKnife.bind(this, view);
         setFont();
+
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
+        imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.drawable.profile_pic)
+                .showImageForEmptyUri(R.drawable.profile_pic)
+                .showImageOnFail(R.drawable.profile_pic)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new CircleBitmapDisplayer())
+                        //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
+                .build();
 
 
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
@@ -142,6 +196,11 @@ public class MyProfile extends Fragment {
                 return false;
             }
         });
+
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+        MainActivity.drawerFragment.setDrawerState(true);
         return view;
     }
 
@@ -152,6 +211,7 @@ public class MyProfile extends Fragment {
         Constant.setFont(getActivity(), email_et, 0);
         Constant.setFont(getActivity(), userNameInfo_tv, 0);
         Constant.setFont(getActivity(), username_et, 0);
+        Constant.setFont(getActivity(), term_tv, 0);
     }
 
     @Override
@@ -160,9 +220,10 @@ public class MyProfile extends Fragment {
         initMap();
     }
 
+    private String imageURL = "";
+
     private void callGetMyProfile() {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-        {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             Uri.Builder builder;
 
@@ -246,12 +307,16 @@ public class MyProfile extends Fragment {
                             String lat = user_details.getString("lat");
                             String _long = user_details.getString("long");
                             String address = user_details.getString("address");
-                            String image = user_details.getString("image");
-                            image = WebServiceConstants.IMAGE_URL + image;
+                            imageURL = user_details.getString("image");
+                            imageURL = WebServiceConstants.IMAGE_URL + imageURL;
 
                             email_et.setText(email);
                             name_et.setText(fullname);
                             username_et.setText(username);
+
+                            imageLoaderNew.displayImage(imageURL, user_img_iv,
+                                    options,
+                                    null);
 
                             if (_long != null && !_long.equalsIgnoreCase("")
                                     && lat != null && !lat.equalsIgnoreCase("")) {
@@ -302,7 +367,7 @@ public class MyProfile extends Fragment {
                     // Loading map
                     if (googleMap == null) {
                         googleMap = fragment.getMap();
-                        //googleMap.setMyLocationEnabled(false);
+                        googleMap.setMyLocationEnabled(true);
                         showMap();
                     }
                 } catch (Exception e) {
@@ -321,11 +386,11 @@ public class MyProfile extends Fragment {
         cameraPosition = new CameraPosition.Builder().target(_latLong)
                 .zoom(12).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        if (marker != null) {
+      /*  if (marker != null) {
             marker.remove();
         }
         marker = googleMap.addMarker(new MarkerOptions()
                 .position(_latLong).icon(BitmapDescriptorFactory.
-                        defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
     }
 }

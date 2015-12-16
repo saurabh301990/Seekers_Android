@@ -1,15 +1,13 @@
-package com.tv.seekers.menu;
+package com.tv.seekers.activities;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
@@ -27,40 +25,52 @@ import java.net.URL;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
- * Created by shoeb on 5/11/15.
+ * Created by shoeb on 16/12/15.
  */
-public class HelpAndSupport extends Fragment {
+public class TermsAndConditions extends Activity {
 
-    @Bind(R.id.web_view_helpsupport)
-    WebView help_wv;
-
+    @Bind(R.id.web_vew_terms)
+    WebView web_vew_terms;
     final String mimeType = "text/html";
     final String encoding = "UTF-8";
     private String webviewtxt = "";
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    /*Header*/
+    @Bind(R.id.tgl_menu)
+    ImageView tgl_menu;
 
-        View view = inflater.inflate(R.layout.helpandsupport,container,false);
-
-        ButterKnife.bind(this, view);
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callHelpSupportWS();
-        } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-        }
-
-        ImageView menu;
-        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
-        menu.setVisibility(View.VISIBLE);
-        MainActivity.drawerFragment.setDrawerState(true);
-        return view;
+    @OnClick(R.id.tgl_menu)
+    public void tgl_menu(View view) {
+        finish();
     }
 
-    private void callHelpSupportWS() {
+    @Bind(R.id.hdr_title)
+    TextView hdr_title;
+
+    @Bind(R.id.hdr_fltr)
+    ImageView hdr_fltr;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.terms_and_cond);
+        ButterKnife.bind(this);
+        hdr_title.setText(getResources().getString(R.string.termAndConditionsTExt));
+        Constant.setFont(this, hdr_title, 0);
+        tgl_menu.setImageResource(R.mipmap.back);
+        hdr_fltr.setVisibility(View.GONE);
+        if (NetworkAvailablity.checkNetworkStatus(TermsAndConditions.this)) {
+            calltermsWS();
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), TermsAndConditions.this);
+        }
+    }
+
+    private void calltermsWS() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
 
         {
@@ -71,7 +81,7 @@ public class HelpAndSupport extends Fragment {
             protected void onPreExecute() {
 
 
-                Constant.showLoader(getActivity());
+                Constant.showLoader(TermsAndConditions.this);
 
 
             }
@@ -79,7 +89,7 @@ public class HelpAndSupport extends Fragment {
             @Override
             protected String doInBackground(String... arg0) {
 
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                if (NetworkAvailablity.checkNetworkStatus(TermsAndConditions.this)) {
 
                     try {
 
@@ -89,8 +99,7 @@ public class HelpAndSupport extends Fragment {
                         try {
 
 
-                            URL url = new URL(WebServiceConstants.getMethodUrl(
-                                    WebServiceConstants.HELP));
+                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.TERMS));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
                             urlConnection.setDoInput(true);
                             urlConnection.setDoOutput(true);
@@ -115,7 +124,7 @@ public class HelpAndSupport extends Fragment {
 
                             bufferedReader.close();
                             _responseMain = sb.toString();
-                            System.out.println("Response of HELP : " + _responseMain);
+                            System.out.println("Response of Terms Screen : " + _responseMain);
 
 
                         } catch (UnsupportedEncodingException e) {
@@ -128,9 +137,9 @@ public class HelpAndSupport extends Fragment {
                         // TODO: handle exception
                         e.printStackTrace();
 
-                        getActivity().runOnUiThread(new Runnable() {
+                        runOnUiThread(new Runnable() {
                             public void run() {
-                                Constant.showToast("Server Error ", getActivity());
+                                Constant.showToast("Server Error ", TermsAndConditions.this);
                             }
                         });
 
@@ -138,11 +147,11 @@ public class HelpAndSupport extends Fragment {
 
 
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // TODO Auto-generated method stub
-                            Constant.showToast("Server Error ", getActivity());
+                            Constant.showToast("Server Error ", TermsAndConditions.this);
                         }
                     });
                 }
@@ -163,8 +172,8 @@ public class HelpAndSupport extends Fragment {
 
                             JSONObject jsonObject1 = jsonObject.getJSONObject("terms");
                             String id = jsonObject1.getString("id");
-                            webviewtxt = jsonObject1.getString("help");
-                            help_wv.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
+                            webviewtxt = jsonObject1.getString("terms");
+                            web_vew_terms.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
                         }
 
                     } catch (Exception e) {

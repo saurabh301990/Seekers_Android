@@ -73,12 +73,18 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
 
+        <activity
+            android:name=".activities.TermsAndConditions"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyMaterialTheme" />
+
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBqq3WcNChgrNRMrN96oPpGQy3NFg94b60" />
+            android:value="AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A" />
 
     </application>
 

@@ -57,4 +57,15 @@
 
         android:background="@mipmap/add_area"
         android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/selectedlayout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="#90FFFFFF"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="gone"></RelativeLayout>
+
 </RelativeLayout>

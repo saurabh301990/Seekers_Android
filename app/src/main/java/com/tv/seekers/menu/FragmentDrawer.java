@@ -107,6 +107,22 @@ public class FragmentDrawer extends Fragment {
         return layout;
     }
 
+    public void setDrawerState(boolean isEnabled) {
+        if ( isEnabled ) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerToggle.syncState();
+
+        }
+        else {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+            mDrawerToggle.syncState();
+        }
+    }
+
     public void openDrawer(){
         mDrawerLayout.openDrawer(containerView);
     }

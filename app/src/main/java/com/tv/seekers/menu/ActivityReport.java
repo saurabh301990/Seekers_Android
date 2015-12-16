@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.tv.seekers.R;
+import com.tv.seekers.activities.FilterActivity;
 
 import java.util.ArrayList;
 
@@ -56,6 +59,22 @@ public class ActivityReport extends Fragment{
 
             @Override
             public void onNothingSelected() {
+
+            }
+        });
+
+        MainActivity.drawerFragment.setDrawerState(true);
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+
+        ImageView rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        rightIcon.setImageResource(R.drawable.filtr);
+        rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(), FilterActivity.class));
 
             }
         });

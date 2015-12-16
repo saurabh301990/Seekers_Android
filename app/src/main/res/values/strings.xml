@@ -95,6 +95,8 @@
     <string name="emailText">Email</string>
     <string name="userNameText">Username</string>
     <string name="currentLocationText">Current Location</string>
+    <string name="termAndConditionsTExt"><u>Terms &amp; Conditions</u></string>
+    <string name="pleaseAgreeTermsText">Please agree to Terms &amp; Conditions.</string>
 
     <!--Forgot Password-->
     <string name="forgotPassText">Forgot Password? No worry Enter your Registered Email to Receive further Instructions</string>

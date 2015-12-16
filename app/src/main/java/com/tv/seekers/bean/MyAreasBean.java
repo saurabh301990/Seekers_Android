@@ -14,6 +14,27 @@ public class MyAreasBean {
     private String _lat = "";
     private String _long= "";
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
+
+    private boolean isSelected = false;
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id= "";
+
     public String get_lat() {
         return _lat;
     }

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,6 +59,7 @@ public class DemoMapFrag extends Fragment {
 
 
     ImageView _rightIcon;
+    TextView _header;
 
     /**
      * function to load map. If map is not created it will create it for you
@@ -107,6 +109,7 @@ public class DemoMapFrag extends Fragment {
         fram_map = (FrameLayout) view.findViewById(R.id.fram_map);
         btn_draw_State = (Button) view.findViewById(R.id.btn_draw_State);
         _rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        _header = (TextView) getActivity().findViewById(R.id.hdr_title);
         val = new HashSet<LatLng>();
         // Button will change Map movable state
         btn_draw_State.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +123,9 @@ public class DemoMapFrag extends Fragment {
                 }
             }
         });
+        _rightIcon.setVisibility(View.VISIBLE);
+        _rightIcon.setImageResource(R.mipmap.save);
+        _header.setText("Draw");
         _rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,6 +177,8 @@ public class DemoMapFrag extends Fragment {
                 }
             }
         });
+
+        MainActivity.drawerFragment.setDrawerState(true);
         return view;
     }
 

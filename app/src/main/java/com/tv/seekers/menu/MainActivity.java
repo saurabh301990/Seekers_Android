@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private Toolbar mToolbar;
 
-    private FragmentDrawer drawerFragment;
+    public static FragmentDrawer drawerFragment;
 
     @Bind(R.id.tgl_menu)
     ImageView _tglMenu;
@@ -67,6 +67,10 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         drawerFragment.setUp(R.id.fragment_navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
+
+        drawerFragment.setDrawerState(false);
+
+        _tglMenu.setVisibility(View.GONE);
 
         _tglMenu.setOnClickListener(new View.OnClickListener() {
             @Override

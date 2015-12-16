@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -46,6 +47,11 @@ public class Notification extends Fragment {
         notificationAdapter = new NotificationAdapter(notifydata , getActivity());
         lvnotify.setAdapter(notificationAdapter);
         Constant.setFont(getActivity() , tvnotification,0);
+
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
+        MainActivity.drawerFragment.setDrawerState(true);
         return view;
     }
 

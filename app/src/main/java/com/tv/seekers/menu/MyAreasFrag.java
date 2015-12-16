@@ -1,24 +1,35 @@
 package com.tv.seekers.menu;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -29,6 +40,14 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadataResult;
+import com.google.android.gms.location.places.PlacePhotoResult;
+import com.google.android.gms.location.places.Places;
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.LandingAdapter;
 import com.tv.seekers.adapter.MyAreaAdapter;
@@ -38,6 +57,7 @@ import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
 import com.tv.seekers.utils.CustomAutoCompletetextview;
+import com.tv.seekers.utils.GeocodingLocation;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONArray;
@@ -65,7 +85,10 @@ import butterknife.ButterKnife;
 /**
  * Created by shoeb on 21/11/15.
  */
-public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickListener {
+public class MyAreasFrag extends Fragment implements
+        AdapterView.OnItemClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     @Bind(R.id.my_area_grid)
     GridView my_area_grid;
@@ -80,7 +103,9 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
     private ArrayList<MyAreasBean> myAreasList = new ArrayList<MyAreasBean>();
 
     private SharedPreferences sPref;
+    private SharedPreferences.Editor editor;
     private String user_id = "";
+    private String loc_ids = "";
     private boolean isDrawOption = false;
     private SearchParserTask searchparserTask;
     private SearchPlacesTask searchplacesTask;
@@ -88,19 +113,45 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
     private double _lat = 0.0;
     private double _long = 0.0;
     private String _address = "";
+    private String input = "";
+
+    private int checkedCountTotal = 0;
     GPSTracker gps;
+    GoogleApiClient mGoogleApiClient;
+    FragmentActivity activity = null;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.my_areas_screen, container, false);
 
-
+        gps = new GPSTracker(getActivity());
         ButterKnife.bind(this, view);
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
         user_id = sPref.getString("id", "");
 
         setFont();
+        activity = getActivity();
+
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callsavedLocationWS();
@@ -109,7 +160,106 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
         }
 
         my_area_grid.setOnItemClickListener(this);
+        my_area_grid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        my_area_grid.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                System.out.println("onPrepareActionMode");
+                // TODO Auto-generated method stub
+                mode.setTitle("onPrepareActionMode");
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+                System.out.println("onDestroyActionMode");
+                // TODO Auto-generated method stub
+                areasAdapter.removeSelection();
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                System.out.println("onCreateActionMode");
+                mode.getMenuInflater().inflate(R.menu.delete_action_mode, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.delete_mode:
+                        SparseBooleanArray selected = areasAdapter.getSelectedIds();
+                        String prefix = "";
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = (selected.size() - 1); i >= 0; i--) {
+                            if (selected.valueAt(i)) {
+                                MyAreasBean selectedItem = myAreasList.get(selected.keyAt(i));
+                                loc_ids = selectedItem.getId();
+
+                                sb.append(prefix);
+                                prefix = ",";
+                                sb.append(loc_ids);
+
+                                myAreasList.remove(selectedItem);
+                                areasAdapter.notifyDataSetChanged();
+
+                            }
+                        }
+                        loc_ids = sb.toString();
+                        System.out.println("Location ids : " + loc_ids);
+
+                        try {
+
+                            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                                calldeleteSaveLocationWS();
+                            } else {
+                                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                            }
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
+                                                  boolean checked) {
+
+                if (isDrawOption) {
+                    if (position == 0) {
+
+                    } else {
+                        int checkedCount = my_area_grid.getCheckedItemCount();
+                        mode.setTitle(checkedCount + " selected");
+
+
+                        MyAreasBean bean = myAreasList.get(position);
+                        bean.setIsSelected(checked);
+
+                        areasAdapter.toggleSelection(position);
+                    }
+                } else {
+                    int checkedCount = my_area_grid.getCheckedItemCount();
+                    mode.setTitle(checkedCount + " selected");
+
+
+                    MyAreasBean bean = myAreasList.get(position);
+                    bean.setIsSelected(checked);
+
+                    areasAdapter.toggleSelection(position);
+                }
+
+
+            }
+        });
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -123,9 +273,17 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
                 if (search_et.getText().length() == 0) {
                     search_iv.setVisibility(View.VISIBLE);
+
                 } else {
                     search_iv.setVisibility(View.GONE);
                 }
+                input = s.toString();
+                /*if (input.contains(" ")) {
+                    input = input.replaceAll(" ", "+");
+                }*/
+
+                searchplacesTask = new SearchPlacesTask();
+                searchplacesTask.execute();
             }
 
             @Override
@@ -133,8 +291,8 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                 if (search_et.getText().length() == 0) {
                     search_iv.setVisibility(View.VISIBLE);
                 }
-                searchplacesTask = new SearchPlacesTask();
-                searchplacesTask.execute(s.toString());
+         /*       searchplacesTask = new SearchPlacesTask();
+                searchplacesTask.execute(s.toString());*/
 
             }
         });
@@ -145,78 +303,22 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                 Constant.hideKeyBoard(getActivity());
                 gps = new GPSTracker(getActivity());
 
-                boolean _isLocationAlreadyAdded = false;
+
                 try {
-                    Geocoder geocoder = new Geocoder(getActivity());
+
                     HashMap<String, String> hm = (HashMap<String, String>)
                             parent.getAdapter().getItem(position);
                     String _locName = hm.get("description");
-                    System.out.println("_locName : " + _locName);
-                    From_geocode = geocoder.getFromLocationName(
-                            _locName, 1);
-                    search_et.setText(hm.get("description"));
+                    search_et.setText(_locName);
                     _address = search_et.getText().toString();
 
-                    if (From_geocode.size() > 0) {
-                        From_geocode.get(0).getLatitude(); // getting // latitude
-                        From_geocode.get(0).getLongitude();
-
-
-                        _lat = From_geocode.get(0).getLatitude();
-                        _long = From_geocode.get(0).getLongitude();
-
-                        System.out.println("LatLng : " + _lat + ", " + _long);
-
-
-                    }
-
-                    if (myAreasList.size() > 0) {
-                        for (int j = 0; j < myAreasList.size(); j++) {
-                            MyAreasBean _bean = myAreasList.get(j);
-                            String _add = _bean.getLoc_add();
-                            String _latUser = _bean.get_lat();
-                            String _longUser = _bean.get_long();
-
-                            if (_lat != 0.0 && _long != 0.0) {
-                                if (String.valueOf(_lat).equalsIgnoreCase(_latUser)
-                                        && String.valueOf(_long).equalsIgnoreCase(_longUser)) {
-                                    //LatLng Matched
-                                    _isLocationAlreadyAdded = true;
-                                    break;
-                                } else {
-                                    _isLocationAlreadyAdded = false;
-                                }
-                            } else {
-                                _isLocationAlreadyAdded = false;
-                            }
-
-                         /*   if (_add.equalsIgnoreCase(_address)) {
-                                //location already added.
-                                _isLocationAlreadyAdded = true;
-                                break;
-                            } else {
-                                _isLocationAlreadyAdded = false;
-                            }*/
-                        }
-                    }
-
-
-                    if (_isLocationAlreadyAdded) {
-                        search_et.setText("");
-                        // TODO: 10/12/15 Redirect to Home screen with current LatLong
-
-                        if (!isDrawOption) {
-                            // TODO: 10/12/15 Redirect to Home Screen
-                            // TODO: 10/12/15  Replace Fragment here with Home Fragment
-                            replaceFragment();
-                        }
+                    PlaceDetails mPlaceDetails = new PlaceDetails();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        mPlaceDetails.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
                     } else {
-                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                            callSaveUserLocation();
-                        } else {
-                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-                        }
+                        mPlaceDetails.execute((String[]) null);
                     }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -235,8 +337,252 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
             e.printStackTrace();
         }
 
-        gps = new GPSTracker(getActivity());
+
         return view;
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            String locationAddress = "";
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    if (bundle.getString("address") != null) {
+                        locationAddress = bundle.getString("address");
+                    }
+
+                    break;
+                default:
+                    locationAddress = "";
+            }
+
+            boolean _isLocationAlreadyAdded = false;
+            if (!locationAddress.equalsIgnoreCase("")) {
+                try {
+
+                    System.out.println("locationAddressLatLng : " + locationAddress);
+
+                    String[] array1 = locationAddress.split("\\:");
+                    if (array1.length > 0) {
+                        System.out.println("array1 : " + array1[2]);
+                        String latLng = "";
+                        if (array1[2].contains("\n")) {
+                            latLng = array1[2].replace("\n", " ");
+                        }
+                        System.out.println("latLng : " + latLng);
+                        String[] finalLatLng;
+
+                        finalLatLng = latLng.split("\\s+");
+                        System.out.println("Lat : " + finalLatLng[1]);
+                        System.out.println("Long : " + finalLatLng[2]);
+
+                        _lat = Double.parseDouble(finalLatLng[1]);
+                        _long = Double.parseDouble(finalLatLng[2]);
+                        int position = 0;
+                        if (myAreasList.size() > 0) {
+                            for (int j = 0; j < myAreasList.size(); j++) {
+                                MyAreasBean _bean = myAreasList.get(j);
+                                String _add = _bean.getLoc_add();
+                                String _latUser = _bean.get_lat();
+                                String _longUser = _bean.get_long();
+
+                                if (_lat != 0.0 && _long != 0.0) {
+                                    if (String.valueOf(_lat).equalsIgnoreCase(_latUser)
+                                            && String.valueOf(_long).equalsIgnoreCase(_longUser)) {
+                                        //LatLng Matched
+                                        _isLocationAlreadyAdded = true;
+                                        position = j;
+                                        break;
+                                    } else {
+                                        _isLocationAlreadyAdded = false;
+                                    }
+                                } else {
+                                    _isLocationAlreadyAdded = false;
+                                }
+
+
+                            }
+                        }
+
+
+                        if (_isLocationAlreadyAdded) {
+                            search_et.setText("");
+                            // TODO: 10/12/15 Redirect to Home screen with current LatLong
+
+                            if (!isDrawOption) {
+                                // TODO: 10/12/15 Redirect to Home Screen
+                                // TODO: 10/12/15  Replace Fragment here with Home Fragment
+                                saveCurrentLatLong(position);
+                                replaceFragment();
+
+                            }
+                        } else {
+                            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                                callSaveUserLocation();
+                            } else {
+                                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                            }
+                        }
+                    } else {
+                        Constant.showToast("Server Error", getActivity());
+                        search_et.setText("");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Constant.showToast("Server Error", getActivity());
+                    search_et.setText("");
+                }
+            }
+
+
+        }
+    }
+
+    private void calldeleteSaveLocationWS() {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+
+
+                Constant.showLoader(getActivity());
+
+                builder = new Uri.Builder()
+                        .appendQueryParameter("location_id", loc_ids);
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+
+                        String query = builder.build().getEncodedQuery();
+                        //			String temp=URLEncoder.encode(uri, "UTF-8");
+                        URL url = new URL(WebServiceConstants.
+                                getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION));
+                        urlConnection = (HttpURLConnection) ((url.openConnection()));
+                        urlConnection.setDoInput(true);
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setUseCaches(false);
+                        urlConnection.setChunkedStreamingMode(1024);
+                        urlConnection.setReadTimeout(30000);
+
+
+                        urlConnection.setRequestMethod("POST");
+                        urlConnection.connect();
+
+                        //Write
+                        OutputStream outputStream = urlConnection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                        writer.write(query);
+                        writer.close();
+                        outputStream.close();
+
+                        //Read
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                        String line = null;
+                        StringBuilder sb = new StringBuilder();
+
+                        while ((line = bufferedReader.readLine()) != null) {
+                            //System.out.println("Uploading............");
+                            sb.append(line);
+                        }
+
+                        bufferedReader.close();
+                        _responseMain = sb.toString();
+                        System.out.println("Response of deleteSaveLocation : " + _responseMain);
+
+
+                        //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", getActivity());
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", getActivity());
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(_responseMain);
+                        int status = jsonObject.getInt("status");
+                        if (status == 1) {
+
+                            Constant.showToast(jsonObject.getString("message"), getActivity());
+
+                        } else {
+                            Constant.showToast(jsonObject.getString("message"), getActivity());
+                        }
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        Constant.hideLoader();
+                    }
+                } else {
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
     }
 
     private void callSaveUserLocation() {
@@ -256,7 +602,12 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                         .appendQueryParameter("user_id", user_id)
                         .appendQueryParameter("loc_lat", String.valueOf(_lat))
                         .appendQueryParameter("loc_long", String.valueOf(_long))
-                        .appendQueryParameter("loc_radius", "5");
+                        .appendQueryParameter("loc_radius", "5")
+                        .appendQueryParameter("loc_address", _address)
+                        .appendQueryParameter("loc_img", finalimgUrl)
+                        .appendQueryParameter("loc_name", _address);
+
+                System.out.println("Request of USER_SAVE_LOCATION : " + builder);
 
 
             }
@@ -273,13 +624,14 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
                         String query = builder.build().getEncodedQuery();
                         //			String temp=URLEncoder.encode(uri, "UTF-8");
-                        URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.USER_SAVE_LOCATION));
+                        URL url = new URL(WebServiceConstants.
+                                getMethodUrl(WebServiceConstants.USER_SAVE_LOCATION));
                         urlConnection = (HttpURLConnection) ((url.openConnection()));
                         urlConnection.setDoInput(true);
                         urlConnection.setDoOutput(true);
                         urlConnection.setUseCaches(false);
                         urlConnection.setChunkedStreamingMode(1024);
-                        urlConnection.setReadTimeout(30000);
+                        urlConnection.setReadTimeout(200000);
 
 
                         urlConnection.setRequestMethod("POST");
@@ -345,12 +697,25 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                         JSONObject jsonObject = new JSONObject(_responseMain);
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
+                            search_et.setText("");
 
                             Constant.showToast(jsonObject.getString("message"), getActivity());
                             if (!isDrawOption) {
                                 // TODO: 10/12/15 Redirect to Home Screen
                                 // TODO: 10/12/15  Replace Fragment here with Home Fragment
                                 replaceFragment();
+                            } else {
+                                MyAreasBean bean = new MyAreasBean();
+                                bean.setIsSelected(false);
+                                bean.setId(jsonObject.getInt("loction_id") + "");
+                                bean.setLoc_name(_address);
+                                bean.setLoc_add(_address);
+                                bean.set_long(_long + "");
+                                bean.set_lat(_lat + "");
+                                bean.setImg_url(finalimgUrl);
+                                myAreasList.add(bean);
+                                areasAdapter.notifyDataSetChanged();
+                                // TODO: 15/12/15 Add to List
                             }
                         } else {
                             Constant.showToast(jsonObject.getString("message"), getActivity());
@@ -361,6 +726,7 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                         e.printStackTrace();
 
                         Constant.hideLoader();
+                        Constant.showToast("Server Error ", getActivity());
                     }
                 } else {
 
@@ -401,6 +767,7 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            System.out.println("SearchPlacesTask Called");
 
         }
 
@@ -412,14 +779,14 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
             // Obtain browser key from https://code.google.com/apis/console
 
-            String key = "key=AIzaSyDEkwu2c89RobN7jfQ1nvoyIAC6Gt4FWpI";
+            String key = "key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
 
-
-            String input = "";
 
             try {
-                input = "input=" + URLEncoder.encode(place[0], "utf-8");
-            } catch (UnsupportedEncodingException e1) {
+//                input = "input=" + URLEncoder.encode(place[0], "utf-8");
+                input = "input=" + URLEncoder.encode(input, "utf-8");
+                ;
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
 
@@ -465,6 +832,9 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
             super.onPostExecute(result);
 
 
+//            callPhotoAPI();
+
+
             // Creating ParserTask
             searchparserTask = new SearchParserTask();
 
@@ -473,6 +843,245 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
 
         }
+    }
+
+    String finalimgUrl = "";
+
+    private class PlaceDetails extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            System.out.println("PlaceDetails Called");
+
+        }
+
+
+        @Override
+        protected String doInBackground(String... place) {
+
+            // For storing data from web service
+            String data = "";
+
+
+            try {
+
+                String loc = URLEncoder.encode(_address, "utf-8");
+                String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?" +
+                        "query=" + loc + "&" +
+                        "key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
+
+
+                System.out.println("Final URL Google API : " + url);
+                // Fetching the data from we service
+                data = downloadUrlsearch(url);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+
+            }
+
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            System.out.println("result From place ID : " + result);
+            String _photo_reference = "";
+            try {
+
+                JSONObject jsonObject = new JSONObject(result);
+                if (jsonObject.has("results")) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("results");
+                    if (jsonArray.length() > 0) {
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                        if (jsonObject1.has("photos")) {
+                            JSONArray jsonArray1 = jsonObject1.getJSONArray("photos");
+                            if (jsonArray1.length() > 0) {
+                                JSONObject jsonObject2 = jsonArray1.getJSONObject(0);
+                                if (jsonObject2.has("photo_reference")) {
+                                    _photo_reference = jsonObject2.getString("photo_reference");
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (!_photo_reference.equalsIgnoreCase("")) {
+                finalimgUrl = "https://maps.googleapis.com/maps/api/place/photo?" +
+                        "maxwidth=400&" +
+                        "photoreference=" + _photo_reference +
+                        "&key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
+
+                System.out.println("Final  Image URL : " + finalimgUrl);
+                GeocodingLocation locationAddress = new GeocodingLocation();
+                locationAddress.getAddressFromLocation(_address,
+                        getActivity(), new GeocoderHandler());
+            } else {
+                GeocodingLocation locationAddress = new GeocodingLocation();
+                locationAddress.getAddressFromLocation(_address,
+                        getActivity(), new GeocoderHandler());
+            }
+        }
+    }
+
+    abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPhoto> {
+
+        private int mHeight;
+
+        private int mWidth;
+
+        public PhotoTask(int width, int height) {
+            mHeight = height;
+            mWidth = width;
+        }
+
+        /**
+         * Loads the first photo for a place id from the Geo Data API.
+         * The place id must be the first (and only) parameter.
+         */
+        @Override
+        protected AttributedPhoto doInBackground(String... params) {
+            if (params.length != 1) {
+                return null;
+            }
+            final String placeId = params[0];
+            AttributedPhoto attributedPhoto = null;
+
+            PlacePhotoMetadataResult result = Places.GeoDataApi
+                    .getPlacePhotos(mGoogleApiClient, placeId).await();
+
+            if (result.getStatus().isSuccess()) {
+                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
+                if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
+                    // Get the first bitmap and its attributions.
+                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
+                    CharSequence attribution = photo.getAttributions();
+                    // Load a scaled bitmap for this photo.
+                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
+                            .getBitmap();
+
+                    attributedPhoto = new AttributedPhoto(attribution, image);
+                }
+                // Release the PlacePhotoMetadataBuffer.
+                photoMetadataBuffer.release();
+            }
+            return attributedPhoto;
+        }
+
+        /**
+         * Holder for an image and its attribution.
+         */
+        class AttributedPhoto {
+
+            public final CharSequence attribution;
+
+            public final Bitmap bitmap;
+
+            public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
+                this.attribution = attribution;
+                this.bitmap = bitmap;
+            }
+        }
+    }
+
+    private void placePhotosTask() {
+        final String placeId = "ChIJrTLr-GyuEmsRBfy61i59si0"; // Australian Cruise Group
+
+        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
+        new PhotoTask(400, 400) {
+            @Override
+            protected void onPreExecute() {
+                // Display a temporary image to show while bitmap is loading.
+//                mImageView.setImageResource(R.drawable.empty_photo);
+            }
+
+            @Override
+            protected void onPostExecute(AttributedPhoto attributedPhoto) {
+                if (attributedPhoto != null) {
+                    // Photo has been loaded, display it.
+                    System.out.println("attributedPhoto.attribution : " + attributedPhoto.attribution);
+                /*    mImageView.setImageBitmap(attributedPhoto.bitmap);
+
+                    // Display the attribution as HTML content if set.
+                    if (attributedPhoto.attribution == null) {
+                        mText.setVisibility(View.GONE);
+                    } else {
+                        mText.setVisibility(View.VISIBLE);
+                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
+                    }*/
+
+                }
+            }
+        }.execute(placeId);
+    }
+
+    private final static String TAG = "MyAreasFragment";
+
+    private void callPhotoAPI() {
+
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+
+
+            @Override
+            protected void onPreExecute() {
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                String placeId = "ChIJN1t_tDeuEmsRUsoyG83frY4";
+
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+                    @Override
+                    public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
+                        if (placePhotoMetadataResult.getStatus().isSuccess()) {
+                            PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+                            int photoCount = photoMetadata.getCount();
+                            for (int i = 0; i < photoCount; i++) {
+                                PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(i);
+                                final String photoDetail = placePhotoMetadata.toString();
+                                placePhotoMetadata.getScaledPhoto(mGoogleApiClient, 500, 500).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                                    @Override
+                                    public void onResult(PlacePhotoResult placePhotoResult) {
+                                        if (placePhotoResult.getStatus().isSuccess()) {
+                                            Log.i(TAG, "Photo " + photoDetail + " loaded");
+                                        } else {
+                                            Log.e(TAG, "Photo " + photoDetail + " failed to load");
+                                        }
+                                    }
+                                });
+                            }
+                            photoMetadata.release();
+                        } else {
+                            Log.e(TAG, "No photos returned");
+                        }
+                    }
+                });
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+
+
     }
 
 
@@ -535,7 +1144,7 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
         @Override
         protected List<HashMap<String, String>> doInBackground(String... jsonData) {
-
+            System.out.println("SearchParserTask Called");
             List<HashMap<String, String>> places = null;
 
             PlaceJSONParser placeJsonParser = new PlaceJSONParser();
@@ -567,13 +1176,21 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                 int[] to = {R.id.listtext};
                 // Instantiating an adapter to store each items
                 // R.layout.listview_layout defines the layout of each item
-                SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-                        result, R.layout.landing_resource_row, from, to) {
-                };
 
-                search_et.setAdapter(adapter);
+                if (result != null) {
+                    SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+
+                            result, R.layout.landing_resource_row, from, to) {
+                    };
+
+                    search_et.setAdapter(adapter);
+                } else {
+                    Constant.showToast("Server Error ", getActivity());
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
+                Constant.showToast("Server Error ", getActivity());
             }
 
 
@@ -686,8 +1303,7 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                         urlConnection.setDoOutput(true);
                         urlConnection.setUseCaches(false);
                         urlConnection.setChunkedStreamingMode(1024);
-                        urlConnection.setReadTimeout(30000);
-
+                        urlConnection.setReadTimeout(200000);
 
                         urlConnection.setRequestMethod("POST");
                         urlConnection.connect();
@@ -767,6 +1383,7 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                                         myAreasList.add(beanDemo);
                                     }
 
+
                                     for (int i = 0; i < user_locations.length(); i++) {
                                         JSONObject jsonobj = user_locations.getJSONObject(i);
                                         String loc_name = jsonobj.getString("loc_name");
@@ -775,12 +1392,16 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
                                         String userlong = jsonobj.getString("loc_long");
                                         String loc_radius = jsonobj.getString("loc_radius");
                                         String id = jsonobj.getString("id");
+                                        String loc_image = jsonobj.getString("loc_image");
 
                                         MyAreasBean bean = new MyAreasBean();
                                         bean.setLoc_name(loc_name);
                                         bean.setLoc_add(loc_address);
                                         bean.set_lat(userlat);
                                         bean.set_long(userlong);
+                                        bean.setId(id);
+                                        bean.setImg_url(loc_image);
+
 
                                         myAreasList.add(bean);
 
@@ -861,12 +1482,48 @@ public class MyAreasFrag extends Fragment implements AdapterView.OnItemClickList
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         if (isDrawOption) {
             if (position == 0) {
                 // TODO: 9/12/15 Replace Fragment with Plot New Area Fragment
 //            Constant.showToast("New ACtivity", getActivity());
+                replaceFragmentPlotArea();
+            } else {
+                saveCurrentLatLong(position);
+                replaceFragment();
             }
+        } else {
+            saveCurrentLatLong(position);
+            replaceFragment();
         }
 
+    }
+
+    private void saveCurrentLatLong(int position) {
+        try {
+            MyAreasBean bean = myAreasList.get(position);
+            editor.putString("LATITUDE", bean.get_lat());
+            editor.putString("LONGITUDE", bean.get_long());
+
+            editor.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void replaceFragmentPlotArea() {
+        DemoMapFrag fragment = new DemoMapFrag();
+        if (fragment != null) {
+
+
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.replace(R.id.container_body, fragment);
+            fragmentTransaction.commit();
+
+
+        }
     }
 }

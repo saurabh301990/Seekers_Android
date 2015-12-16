@@ -94,7 +94,7 @@ public class MapView extends Fragment {
 
 
     LatLng _latLong;
-    GPSTracker gps;
+//    GPSTracker gps;
     Circle mapCircle;
 
     @Bind(R.id.two_miles_btn)
@@ -242,9 +242,14 @@ public class MapView extends Fragment {
     }
 
     private TextView header;
-    private ImageView rightIcon;
+    private ImageView rightIcon = null;
+
+
     SharedPreferences sPref;
     private String user_id = "";
+    private String mlatitude = "";
+    private String mlongitude = "";
+
 
     @Nullable
     @Override
@@ -253,10 +258,24 @@ public class MapView extends Fragment {
         View view = inflater.inflate(R.layout.map_view_screen, container, false);
         ButterKnife.bind(this, view);
 
+        MainActivity.drawerFragment.setDrawerState(true);
         header = (TextView) getActivity().findViewById(R.id.hdr_title);
+
+        header.setText("Map");
+        rightIcon = (ImageView)getActivity().findViewById(R.id.hdr_fltr);
+        rightIcon.setVisibility(View.VISIBLE);
+        rightIcon.setImageResource(R.drawable.filtr);
+        rightIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), FilterActivity.class));
+            }
+        });
         setfont();
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         user_id = sPref.getString("id", "");
+        mlongitude = sPref.getString("LONGITUDE", "");
+        mlatitude = sPref.getString("LATITUDE", "");
 
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
@@ -298,8 +317,11 @@ public class MapView extends Fragment {
             }
         });
 
+        ImageView menu;
+        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
+        menu.setVisibility(View.VISIBLE);
 
-        rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        ImageView rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         rightIcon.setImageResource(R.drawable.filtr);
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,7 +358,10 @@ public class MapView extends Fragment {
                 builder = new Uri.Builder()
                         .appendQueryParameter("user_id", user_id)
                         .appendQueryParameter("radius", radius)
-                        .appendQueryParameter("source", "1,2,3,4");
+                        .appendQueryParameter("cur_lat", mlatitude)
+                        .appendQueryParameter("cur_long", mlongitude);
+
+                System.out.println("Request : " + builder.toString());
 
             }
 
@@ -360,10 +385,10 @@ public class MapView extends Fragment {
                             urlConnection.setDoOutput(true);
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);
-
+                            urlConnection.setReadTimeout(3000000);
 
                             urlConnection.setRequestMethod("POST");
-                            urlConnection.setReadTimeout(50000);
+
                             urlConnection.connect();
 
                             //Write
@@ -459,6 +484,7 @@ public class MapView extends Fragment {
                                     bean.setSource(_jSubObject.getString("source"));
                                     bean.setUser_address(_jSubObject.getString("user_address"));
                                     bean.setUser_image(_jSubObject.getString("user_image"));
+                                    bean.setUser_name(_jSubObject.getString("user_name"));
                                     _mainList.add(bean);
 
                                 }
@@ -514,10 +540,25 @@ public class MapView extends Fragment {
 
 
     private void init() {
-        gps = new GPSTracker(getActivity());
+//        gps = new GPSTracker(getActivity());
+        if (!mlatitude.equalsIgnoreCase("") &&
+                !mlongitude.equalsIgnoreCase("")) {
 
+            latitude = Double.parseDouble(mlatitude);
+            longitude = Double.parseDouble(mlongitude);
+            try {
+                // Loading map
+                initilizeMap();
 
-        if (gps.canGetLocation()) {
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Constant.showToast("Server Error ", getActivity());
+        }
+
+        /*if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
 
@@ -537,7 +578,7 @@ public class MapView extends Fragment {
             }
         } else {
             gps.showSettingsAlert();
-        }
+        }*/
 
 
     }
@@ -568,7 +609,7 @@ public class MapView extends Fragment {
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = fragment.getMap();
-//            googleMap.setMyLocationEnabled(false);
+//            googleMap.setMyLocationEnabled(true);
 
             try {
 
@@ -614,7 +655,9 @@ public class MapView extends Fragment {
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.instagram_pin);
                     } else if (bean.getSource().equalsIgnoreCase("Youtube")) {
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.youtube_pin);
-                    } else {
+                    } else if (bean.getSource().equalsIgnoreCase("Vk")) {
+                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
+                    }else {
                         bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                     }
 
@@ -675,6 +718,7 @@ public class MapView extends Fragment {
         Constant.setFont(getActivity(), search_et, 0);
         Constant.setFont(getActivity(), sorry_tv, 0);
         Constant.setFont(getActivity(), no_post_tv, 0);
+        Constant.setFont(getActivity(), header, 0);
     }
 
 
