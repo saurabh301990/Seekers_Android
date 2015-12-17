@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
@@ -58,6 +59,7 @@ import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
 import com.tv.seekers.utils.NetworkAvailablity;
+import com.tv.seekers.utils.XListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -81,7 +83,7 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 3/11/15.
  */
-public class MapView extends Fragment {
+public class MapView extends Fragment implements XListView.IXListViewListener {
 
     //map Related
     private GoogleMap googleMap;
@@ -94,7 +96,7 @@ public class MapView extends Fragment {
 
 
     LatLng _latLong;
-//    GPSTracker gps;
+    //    GPSTracker gps;
     Circle mapCircle;
 
     @Bind(R.id.two_miles_btn)
@@ -102,6 +104,7 @@ public class MapView extends Fragment {
 
     @OnClick(R.id.two_miles_btn)
     public void two_miles_btn(View view) {
+        _page_number = 1;
         activeMilesBtn(2);
         _radiusForWS = "2";
         callGetAllPostsWS(_radiusForWS);
@@ -113,6 +116,7 @@ public class MapView extends Fragment {
     @OnClick(R.id.five_miles_btn)
     public void five_miles_btn(View view) {
         if (view.getId() == R.id.five_miles_btn) {
+            _page_number = 1;
             activeMilesBtn(5);
             _radiusForWS = "5";
             callGetAllPostsWS(_radiusForWS);
@@ -127,7 +131,7 @@ public class MapView extends Fragment {
     @OnClick(R.id.ten_miles_btn)
     public void ten_miles_btn(View view) {
         if (view.getId() == R.id.ten_miles_btn) {
-
+            _page_number = 1;
             activeMilesBtn(10);
             _radiusForWS = "10";
             callGetAllPostsWS(_radiusForWS);
@@ -140,6 +144,7 @@ public class MapView extends Fragment {
     @OnClick(R.id.twenty_miles_btn)
     public void twenty_miles_btn(View view) {
         if (view.getId() == R.id.twenty_miles_btn) {
+            _page_number = 1;
             activeMilesBtn(20);
             _radiusForWS = "20";
             callGetAllPostsWS(_radiusForWS);
@@ -179,6 +184,7 @@ public class MapView extends Fragment {
             map_btn.setTextColor(Color.BLACK);
             list_layout.setVisibility(View.GONE);
             no_post_layout.setVisibility(View.GONE);
+            headerRL.setVisibility(View.GONE);
 
 
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
@@ -199,6 +205,7 @@ public class MapView extends Fragment {
         if (view.getId() == R.id.list_btn) {
 
             list_layout.setVisibility(View.VISIBLE);
+            headerRL.setVisibility(View.VISIBLE);
             map_view.setVisibility(View.GONE);
             no_post_layout.setVisibility(View.GONE);
             list_btn.setBackgroundColor(Color.WHITE);
@@ -228,8 +235,11 @@ public class MapView extends Fragment {
     @Bind(R.id.list_layout)
     RelativeLayout list_layout;
 
+    //Load More
     @Bind(R.id.listView_home)
-    ListView listView_home;
+    XListView listView_home;
+
+
     HomeListAdapter adapterList;
 
     private boolean _isList = false;
@@ -244,11 +254,15 @@ public class MapView extends Fragment {
     private TextView header;
     private ImageView rightIcon = null;
 
+    @Bind(R.id.header)
+    RelativeLayout headerRL = null;
+
 
     SharedPreferences sPref;
     private String user_id = "";
     private String mlatitude = "";
     private String mlongitude = "";
+    private int _page_number = 1;
 
 
     @Nullable
@@ -262,7 +276,7 @@ public class MapView extends Fragment {
         header = (TextView) getActivity().findViewById(R.id.hdr_title);
 
         header.setText("Map");
-        rightIcon = (ImageView)getActivity().findViewById(R.id.hdr_fltr);
+        rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         rightIcon.setVisibility(View.VISIBLE);
         rightIcon.setImageResource(R.drawable.filtr);
         rightIcon.setOnClickListener(new View.OnClickListener() {
@@ -339,6 +353,12 @@ public class MapView extends Fragment {
         }
 
 
+        //Load More
+        listView_home.setSelector(android.R.color.transparent);
+        listView_home.setXListViewListener(this);
+        listView_home.setPullRefreshEnable(false);
+        listView_home.setPullLoadEnable(false);
+
         return view;
     }
 
@@ -355,12 +375,21 @@ public class MapView extends Fragment {
 
                 Constant.showLoader(getActivity());
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("user_id", user_id)
-                        .appendQueryParameter("radius", radius)
-                        .appendQueryParameter("cur_lat", mlatitude)
-                        .appendQueryParameter("cur_long", mlongitude);
 
+                builder = new Uri.Builder();
+                builder.appendQueryParameter("user_id", user_id);
+                builder.appendQueryParameter("radius", radius);
+
+                builder.appendQueryParameter("cur_lat", mlatitude);
+                builder.appendQueryParameter("cur_long", mlongitude);
+
+                if (_isList) {
+                    builder.appendQueryParameter("isMap", "0");
+                    builder.appendQueryParameter("page_number", _page_number + "");
+                } else {
+                    builder.appendQueryParameter("isMap", "1");
+                    builder.appendQueryParameter("page_number", "1");
+                }
                 System.out.println("Request : " + builder.toString());
 
             }
@@ -381,11 +410,12 @@ public class MapView extends Fragment {
 
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_ALL_POSTS));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
+                           /* urlConnection.setDoInput(true);
                             urlConnection.setDoOutput(true);
                             urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-                            urlConnection.setReadTimeout(3000000);
+                            urlConnection.setChunkedStreamingMode(1024);*/
+                            urlConnection.setConnectTimeout(80 * 1000);
+                            urlConnection.setReadTimeout(80 * 1000);
 
                             urlConnection.setRequestMethod("POST");
 
@@ -457,11 +487,14 @@ public class MapView extends Fragment {
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            if (_mainList.size() > 0) {
-                                _mainList.clear();
+                            if (_page_number == 1) {
+                                if (_mainList.size() > 0) {
+                                    _mainList.clear();
+                                }
                             }
-                            JSONObject _jObject = jsonObject.getJSONObject("social_post");
-                            JSONArray _resultJSONArray = _jObject.getJSONArray("result");
+
+
+                            JSONArray _resultJSONArray = jsonObject.getJSONArray("social_post");
                             if (_resultJSONArray.length() > 0) {
 
                                 if (_isList) {
@@ -469,6 +502,9 @@ public class MapView extends Fragment {
                                     map_view.setVisibility(View.GONE);
                                     list_layout.setVisibility(View.VISIBLE);
                                 } else {
+                                    if (_mainList.size() > 0) {
+                                        _mainList.clear();
+                                    }
                                     no_post_layout.setVisibility(View.GONE);
                                     map_view.setVisibility(View.VISIBLE);
                                     list_layout.setVisibility(View.GONE);
@@ -480,19 +516,56 @@ public class MapView extends Fragment {
                                     HomeBean bean = new HomeBean();
                                     bean.setPost_lat(_jSubObject.getString("post_lat"));
                                     bean.setPost_long(_jSubObject.getString("post_long"));
-                                    bean.setPost_text(_jSubObject.getString("post_text"));
-                                    bean.setSource(_jSubObject.getString("source"));
-                                    bean.setUser_address(_jSubObject.getString("user_address"));
-                                    bean.setUser_image(_jSubObject.getString("user_image"));
-                                    bean.setUser_name(_jSubObject.getString("user_name"));
+                                    if (_jSubObject.has("post_text")) {
+                                        bean.setPost_text(_jSubObject.getString("post_text"));
+                                    } else {
+                                        bean.setPost_text("");
+                                    }
+
+
+                                    if (_jSubObject.has("source")) {
+                                        bean.setSource(_jSubObject.getString("source"));
+                                    } else {
+                                        bean.setSource("");
+                                    }
+
+                                    if (_jSubObject.has("user_address")) {
+                                        bean.setUser_address(_jSubObject.getString("user_address"));
+                                    } else {
+                                        bean.setUser_address("");
+                                    }
+
+                                    if (_jSubObject.has("user_image")) {
+                                        bean.setUser_image(_jSubObject.getString("user_image"));
+                                    } else {
+                                        bean.setUser_image("");
+                                    }
+                                    if (_jSubObject.has("user_name")) {
+                                        bean.setUser_name(_jSubObject.getString("user_name"));
+                                    } else {
+                                        bean.setUser_name("");
+                                    }
+
+                                    if (_jSubObject.has("source_id")) {
+                                        bean.setSource_id(_jSubObject.getString("source_id"));
+                                    } else {
+                                        bean.setSource_id("");
+                                    }
+
                                     _mainList.add(bean);
 
                                 }
 
                                 if (_isList) {
                                     //todo setting Adapter here
-                                    adapterList = new HomeListAdapter(_mainList, getActivity());
-                                    listView_home.setAdapter(adapterList);
+
+                                    if (_page_number == 1) {
+                                        adapterList = new HomeListAdapter(_mainList, getActivity());
+                                        listView_home.setAdapter(adapterList);
+                                    } else {
+                                        adapterList.notifyDataSetChanged();
+                                    }
+
 
                                 } else {
 
@@ -515,6 +588,16 @@ public class MapView extends Fragment {
                                 no_post_layout.setVisibility(View.VISIBLE);
                                 map_view.setVisibility(View.GONE);
                                 list_layout.setVisibility(View.GONE);
+                            }
+
+                            if (jsonObject.has("is_more")) {
+                                boolean _is_more = jsonObject.getBoolean("is_more");
+                                if (_is_more) {
+                                    listView_home.setPullLoadEnable(true);
+                                } else {
+                                    listView_home.setPullLoadEnable(false);
+                                }
+
                             }
                         }
 
@@ -638,6 +721,9 @@ public class MapView extends Fragment {
         int _length = _mainList.size();
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
+            if (googleMap!=null){
+                googleMap.clear();
+            }
 
             cameraPosition = new CameraPosition.Builder().target(_latLong)
                     .zoom(zoom).build();
@@ -648,16 +734,18 @@ public class MapView extends Fragment {
                 double _long = Double.parseDouble(bean.getPost_long());
                 LatLng ll = new LatLng(_lat, _long);
                 BitmapDescriptor bitmapMarker = null;
-                if (!bean.getSource().equalsIgnoreCase("")) {
-                    if (bean.getSource().equalsIgnoreCase("Twitter")) {
+                if (!bean.getSource_id().equalsIgnoreCase("")) {
+                    if (bean.getSource_id().equalsIgnoreCase("2")) { //Tweet
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.twitter_pin);
-                    } else if (bean.getSource().equalsIgnoreCase("Instagram")) {
+                    } else if (bean.getSource_id().equalsIgnoreCase("3")) {//Instagram
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.instagram_pin);
-                    } else if (bean.getSource().equalsIgnoreCase("Youtube")) {
+                    } else if (bean.getSource_id().equalsIgnoreCase("4")) {//Youtube
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.youtube_pin);
-                    } else if (bean.getSource().equalsIgnoreCase("Vk")) {
+                    } else if (bean.getSource_id().equalsIgnoreCase("5")) {//MeetUp
+                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.meetup_pin);
+                    } else if (bean.getSource_id().equalsIgnoreCase("6")) {//Vk
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
-                    }else {
+                    } else {
                         bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                     }
 
@@ -667,6 +755,7 @@ public class MapView extends Fragment {
 
 
 //                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+
                 googleMap.addMarker(new MarkerOptions().position(ll)
                         .title("")
                         .icon(bitmapMarker));
@@ -782,6 +871,24 @@ public class MapView extends Fragment {
                 break;
 
         }
+
+    }
+
+    @Override
+    public void onRefresh() {
+//For Pull To Refresh
+    }
+
+    @Override
+    public void onLoadMore() {
+//For Load More from Bottom
+        _page_number = _page_number + 1;
+        callGetAllPostsWS(_radiusForWS);
+//        onLoad();
+    }
+
+    private void onLoad() {
+        listView_home.stopLoadMore();
 
     }
 }

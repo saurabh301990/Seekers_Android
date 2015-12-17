@@ -69,21 +69,33 @@ public class Constant {
     }
 
     public static void hideLoader() {
-        if (builder != null) {
-            builder.cancel();
+        try {
+            if (builder != null) {
+                builder.cancel();
+            }
+        }catch (Exception  e){
+            e.printStackTrace();
         }
+
+
     }
 
     public static Dialog builder;
 
     public static void showLoader(Context c) {
-        builder = new Dialog(c, R.style.mydialogstyle);
-        builder.setContentView(R.layout.loader);
-        ImageView iw = (ImageView) builder.findViewById(R.id.runImg);
-        iw.setBackgroundResource(R.drawable.spin_animation);
-        AnimationDrawable frameAnimation = (AnimationDrawable) iw.getBackground();
-        frameAnimation.start();
-        builder.setCancelable(false);
-        builder.show();
+
+        try {
+            builder = new Dialog(c, R.style.mydialogstyle);
+            builder.setContentView(R.layout.loader);
+            ImageView iw = (ImageView) builder.findViewById(R.id.runImg);
+            iw.setBackgroundResource(R.drawable.spin_animation);
+            AnimationDrawable frameAnimation = (AnimationDrawable) iw.getBackground();
+            frameAnimation.start();
+            builder.setCancelable(false);
+            builder.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }

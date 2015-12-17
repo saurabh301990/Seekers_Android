@@ -1,12 +1,18 @@
 package com.tv.seekers.menu;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,12 +39,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.ChangePassword;
 import com.tv.seekers.activities.TermsAndConditions;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
+import com.tv.seekers.uploadimg.ContentType;
+import com.tv.seekers.uploadimg.UploadRequest;
+import com.tv.seekers.uploadimg.UploadService;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.NetworkAvailablity;
 
@@ -52,6 +64,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -91,10 +104,169 @@ public class MyProfile extends Fragment {
 
     @OnClick(R.id.sav_prof_iv)
     public void sav_prof_iv(View view) {
-        if (isChecked) {
 
+        if (validData()) {
+            if (isImgChoosed) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    isImgChoosed = false;
+                    callSaveWS();
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+            } else {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    callSaveWSOnlyParam();
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+            }
+
+        }
+
+    }
+
+    private void callSaveWSOnlyParam() {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
+            String _responseMain = "";
+            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+                Constant.showLoader(getActivity());
+                builder = new Uri.Builder()
+                        .appendQueryParameter("user_id", user_id)
+                        .appendQueryParameter("image", "")
+                        .appendQueryParameter("cur_lat", latitude + "")
+                        .appendQueryParameter("cur_long", longitude + "")
+                        .appendQueryParameter("fullname", name);
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    try {
+                        HttpURLConnection urlConnection;
+                        String query = builder.build().getEncodedQuery();
+                        //String temp=URLEncoder.encode(uri, "UTF-8");
+                        URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.UPDATE_USER_PROF));
+                        urlConnection = (HttpURLConnection) ((url.openConnection()));
+                        urlConnection.setDoInput(true);
+                        urlConnection.setDoOutput(true);
+                        urlConnection.setUseCaches(false);
+                        urlConnection.setChunkedStreamingMode(1024);
+                        urlConnection.setRequestMethod("POST");
+                        urlConnection.setReadTimeout(30 * 1000);
+                        urlConnection.connect();
+
+                        //Write
+                        OutputStream outputStream = urlConnection.getOutputStream();
+                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                        writer.write(query);
+                        writer.close();
+                        outputStream.close();
+
+                        //Read
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+                        String line = null;
+                        StringBuilder sb = new StringBuilder();
+                        while ((line = bufferedReader.readLine()) != null) {
+                            //System.out.println("Uploading............");
+                            sb.append(line);
+                        }
+                        bufferedReader.close();
+                        _responseMain = sb.toString();
+                        System.out.println("Response of Update Profile : " + _responseMain);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", getActivity());
+                        }
+                    });
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+                    try {
+                        JSONObject _JsonObject = new JSONObject(_responseMain);
+                        int status = _JsonObject.getInt("status");
+                        if (status == 1) {
+                            Constant.showToast(_JsonObject.getString("message"), getActivity());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Constant.showToast("Server Error ", getActivity());
+                        Constant.hideLoader();
+                    }
+                } else {
+                    Constant.showToast("Server Error ", getActivity());
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
         } else {
+            _Task.execute((String[]) null);
+        }
+    }
+
+    private boolean validData() {
+        name = name_et.getText().toString().trim();
+        boolean isSuccess = false;
+        if (name == null || name.equalsIgnoreCase("")) {
+            isSuccess = false;
+            Constant.showToast("Please enter your name.", getActivity());
+        } else if (!isChecked) {
+            isSuccess = false;
             Constant.showToast(getActivity().getResources().getString(R.string.pleaseAgreeTermsText), getActivity());
+        } else {
+            isSuccess = true;
+        }
+        return isSuccess;
+    }
+
+
+    private void callSaveWS() {
+
+
+        System.out.println("SD CARD : " + fileToUploadPath);
+
+
+        final UploadRequest request = new UploadRequest(getActivity(),
+                UUID.randomUUID().toString()
+                , WebServiceConstants.getMethodUrl(WebServiceConstants.UPDATE_USER_PROF));
+
+        //and parameters
+
+        request.addParameter("user_id", user_id);
+        request.addParameter("cur_lat", latitude + "");
+        request.addParameter("cur_long", longitude + "");
+        request.addParameter("fullname", name);
+
+        request.addFileToUpload(fileToUploadPath, "image", System.currentTimeMillis() + ".jpeg", ContentType.APPLICATION_OCTET_STREAM);
+
+
+        System.err.println("request of Upload img : " + request.toString());
+        request.setNotificationConfig(R.mipmap.app_icon, getString(R.string.app_name),
+                getString(R.string.uploading), getString(R.string.upload_success),
+                getString(R.string.upload_error), false);
+
+        try {
+            UploadService.startUpload(request);
+            Constant.showToast(getString(R.string.uploading), getActivity());
+        } catch (Exception exc) {
+            Constant.showToast("Malformed upload request. ", getActivity());
         }
     }
 
@@ -104,7 +276,43 @@ public class MyProfile extends Fragment {
 
     @OnClick(R.id.user_img_iv)
     public void img_click(View view) {
+        selectCam();
+    }
 
+    private static final int RESULT_LOAD_IMG = 1;
+    private static final int TAKE_PHOTO_CODE = 0;
+
+    private void selectCam() {
+        final CharSequence[] options = {"Image From Camera", "Choose From Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setTitle("Select Photo" + "!");
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+
+            @Override
+
+            public void onClick(DialogInterface dialog, int item) {
+
+                if (options[item].equals("Image From Camera")) {
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                    startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
+
+                } else if (options[item].equals("Choose From Gallery")) {
+//                    Toast.makeText(MainActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+                    // Create intent to Open Image applications like Gallery, Google Photos
+                    Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                    startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+                } else if (options[item].equals("Cancel")) {
+                    dialog.dismiss();
+                }
+            }
+
+        });
+
+        builder.show();
     }
 
     @Bind(R.id.nameInfo_tv)
@@ -142,6 +350,10 @@ public class MyProfile extends Fragment {
     @Bind(R.id.map_view)
     RelativeLayout map_view;
 
+
+    @Bind(R.id.progress_bar)
+    ProgressBar progress_bar;
+
     //map Related
     private GoogleMap googleMap;
     CameraPosition cameraPosition;
@@ -153,9 +365,13 @@ public class MyProfile extends Fragment {
     GPSTracker gps;
 
     private String user_id = "";
+    private String name = "";
     private SharedPreferences sPref;
     private DisplayImageOptions options;
     com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
+    private String imageURL = "";
+    private String fileToUploadPath = "";
+    private boolean isImgChoosed = false;
 
     @Nullable
     @Override
@@ -220,7 +436,6 @@ public class MyProfile extends Fragment {
         initMap();
     }
 
-    private String imageURL = "";
 
     private void callGetMyProfile() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
@@ -248,6 +463,7 @@ public class MyProfile extends Fragment {
                         urlConnection.setUseCaches(false);
                         urlConnection.setChunkedStreamingMode(1024);
                         urlConnection.setRequestMethod("POST");
+                        urlConnection.setReadTimeout(30 * 1000);
                         urlConnection.connect();
 
                         //Write
@@ -315,8 +531,22 @@ public class MyProfile extends Fragment {
                             username_et.setText(username);
 
                             imageLoaderNew.displayImage(imageURL, user_img_iv,
-                                    options,
-                                    null);
+                                    options, new SimpleImageLoadingListener() {
+                                        @Override
+                                        public void onLoadingStarted(String imageUri, View view) {
+                                            progress_bar.setVisibility(View.VISIBLE);
+                                        }
+
+                                        @Override
+                                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                                            progress_bar.setVisibility(View.GONE);
+                                        }
+
+                                        @Override
+                                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                            progress_bar.setVisibility(View.GONE);
+                                        }
+                                    });
 
                             if (_long != null && !_long.equalsIgnoreCase("")
                                     && lat != null && !lat.equalsIgnoreCase("")) {
@@ -392,5 +622,69 @@ public class MyProfile extends Fragment {
         marker = googleMap.addMarker(new MarkerOptions()
                 .position(_latLong).icon(BitmapDescriptorFactory.
                         defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("onActivityResult Called For My Profile");
+        try {
+            // When an Image is picked
+            if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+                isImgChoosed = true;
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                // Get the cursor
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                fileToUploadPath = cursor.getString(columnIndex);
+                System.out.println("File Path of Img From Gallery : " + fileToUploadPath);
+
+
+                imageLoaderNew.displayImage("file://" + fileToUploadPath, user_img_iv,
+                        options,
+                        null);
+
+                cursor.close();
+
+
+            } else if (requestCode == TAKE_PHOTO_CODE && resultCode == Activity.RESULT_OK
+                    && null != data) {
+                // Get the Image from data
+
+                isImgChoosed = true;
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                // Get the cursor
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                // Move to first row
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                fileToUploadPath = cursor.getString(columnIndex);
+                System.out.println("File Path of Img From Camera : " + fileToUploadPath);
+                imageLoaderNew.displayImage("file://" + fileToUploadPath, user_img_iv,
+                        options,
+                        null);
+
+                cursor.close();
+            } else {
+                isImgChoosed = false;
+            }
+        } catch (Exception e) {
+            isImgChoosed = false;
+            Constant.showToast("Something went wrong", getActivity());
+        }
+
+
     }
 }

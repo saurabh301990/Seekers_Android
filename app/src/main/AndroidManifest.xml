@@ -17,6 +17,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <!-- Required OpenGL ES 2.0. for Maps V2 -->
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -86,6 +89,14 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A" />
 
+        <service
+            android:name="com.tv.seekers.uploadimg.UploadService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.alexbbb.uploadservice.action.upload" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -41,12 +41,19 @@
 
                     <ImageView
                         android:id="@+id/user_img_iv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
 
 
                         android:scaleType="centerCrop"
                         android:src="@drawable/profile_pic" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true" />
                 </RelativeLayout>
 
             </RelativeLayout>

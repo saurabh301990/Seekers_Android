@@ -17,6 +17,9 @@ public class HttpConnection {
         try {
             URL url = new URL(mapsApiDirectionsUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setConnectTimeout(80 * 1000);
+            urlConnection.setReadTimeout(80 * 1000);
+
             urlConnection.connect();
             iStream = urlConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(

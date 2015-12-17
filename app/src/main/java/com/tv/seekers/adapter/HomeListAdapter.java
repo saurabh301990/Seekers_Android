@@ -124,6 +124,8 @@ public class HomeListAdapter extends BaseAdapter {
             view_holder.userTypeImage.setImageResource(R.mipmap.youtube_top_corner);
         } else if (bean.getSource().equalsIgnoreCase("Vk")) {
             view_holder.userTypeImage.setImageResource(R.mipmap.vk_top_corner);
+        } else if (bean.getSource().equalsIgnoreCase("Meetup")) {
+            view_holder.userTypeImage.setImageResource(R.mipmap.meetup_top_corner);
         }
 
         imageLoaderNew.displayImage(bean.getUser_image(), view_holder.userImage,

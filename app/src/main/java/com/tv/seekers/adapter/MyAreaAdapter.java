@@ -40,9 +40,9 @@ public class MyAreaAdapter extends BaseAdapter {
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
 
         options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.drawable.demo_loc_img)
-                .showImageForEmptyUri(R.drawable.demo_loc_img)
-                .showImageOnFail(R.drawable.demo_loc_img)
+                .showImageOnLoading(R.mipmap.demo_loc_img)
+                .showImageForEmptyUri(R.mipmap.demo_loc_img)
+                .showImageOnFail(R.mipmap.demo_loc_img)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true).build();
@@ -124,6 +124,7 @@ public class MyAreaAdapter extends BaseAdapter {
         } else {
             view_holder.selectedlayout.setVisibility(View.GONE);
         }
+
 
         imageLoaderNew.displayImage(bean.getImg_url(), view_holder.area_img,
                 options,

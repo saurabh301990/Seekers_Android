@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
         android:focusable="true"
+        android:visibility="gone"
         android:focusableInTouchMode="true"
         android:padding="8dp">
 
@@ -73,10 +74,10 @@
 
                 android:visibility="gone">
 
-                <ListView
+                <com.tv.seekers.utils.XListView
                     android:id="@+id/listView_home"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"></ListView>
+                    android:layout_height="match_parent"></com.tv.seekers.utils.XListView>
 
 
             </RelativeLayout>

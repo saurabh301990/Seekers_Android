@@ -24,6 +24,7 @@ public class WebServiceConstants {
     public static final String USER_SAVE_LOCATION = "userSaveLocation";
     public static final String DELETE_SAVE_LOCATION = "deleteSaveLocation";
     public static final String TERMS = "terms";
+    public static final String UPDATE_USER_PROF = "updateUserProfile";
 
 
     public static final String IMAGE_URL = "http://198.12.150.220/Seeker/uploads/profileImage/";
