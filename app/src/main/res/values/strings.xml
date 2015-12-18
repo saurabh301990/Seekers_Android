@@ -46,7 +46,7 @@
 
     <string-array name="nav_drawer_labels">
         <item>Home</item>
-        <item>Followed</item>
+        <item>Followed Profile</item>
         <item>My Keywords</item>
         <item>My Locations</item>
         <item>Plot a New Area</item>
@@ -121,4 +121,7 @@
     <string name="addFollowedtext">Add Followed</string>
     <string name="usertext">User</string>
     <string name="entrkeyword">Enter keyword</string>
+
+    <!--My Areas-->
+    <string name="locationAlreadySavedText">Location already saved.</string>
 </resources>

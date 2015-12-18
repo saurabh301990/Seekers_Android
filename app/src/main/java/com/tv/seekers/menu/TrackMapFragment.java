@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.tv.seekers.R;
+import com.tv.seekers.adapter.HomeListAdapter;
+import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.utils.HttpConnection;
 import com.tv.seekers.utils.PathJSONParser;
@@ -102,6 +104,8 @@ public class TrackMapFragment extends Fragment {
         list_btn.setTextColor(Color.BLACK);
         map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
 
+        addData();
+
     }
 
     @Bind(R.id.map_view)
@@ -109,6 +113,8 @@ public class TrackMapFragment extends Fragment {
 
     @Bind(R.id.list)
     ListView list;
+    private ArrayList<HomeBean> _mainList = new ArrayList<HomeBean>();
+    HomeListAdapter adapterList;
 
     public void setfont() {
         Constant.setFont(getActivity(), name_info_tv, 0);
@@ -127,6 +133,7 @@ public class TrackMapFragment extends Fragment {
 
         ButterKnife.bind(this, view);
         setfont();
+
 
         _ivRight = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         _ivRight.setVisibility(View.GONE);
@@ -150,6 +157,29 @@ public class TrackMapFragment extends Fragment {
         });
         return view;
 
+    }
+
+    private void addData() {
+
+        if (_mainList.size() > 0) {
+            _mainList.clear();
+        }
+        for (int i = 0; i < 3; i++) {
+
+            HomeBean bean = new HomeBean();
+            bean.setPost_lat("");
+            bean.setPost_long("");
+            bean.setPost_text("Feeling Awesome");
+            bean.setSource("Twitter");
+            bean.setUser_address("North Lois Avenue, Tampa ");
+            bean.setUser_image("http://cs629312.vk.me/v629312246/180c9/8KDEIk0KsK4.jpg");
+            bean.setUser_name("John");
+            bean.setSource_id("");
+            _mainList.add(bean);
+
+        }
+        adapterList = new HomeListAdapter(_mainList, getActivity());
+        list.setAdapter(adapterList);
     }
 
     @Override
@@ -332,7 +362,7 @@ public class TrackMapFragment extends Fragment {
 
             try {
                 googleMap.addPolyline(polyLineOptions);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

@@ -20,14 +20,12 @@
         <ImageView
             android:id="@+id/locationimage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_weight="2.3"
-            android:src="@mipmap/location_pin"
+            android:src="@mipmap/location_pin" />
 
-
-            />
 
         <TextView
             android:id="@+id/listtext"

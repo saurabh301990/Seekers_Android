@@ -83,10 +83,10 @@ public class MyProfile extends Fragment {
     public void checkbox_click(View view) {
         if (isChecked) {
             isChecked = false;
-            checkbox_terms.setImageResource(R.mipmap.unchecked_box);
+            checkbox_terms.setBackgroundResource(R.mipmap.unchecked_box);
         } else {
             isChecked = true;
-            checkbox_terms.setImageResource(R.mipmap.checked_box);
+            checkbox_terms.setBackgroundResource(R.mipmap.checked_box);
         }
 
     }

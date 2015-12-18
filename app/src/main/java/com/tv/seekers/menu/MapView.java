@@ -104,10 +104,16 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
 
     @OnClick(R.id.two_miles_btn)
     public void two_miles_btn(View view) {
-        _page_number = 1;
-        activeMilesBtn(2);
-        _radiusForWS = "2";
-        callGetAllPostsWS(_radiusForWS);
+
+
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+            _page_number = 1;
+            activeMilesBtn(2);
+            _radiusForWS = "2";
+            callGetAllPostsWS(_radiusForWS);
+        }else {
+            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+        }
     }
 
     @Bind(R.id.five_miles_btn)
@@ -116,10 +122,16 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     @OnClick(R.id.five_miles_btn)
     public void five_miles_btn(View view) {
         if (view.getId() == R.id.five_miles_btn) {
-            _page_number = 1;
-            activeMilesBtn(5);
-            _radiusForWS = "5";
-            callGetAllPostsWS(_radiusForWS);
+
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+                _page_number = 1;
+                activeMilesBtn(5);
+                _radiusForWS = "5";
+                callGetAllPostsWS(_radiusForWS);
+            }else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
 
         }
     }
@@ -131,10 +143,16 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     @OnClick(R.id.ten_miles_btn)
     public void ten_miles_btn(View view) {
         if (view.getId() == R.id.ten_miles_btn) {
-            _page_number = 1;
-            activeMilesBtn(10);
-            _radiusForWS = "10";
-            callGetAllPostsWS(_radiusForWS);
+
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+                _page_number = 1;
+                activeMilesBtn(10);
+                _radiusForWS = "10";
+                callGetAllPostsWS(_radiusForWS);
+            }else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
         }
     }
 
@@ -144,10 +162,16 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     @OnClick(R.id.twenty_miles_btn)
     public void twenty_miles_btn(View view) {
         if (view.getId() == R.id.twenty_miles_btn) {
-            _page_number = 1;
-            activeMilesBtn(20);
-            _radiusForWS = "20";
-            callGetAllPostsWS(_radiusForWS);
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+                _page_number = 1;
+                activeMilesBtn(20);
+                _radiusForWS = "20";
+                callGetAllPostsWS(_radiusForWS);
+            }else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
+
 
         }
     }
@@ -468,7 +492,7 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
                         @Override
                         public void run() {
                             // TODO Auto-generated method stub
-                            Constant.showToast("Server Error ", getActivity());
+                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
                         }
                     });
                 }

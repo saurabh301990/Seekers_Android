@@ -68,6 +68,7 @@ public class Track extends Fragment {
         _header = (TextView) getActivity().findViewById(R.id.hdr_title);
         _header.setText("Followed");
         rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        rightIcon.setVisibility(View.VISIBLE);
         rightIcon.setImageResource(R.mipmap.plus);
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override

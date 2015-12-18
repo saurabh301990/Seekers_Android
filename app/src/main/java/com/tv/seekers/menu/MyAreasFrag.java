@@ -402,7 +402,16 @@ public class MyAreasFrag extends Fragment implements
                                 String _latUser = _bean.get_lat();
                                 String _longUser = _bean.get_long();
 
-                                if (_lat != 0.0 && _long != 0.0) {
+                                String _locName = _bean.getLoc_name();
+                                if (_locName.equalsIgnoreCase(_address)) {
+                                    _isLocationAlreadyAdded = true;
+                                    position = j;
+                                    break;
+                                } else {
+                                    _isLocationAlreadyAdded = false;
+                                }
+
+                               /* if (_lat != 0.0 && _long != 0.0) {
                                     if (String.valueOf(_lat).equalsIgnoreCase(_latUser)
                                             && String.valueOf(_long).equalsIgnoreCase(_longUser)) {
                                         //LatLng Matched
@@ -414,7 +423,7 @@ public class MyAreasFrag extends Fragment implements
                                     }
                                 } else {
                                     _isLocationAlreadyAdded = false;
-                                }
+                                }*/
 
 
                             }
@@ -431,6 +440,9 @@ public class MyAreasFrag extends Fragment implements
                                 saveCurrentLatLong(position);
                                 replaceFragment();
 
+                            } else {
+                                // TODO: 18/12/15 Need to Show Pop Up message as Location
+                                Constant.showToast(getActivity().getResources().getString(R.string.locationAlreadySavedText), getActivity());
                             }
                         } else {
                             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
@@ -779,7 +791,7 @@ public class MyAreasFrag extends Fragment implements
 
             // Obtain browser key from https://code.google.com/apis/console
 
-            String key = "key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
+            String key = "key=AIzaSyDEkwu2c89RobN7jfQ1nvoyIAC6Gt4FWpI";
 
 
             try {
@@ -870,7 +882,7 @@ public class MyAreasFrag extends Fragment implements
                 String loc = URLEncoder.encode(_address, "utf-8");
                 String url = "https://maps.googleapis.com/maps/api/place/textsearch/json?" +
                         "query=" + loc + "&" +
-                        "key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
+                        "key=AIzaSyDEkwu2c89RobN7jfQ1nvoyIAC6Gt4FWpI";
 
 
                 System.out.println("Final URL Google API : " + url);
@@ -916,7 +928,7 @@ public class MyAreasFrag extends Fragment implements
                 finalimgUrl = "https://maps.googleapis.com/maps/api/place/photo?" +
                         "maxwidth=400&" +
                         "photoreference=" + _photo_reference +
-                        "&key=AIzaSyCmvCmACC2xkvGnDSxlAC3MDbbNzl2129A";
+                        "&key=AIzaSyDEkwu2c89RobN7jfQ1nvoyIAC6Gt4FWpI";
 
                 System.out.println("Final  Image URL : " + finalimgUrl);
                 GeocodingLocation locationAddress = new GeocodingLocation();
@@ -930,96 +942,6 @@ public class MyAreasFrag extends Fragment implements
         }
     }
 
-    abstract class PhotoTask extends AsyncTask<String, Void, PhotoTask.AttributedPhoto> {
-
-        private int mHeight;
-
-        private int mWidth;
-
-        public PhotoTask(int width, int height) {
-            mHeight = height;
-            mWidth = width;
-        }
-
-        /**
-         * Loads the first photo for a place id from the Geo Data API.
-         * The place id must be the first (and only) parameter.
-         */
-        @Override
-        protected AttributedPhoto doInBackground(String... params) {
-            if (params.length != 1) {
-                return null;
-            }
-            final String placeId = params[0];
-            AttributedPhoto attributedPhoto = null;
-
-            PlacePhotoMetadataResult result = Places.GeoDataApi
-                    .getPlacePhotos(mGoogleApiClient, placeId).await();
-
-            if (result.getStatus().isSuccess()) {
-                PlacePhotoMetadataBuffer photoMetadataBuffer = result.getPhotoMetadata();
-                if (photoMetadataBuffer.getCount() > 0 && !isCancelled()) {
-                    // Get the first bitmap and its attributions.
-                    PlacePhotoMetadata photo = photoMetadataBuffer.get(0);
-                    CharSequence attribution = photo.getAttributions();
-                    // Load a scaled bitmap for this photo.
-                    Bitmap image = photo.getScaledPhoto(mGoogleApiClient, mWidth, mHeight).await()
-                            .getBitmap();
-
-                    attributedPhoto = new AttributedPhoto(attribution, image);
-                }
-                // Release the PlacePhotoMetadataBuffer.
-                photoMetadataBuffer.release();
-            }
-            return attributedPhoto;
-        }
-
-        /**
-         * Holder for an image and its attribution.
-         */
-        class AttributedPhoto {
-
-            public final CharSequence attribution;
-
-            public final Bitmap bitmap;
-
-            public AttributedPhoto(CharSequence attribution, Bitmap bitmap) {
-                this.attribution = attribution;
-                this.bitmap = bitmap;
-            }
-        }
-    }
-
-    private void placePhotosTask() {
-        final String placeId = "ChIJrTLr-GyuEmsRBfy61i59si0"; // Australian Cruise Group
-
-        // Create a new AsyncTask that displays the bitmap and attribution once loaded.
-        new PhotoTask(400, 400) {
-            @Override
-            protected void onPreExecute() {
-                // Display a temporary image to show while bitmap is loading.
-//                mImageView.setImageResource(R.drawable.empty_photo);
-            }
-
-            @Override
-            protected void onPostExecute(AttributedPhoto attributedPhoto) {
-                if (attributedPhoto != null) {
-                    // Photo has been loaded, display it.
-                    System.out.println("attributedPhoto.attribution : " + attributedPhoto.attribution);
-                /*    mImageView.setImageBitmap(attributedPhoto.bitmap);
-
-                    // Display the attribution as HTML content if set.
-                    if (attributedPhoto.attribution == null) {
-                        mText.setVisibility(View.GONE);
-                    } else {
-                        mText.setVisibility(View.VISIBLE);
-                        mText.setText(Html.fromHtml(attributedPhoto.attribution.toString()));
-                    }*/
-
-                }
-            }
-        }.execute(placeId);
-    }
 
     private final static String TAG = "MyAreasFragment";
 

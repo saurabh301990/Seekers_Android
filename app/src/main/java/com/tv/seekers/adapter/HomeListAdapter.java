@@ -1,12 +1,6 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +11,8 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.LoadedFrom;
-import com.nostra13.universalimageloader.core.display.BitmapDisplayer;
-import com.nostra13.universalimageloader.core.imageaware.ImageAware;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.HomeBean;
-import com.tv.seekers.bean.LandingBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
 
@@ -92,7 +82,9 @@ public class HomeListAdapter extends BaseAdapter {
         if (convertView == null) {
 
             view_holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.home_list_item_row, null);
+
+
+            convertView = inflater.inflate(R.layout.home_list_item_row_text, null);
 
             view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
             view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
