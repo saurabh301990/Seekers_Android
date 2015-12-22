@@ -598,6 +598,7 @@ public class MyProfile extends Fragment {
                     if (googleMap == null) {
                         googleMap = fragment.getMap();
                         googleMap.setMyLocationEnabled(true);
+
                         showMap();
                     }
                 } catch (Exception e) {

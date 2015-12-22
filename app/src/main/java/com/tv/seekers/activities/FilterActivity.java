@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +17,9 @@ import android.widget.ToggleButton;
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.date.DateTime;
+import com.tv.seekers.date.DateTimePicker;
+import com.tv.seekers.date.SimpleDateTimePicker;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONArray;
@@ -29,6 +34,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +42,9 @@ import butterknife.ButterKnife;
 /**
  * Created by Saurabh on 4/11/15.
  */
-public class FilterActivity extends Activity implements View.OnClickListener {
+public class FilterActivity extends FragmentActivity
+        implements View.OnClickListener,
+        DateTimePicker.OnDateTimeSetListener {
     //Textview
     @Bind(R.id.txtcancel)
     TextView txtheadercancel;
@@ -139,6 +147,8 @@ public class FilterActivity extends Activity implements View.OnClickListener {
 
     private String user_id = "";
     private SharedPreferences sPref;
+    private boolean isDate = false;
+    private boolean isTime = false;
 
 
     @Override
@@ -157,6 +167,8 @@ public class FilterActivity extends Activity implements View.OnClickListener {
         } else {
             Constant.showToast(getResources().getString(R.string.internet), FilterActivity.this);
         }
+
+
     }
 
     private void callGetUserFilterWS() {
@@ -305,6 +317,8 @@ public class FilterActivity extends Activity implements View.OnClickListener {
                                     } else {
                                         youtubetoggle.setChecked(false);
                                     }
+
+
                                 }
                             }
                         }
@@ -333,6 +347,8 @@ public class FilterActivity extends Activity implements View.OnClickListener {
     public void setonclick() {
         txtheadercancel.setOnClickListener(this);
         txtheaderapply.setOnClickListener(this);
+        Sdatetime.setOnClickListener(this);
+        Edatetime.setOnClickListener(this);
     }
 
     public void setfont() {
@@ -412,6 +428,19 @@ public class FilterActivity extends Activity implements View.OnClickListener {
                 }
 
 
+                break;
+
+            case R.id.txtSdatetime:
+                isDate = true;
+                isTime = false;
+                showDateTimePicker("Choose Start Date");
+                break;
+            case R.id.txtEdatetime:
+                isDate = false;
+                isTime = true;
+                showDateTimePicker("Choose End Date");
+                break;
+            default:
                 break;
 
 
@@ -583,6 +612,43 @@ public class FilterActivity extends Activity implements View.OnClickListener {
             _Task.execute((String[]) null);
         }
 
+
+    }
+
+    public void showDateTimePicker(String mTitle) {
+// Create a SimpleDateTimePicker and Show it
+        SimpleDateTimePicker simpleDateTimePicker = SimpleDateTimePicker.make(
+                mTitle,
+                new Date(),
+                this, getSupportFragmentManager()
+        );
+        // Show It baby!
+        simpleDateTimePicker.show();
+
+      /*  // Or we can chain it to simplify
+        SimpleDateTimePicker.make(
+                "Set Date & Time Title",
+                new Date(),
+                this,
+                getSupportFragmentManager()
+        ).show();*/
+
+    }
+
+    @Override
+    public void DateTimeSet(Date date) {
+
+        // This is the DateTime class we created earlier to handle the conversion
+        // of Date to String Format of Date String Format to Date object
+        DateTime mDateTime = new DateTime(date);
+        // Show in the LOGCAT the selected Date and Time
+        Log.v("FILTER ACTIVITY: ", "Date and Time selected: " + mDateTime.getDateString());
+
+        if (isDate){
+            Sdatetime.setText(mDateTime.getDateString());
+        }else if (isTime){
+            Edatetime.setText(mDateTime.getDateString());
+        }
 
     }
 }

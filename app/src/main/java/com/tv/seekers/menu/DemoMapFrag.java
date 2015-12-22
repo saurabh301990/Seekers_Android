@@ -116,7 +116,7 @@ public class DemoMapFrag extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (Is_MAP_Moveable != true) {
+                if (!Is_MAP_Moveable) {
                     Is_MAP_Moveable = true;
                 } else {
                     Is_MAP_Moveable = false;
@@ -138,43 +138,51 @@ public class DemoMapFrag extends Fragment {
             @Override
 
             public boolean onTouch(View v, MotionEvent event) {
-                float x = event.getX();
-                float y = event.getY();
 
-                int x_co = Math.round(x);
-                int y_co = Math.round(y);
+                if (Is_MAP_Moveable){
+                    float x = event.getX();
+                    float y = event.getY();
+
+                    int x_co = Math.round(x);
+                    int y_co = Math.round(y);
 
 //                Projection projection = googleMap.getProjection();
-                Point x_y_points = new Point(x_co, y_co);
+                    Point x_y_points = new Point(x_co, y_co);
 
-                LatLng latLng = googleMap.getProjection().fromScreenLocation(x_y_points);
-                latitude = latLng.latitude;
+                    LatLng latLng = googleMap.getProjection().fromScreenLocation(x_y_points);
+                    latitude = latLng.latitude;
 
-                longitude = latLng.longitude;
+                    longitude = latLng.longitude;
 
-                int eventaction = event.getAction();
-                switch (eventaction) {
-                    case MotionEvent.ACTION_DOWN:
-                        // finger touches the screen
+                    System.out.println("LatLng : "+ latitude +" : "+ longitude);
 
-                        val.add(new LatLng(latitude, longitude));
+                    int eventaction = event.getAction();
+                    switch (eventaction) {
+                        case MotionEvent.ACTION_DOWN:
+                            // finger touches the screen
 
-                    case MotionEvent.ACTION_MOVE:
-                        // finger moves on the screen
-                        val.add(new LatLng(latitude, longitude));
+                            val.add(new LatLng(latitude, longitude));
 
-                    case MotionEvent.ACTION_UP:
-                        // finger leaves the screen
-                        Draw_Map();
-                        break;
-                }
+                        case MotionEvent.ACTION_MOVE:
+                            // finger moves on the screen
+                            val.add(new LatLng(latitude, longitude));
 
-                if (Is_MAP_Moveable == true) {
-                    return true;
+                        case MotionEvent.ACTION_UP:
+                            // finger leaves the screen
+                            Draw_Map();
+                            break;
+                    }
 
+                    if (Is_MAP_Moveable) {
+                        return true;
+
+                    } else {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
+
             }
         });
 
