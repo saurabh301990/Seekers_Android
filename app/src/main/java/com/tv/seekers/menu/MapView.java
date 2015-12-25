@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.AddFollowedActivity;
 import com.tv.seekers.activities.FilterActivity;
+import com.tv.seekers.adapter.CustomWindAdapter;
 import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.adapter.LandingAdapter;
 import com.tv.seekers.bean.HomeBean;
@@ -83,7 +84,9 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 3/11/15.
  */
-public class MapView extends Fragment implements XListView.IXListViewListener {
+public class MapView extends Fragment
+        implements XListView.IXListViewListener,
+        GoogleMap.OnInfoWindowClickListener {
 
     //map Related
     private GoogleMap googleMap;
@@ -106,12 +109,12 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     public void two_miles_btn(View view) {
 
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             _page_number = 1;
             activeMilesBtn(2);
             _radiusForWS = "2";
             callGetAllPostsWS(_radiusForWS);
-        }else {
+        } else {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
     }
@@ -124,12 +127,12 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
         if (view.getId() == R.id.five_miles_btn) {
 
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(5);
                 _radiusForWS = "5";
                 callGetAllPostsWS(_radiusForWS);
-            }else {
+            } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
             }
 
@@ -145,12 +148,12 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
         if (view.getId() == R.id.ten_miles_btn) {
 
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(10);
                 _radiusForWS = "10";
                 callGetAllPostsWS(_radiusForWS);
-            }else {
+            } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
             }
         }
@@ -163,12 +166,12 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     public void twenty_miles_btn(View view) {
         if (view.getId() == R.id.twenty_miles_btn) {
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(20);
                 _radiusForWS = "20";
                 callGetAllPostsWS(_radiusForWS);
-            }else {
+            } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
             }
 
@@ -380,7 +383,7 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
         //Load More
         listView_home.setSelector(android.R.color.transparent);
         listView_home.setXListViewListener(this);
-        listView_home.setPullRefreshEnable(false);
+        listView_home.setPullRefreshEnable(true);
         listView_home.setPullLoadEnable(false);
 
         return view;
@@ -586,7 +589,10 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
                                     if (_page_number == 1) {
                                         adapterList = new HomeListAdapter(_mainList, getActivity());
                                         listView_home.setAdapter(adapterList);
+//                                        onLoad();
+                                        listView_home.stopRefresh();
                                     } else {
+
                                         adapterList.notifyDataSetChanged();
                                     }
 
@@ -622,16 +628,19 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
                                     listView_home.setPullLoadEnable(false);
                                 }
 
+                            } else {
+                                listView_home.setPullLoadEnable(false);
                             }
                         }
 
                     } catch (Exception e) {
 
                         e.printStackTrace();
-
+                        Constant.showToast("Server Error ", getActivity());
                         Constant.hideLoader();
                     }
                 } else {
+                    Constant.showToast("Server Error ", getActivity());
 
                     Constant.hideLoader();
                 }
@@ -716,6 +725,8 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = fragment.getMap();
+            // Set a listener for info window events.
+            googleMap.setOnInfoWindowClickListener(this);
 //            googleMap.setMyLocationEnabled(true);
 
             try {
@@ -745,7 +756,7 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
         int _length = _mainList.size();
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
-            if (googleMap!=null){
+            if (googleMap != null) {
                 googleMap.clear();
             }
 
@@ -779,11 +790,13 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
 
 
 //                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-
+                // Setting an info window adapter allows us to change the both the contents and look of the
+                // info window.
+                googleMap.setInfoWindowAdapter(new CustomWindAdapter(getActivity()));
                 googleMap.addMarker(new MarkerOptions().position(ll)
-                        .title("")
+                        .title("UserName")
+                        .snippet("Snippet")
                         .icon(bitmapMarker));
-
 
             }
         }
@@ -901,6 +914,8 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     @Override
     public void onRefresh() {
 //For Pull To Refresh
+        _page_number = 1;
+        callGetAllPostsWS(_radiusForWS);
     }
 
     @Override
@@ -914,5 +929,13 @@ public class MapView extends Fragment implements XListView.IXListViewListener {
     private void onLoad() {
         listView_home.stopLoadMore();
 
+
+    }
+
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(getActivity(), "Info window clicked",
+                Toast.LENGTH_SHORT).show();
     }
 }

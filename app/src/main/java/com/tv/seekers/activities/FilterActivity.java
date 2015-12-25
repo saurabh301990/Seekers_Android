@@ -34,6 +34,8 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.Bind;
@@ -113,8 +115,11 @@ public class FilterActivity extends FragmentActivity
     @Bind(R.id.filterdatetoggle)
     ToggleButton filterbydatetgl;
 
-    @Bind(R.id.fbtoggle)
-    ToggleButton fbtgl;
+  /*  @Bind(R.id.fbtoggle)
+    ToggleButton fbtgl;*/
+
+    @Bind(R.id.meetUpTgl)
+    ToggleButton meetUpTgl;
 
     @Bind(R.id.twittertoggle)
     ToggleButton twittertoggle;
@@ -149,6 +154,8 @@ public class FilterActivity extends FragmentActivity
     private SharedPreferences sPref;
     private boolean isDate = false;
     private boolean isTime = false;
+    private String start_date = "";
+    private String end_date = "";
 
 
     @Override
@@ -235,7 +242,7 @@ public class FilterActivity extends FragmentActivity
 
                             bufferedReader.close();
                             _responseMain = sb.toString();
-//                            System.out.println("Response of Get User Filter : " + _responseMain);
+                            System.out.println("Response of Get User Filter : " + _responseMain);
 
 
                         } catch (UnsupportedEncodingException e) {
@@ -286,15 +293,70 @@ public class FilterActivity extends FragmentActivity
                                     JSONObject jsonObject1 = jsonArray.getJSONObject(0);
                                     String id = jsonObject1.getString("id");
                                     String user_id = jsonObject1.getString("user_id");
-                                    String facebook = jsonObject1.getString("facebook");
+//                                    String facebook = jsonObject1.getString("facebook");
                                     String twitter = jsonObject1.getString("twitter");
                                     String instagram = jsonObject1.getString("instagram");
                                     String youtube = jsonObject1.getString("youtube");
+                                    String meetup = jsonObject1.getString("meetup");
+                                    String vk = jsonObject1.getString("vk");
+                                    String start_date = jsonObject1.getString("start_date");
+                                    String end_date = jsonObject1.getString("end_date");
+                                    String filter_by_date = jsonObject1.getString("filter_by_date");
+                                    String filter_by_keyword = jsonObject1.getString("filter_by_keyword");
 
-                                    if (!facebook.equalsIgnoreCase("0") && !facebook.equalsIgnoreCase("")) {
-                                        fbtgl.setChecked(true);
+
+                                    String inputPattern = "yyyy-MM-dd hh:mm:ss";
+
+                                    String outputPattern = "dd MMMM yyyy hh:mm a";
+                                    SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+                                    SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+                                    Date mdate = null;
+                                    String str = null;
+
+                                    try {
+                                        mdate = inputFormat.parse(end_date);
+                                        String mend_date = outputFormat.format(mdate);
+                                        System.out.println("Final DAte : in New format : " + mend_date);
+                                        Edatetime.setText(mend_date);
+
+
+                                        mdate = inputFormat.parse(start_date);
+                                        String mStartDate = outputFormat.format(mdate);
+                                        System.out.println("Final DAte : in New format : " + mStartDate);
+                                        Sdatetime.setText(mStartDate);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                    if (!filter_by_keyword.equalsIgnoreCase("0") &&
+                                            !filter_by_keyword.equalsIgnoreCase("")) {
+                                        filterbykeywordtgl.setChecked(true);
                                     } else {
-                                        fbtgl.setChecked(false);
+                                        filterbykeywordtgl.setChecked(false);
+                                    }
+
+                                    if (!filter_by_date.equalsIgnoreCase("0") &&
+                                            !filter_by_date.equalsIgnoreCase("")) {
+                                        filterbydatetgl.setChecked(true);
+                                    } else {
+                                        filterbydatetgl.setChecked(false);
+                                    }
+
+                                    if (!vk.equalsIgnoreCase("0") &&
+                                            !vk.equalsIgnoreCase("")) {
+                                        vktgl.setChecked(true);
+                                    } else {
+                                        vktgl.setChecked(false);
+                                    }
+
+
+                                    if (!meetup.equalsIgnoreCase("0") &&
+                                            !meetup.equalsIgnoreCase("")) {
+                                        meetUpTgl.setChecked(true);
+                                    } else {
+                                        meetUpTgl.setChecked(false);
                                     }
 
                                     if (!twitter.equalsIgnoreCase("0") && !twitter.equalsIgnoreCase("")) {
@@ -384,9 +446,9 @@ public class FilterActivity extends FragmentActivity
 
                 break;
 
-            case R.id.fbtoggle:
+          /*  case R.id.fbtoggle:
 
-                break;
+                break;*/
             case R.id.twittertoggle:
 
                 break;
@@ -454,10 +516,15 @@ public class FilterActivity extends FragmentActivity
 
         {
             String _responseMain = "";
-            String fb = "";
+            String fb = "0";
             String tw = "";
             String yt = "";
             String insta = "";
+            String meetUp = "";
+            String vk = "";
+            String filter_by_keyword = "";
+            String filter_by_date = "";
+
             Uri.Builder builder;
 
             @Override
@@ -466,11 +533,11 @@ public class FilterActivity extends FragmentActivity
 
                 Constant.showLoader(FilterActivity.this);
 
-                if (fbtgl.isChecked()) {
+               /* if (fbtgl.isChecked()) {
                     fb = "1";
                 } else {
                     fb = "0";
-                }
+                }*/
                 if (twittertoggle.isChecked()) {
                     tw = "2";
                 } else {
@@ -482,9 +549,32 @@ public class FilterActivity extends FragmentActivity
                     insta = "0";
                 }
                 if (youtubetoggle.isChecked()) {
-                    yt = "3";
+                    yt = "4";
                 } else {
                     yt = "0";
+                }
+                if (meetUpTgl.isChecked()) {
+                    meetUp = "5";
+                } else {
+                    meetUp = "0";
+                }
+
+                if (vktgl.isChecked()) {
+                    vk = "6";
+                } else {
+                    vk = "0";
+                }
+
+                if (filterbykeywordtgl.isChecked()) {
+                    filter_by_keyword = "1";
+                } else {
+                    filter_by_keyword = "0";
+                }
+
+                if (filterbydatetgl.isChecked()) {
+                    filter_by_date = "1";
+                } else {
+                    filter_by_date = "0";
                 }
 
                 builder = new Uri.Builder()
@@ -493,6 +583,12 @@ public class FilterActivity extends FragmentActivity
                         .appendQueryParameter("twitter", tw)
                         .appendQueryParameter("instagram", insta)
                         .appendQueryParameter("youtube", yt)
+                        .appendQueryParameter("meetup", meetUp)
+                        .appendQueryParameter("vk", vk)
+                        .appendQueryParameter("filter_by_keyword", filter_by_keyword)
+                        .appendQueryParameter("filter_by_date", filter_by_date)
+                        .appendQueryParameter("start_date", start_date)
+                        .appendQueryParameter("end_date", end_date)
                 ;
             }
 
@@ -644,10 +740,44 @@ public class FilterActivity extends FragmentActivity
         // Show in the LOGCAT the selected Date and Time
         Log.v("FILTER ACTIVITY: ", "Date and Time selected: " + mDateTime.getDateString());
 
-        if (isDate){
+        if (isDate) {
+
+
             Sdatetime.setText(mDateTime.getDateString());
-        }else if (isTime){
+
+            String inputPattern = "dd MMMM yyyy hh:mm a";
+            String outputPattern = "yyyy-MM-dd hh:mm:ss";
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+            SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+            Date mdate = null;
+            String str = null;
+
+            try {
+                mdate = inputFormat.parse(mDateTime.getDateString());
+                start_date = outputFormat.format(mdate);
+                System.out.println("Final DAte : in New format : " + start_date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else if (isTime) {
+
             Edatetime.setText(mDateTime.getDateString());
+            String inputPattern = "dd MMMM yyyy hh:mm a";
+            String outputPattern = "yyyy-MM-dd hh:mm:ss";
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+            SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+            Date mdate = null;
+            String str = null;
+
+            try {
+                mdate = inputFormat.parse(mDateTime.getDateString());
+                end_date = outputFormat.format(mdate);
+                System.out.println("Final DAte : in New format : " + end_date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
     }

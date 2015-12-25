@@ -50,7 +50,6 @@ public class ChangePassword extends Activity implements View.OnClickListener {
     @Bind(R.id.user_img_iv)
     ImageView user_img_iv;
 
-
     @Bind(R.id.current_pass_info_tv)
     TextView current_pass_info_tv;
 
@@ -177,6 +176,8 @@ public class ChangePassword extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+        Constant.hideKeyBoard(ChangePassword.this);
         switch (v.getId()) {
             case R.id.user_img_iv:
                 break;
@@ -357,6 +358,9 @@ public class ChangePassword extends Activity implements View.OnClickListener {
             isValid = false;
         } else if (!newPass.equals(confirmPass)) {
             Constant.showToast(getResources().getString(R.string.passwordNotMatch), ChangePassword.this);
+            isValid = false;
+        }else if (currentPass.equals(newPass)) {
+            Constant.showToast(getResources().getString(R.string.currentAndNewPssNotSame), ChangePassword.this);
             isValid = false;
         } else {
             isValid = true;

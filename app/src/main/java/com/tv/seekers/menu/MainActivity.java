@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.snappydb.DB;
+import com.snappydb.DBFactory;
+import com.snappydb.SnappyDB;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.constant.Constant;
@@ -98,9 +101,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
 
+
+
+
         // display the first navigation drawer view on app launch
         displayView(3, false);
     }
+
 
     @Override
     public void onBackPressed() {

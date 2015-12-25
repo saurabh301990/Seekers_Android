@@ -48,6 +48,8 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
+import com.snappydb.DB;
+import com.snappydb.DBFactory;
 import com.tv.seekers.R;
 import com.tv.seekers.adapter.LandingAdapter;
 import com.tv.seekers.adapter.MyAreaAdapter;
@@ -120,6 +122,9 @@ public class MyAreasFrag extends Fragment implements
     GoogleApiClient mGoogleApiClient;
     FragmentActivity activity = null;
 
+    //todo DataBase
+    DB mDataBase;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -150,12 +155,103 @@ public class MyAreasFrag extends Fragment implements
         user_id = sPref.getString("id", "");
 
         setFont();
+        creatingDB();
         activity = getActivity();
 
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callsavedLocationWS();
         } else {
+            try {
+                JSONArray user_locations = mDataBase.getObject("user_locations", JSONArray.class);
+                System.out.println("JSON ARRAY length : " + user_locations.length());
+
+                if (user_locations.length() > 0) {
+                    if (myAreasList.size() > 0) {
+                        myAreasList.clear();
+                    }
+                    if (isDrawOption) {
+                        MyAreasBean beanDemo = new MyAreasBean();
+                        beanDemo.setLoc_name("");
+                        beanDemo.setLoc_add("");
+                        myAreasList.add(beanDemo);
+                    }
+
+
+                    for (int i = 0; i < user_locations.length(); i++) {
+                        JSONObject jsonobj = user_locations.getJSONObject(i);
+                        String loc_name = jsonobj.getString("loc_name");
+                        String loc_address = jsonobj.getString("loc_address");
+                        String userlat = jsonobj.getString("loc_lat");
+                        String userlong = jsonobj.getString("loc_long");
+                        String loc_radius = jsonobj.getString("loc_radius");
+                        String id = jsonobj.getString("id");
+                        String loc_image = jsonobj.getString("loc_image");
+
+                        MyAreasBean bean = new MyAreasBean();
+                        bean.setLoc_name(loc_name);
+                        bean.setLoc_add(loc_address);
+                        bean.set_lat(userlat);
+                        bean.set_long(userlong);
+                        bean.setId(id);
+                        bean.setImg_url(loc_image);
+
+
+                        myAreasList.add(bean);
+
+
+                    }
+
+                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity(), isDrawOption);
+                    my_area_grid.setAdapter(areasAdapter);
+
+                    /** Setting data for Auto Complete
+                     *
+                     */
+
+                                   /* AreaAdapterAutoComplete adapter = new AreaAdapterAutoComplete(getActivity(),
+                                            R.layout.landing_resource_row, R.id.listtext, myAreasList);
+                                    search_et.setAdapter(adapter);*/
+
+                    // Each row in the list stores country name, currency and flag
+                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                    for (int i = 0; i < myAreasList.size(); i++) {
+                        HashMap<String, String> hm = new HashMap<String, String>();
+                        MyAreasBean bean = myAreasList.get(i);
+                        hm.put("loc", bean.getLoc_name());
+                        aList.add(hm);
+                    }
+
+                    String[] from = {"loc"};
+                    int[] to = {R.id.listtext};
+                    // Instantiating an adapter to store each items
+                    // R.layout.listview_layout defines the layout of each item
+                    SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+                            aList, R.layout.landing_resource_row, from, to) {
+                    };
+                                   /*     @Override
+                                        public View getView(int position, View convertView, ViewGroup parent) {
+                                            View v = super.getView(position, convertView, parent);
+
+                                            TextView _tvData = (TextView) v.findViewById(R.id.listtext);
+                                            Constant.setFont(getActivity(), _tvData, 0);
+
+
+                                            return v;
+                                        }
+                                    };*//*
+
+
+                                    *//** Setting the adapter to the listView */
+                    search_et.setAdapter(adapter);
+
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
 
@@ -1294,6 +1390,9 @@ public class MyAreasFrag extends Fragment implements
                             if (jsonObject.has("user_locations")) {
 
                                 JSONArray user_locations = jsonObject.getJSONArray("user_locations");
+                                if (mDataBase.isOpen()) {
+                                    mDataBase.put("user_locations", user_locations);
+                                }
                                 if (user_locations.length() > 0) {
                                     if (myAreasList.size() > 0) {
                                         myAreasList.clear();
@@ -1400,6 +1499,17 @@ public class MyAreasFrag extends Fragment implements
         }
 
     }
+
+    private void creatingDB() {
+        try {
+             mDataBase = DBFactory.open(getActivity(), "SeekersDB");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 
     @Override

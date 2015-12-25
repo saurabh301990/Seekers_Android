@@ -99,7 +99,9 @@
                         android:id="@+id/txtfilterbydate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.7"
+                        android:gravity="center_vertical"
                         android:paddingLeft="5dp"
                         android:text="@string/filterbydate"
                         android:textSize="15sp" />
@@ -141,7 +143,9 @@
                         android:id="@+id/txtstartdate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
+                        android:gravity="center_vertical"
                         android:paddingLeft="5dp"
                         android:text="@string/startdate"
                         android:textSize="15sp" />
@@ -150,8 +154,10 @@
                         android:id="@+id/txtSdatetime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.9"
                         android:gravity="right"
+
                         android:text="25 October 2015 05:00 AM"
                         android:textSize="15sp" />
 
@@ -176,7 +182,9 @@
                         android:id="@+id/txtenddate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="1"
+                        android:gravity="center_vertical"
                         android:paddingLeft="5dp"
                         android:text="@string/enddate"
                         android:textSize="15sp" />
@@ -185,7 +193,9 @@
                         android:id="@+id/txtEdatetime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.9"
+
                         android:gravity="right"
                         android:text="25 October 2015 05:00 AM"
                         android:textSize="15sp" />
@@ -205,6 +215,8 @@
                     android:id="@+id/txtnetwork"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:padding="5dp"
                     android:text="@string/networktext"
                     android:textColor="#ffffff"
@@ -231,20 +243,25 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginLeft="5dp"
-                        android:background="@mipmap/fb_icon" />
+                        android:background="@mipmap/meetup_icon_fltr"
+                        android:gravity="center_vertical" />
 
                     <TextView
                         android:id="@+id/fbtext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
-                        android:text="@string/fbtext"
+
+                        android:text="@string/meetUpText"
                         android:textSize="15sp" />
 
                     <ToggleButton
-                        android:id="@+id/fbtoggle"
+                        android:id="@+id/meetUpTgl"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -278,7 +295,9 @@
                         android:id="@+id/twittertxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/twittertext"
                         android:textSize="15sp" />
@@ -317,7 +336,9 @@
                         android:id="@+id/youtubetxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/youtubetext"
                         android:textSize="15sp" />
@@ -357,7 +378,9 @@
                         android:id="@+id/instatext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/Instatext"
                         android:textSize="15sp" />
@@ -398,7 +421,9 @@
                         android:id="@+id/flickrtext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/flicktext"
                         android:textSize="15sp" />
@@ -425,7 +450,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -466,7 +492,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -479,7 +506,9 @@
                         android:id="@+id/vinetxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/vinetext"
                         android:textSize="15sp" />
@@ -519,7 +548,9 @@
                         android:id="@+id/vktext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_weight="0.5"
+                        android:gravity="center_vertical"
                         android:paddingLeft="2dp"
                         android:text="@string/vktext"
                         android:textSize="15sp" />
@@ -546,7 +577,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="wrap_content"

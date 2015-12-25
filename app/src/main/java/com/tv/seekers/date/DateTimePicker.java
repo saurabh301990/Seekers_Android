@@ -54,6 +54,7 @@ public class DateTimePicker extends DialogFragment {
         Bundle mBundle = new Bundle();
         mBundle.putCharSequence(KEY_DIALOG_TITLE, dialogTitle);
         mBundle.putSerializable(KEY_INIT_DATE, initDate);
+
         mDateTimePicker.setArguments(mBundle);
         // Return instance with arguments
         return mDateTimePicker;
@@ -100,6 +101,7 @@ public class DateTimePicker extends DialogFragment {
         mTabHost.addTab(mTimeTab);
         // Retrieve Date from Arguments sent to the Dialog
         DateTime mDateTime = new DateTime((Date) mArgument.getSerializable(KEY_INIT_DATE));
+
         // Initialize Date and Time Pickers
         mDatePicker = (DatePicker) mView.findViewById(R.id.date_picker);
         mTimePicker = (TimePicker) mView.findViewById(R.id.time_picker);
@@ -107,6 +109,11 @@ public class DateTimePicker extends DialogFragment {
                 mDateTime.getDayOfMonth(), null);
         mTimePicker.setCurrentHour(mDateTime.getHourOfDay());
         mTimePicker.setCurrentMinute(mDateTime.getMinuteOfHour());
+
+
+
+        mDatePicker.setMaxDate(System.currentTimeMillis());
+
         // Return created view
         return mView;
     }

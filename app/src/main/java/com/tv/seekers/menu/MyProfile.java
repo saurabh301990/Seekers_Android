@@ -12,10 +12,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,6 +59,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -106,6 +109,8 @@ public class MyProfile extends Fragment {
     public void sav_prof_iv(View view) {
 
         if (validData()) {
+            editor.putBoolean("ISAGREED", true);
+            editor.commit();
             if (isImgChoosed) {
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                     isImgChoosed = false;
@@ -124,6 +129,7 @@ public class MyProfile extends Fragment {
         }
 
     }
+
 
     private void callSaveWSOnlyParam() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
@@ -156,6 +162,8 @@ public class MyProfile extends Fragment {
                         urlConnection.setChunkedStreamingMode(1024);
                         urlConnection.setRequestMethod("POST");
                         urlConnection.setReadTimeout(30 * 1000);
+
+//                        urlConnection.setRequestProperty("Content-Type","application/json");
                         urlConnection.connect();
 
                         //Write
@@ -202,15 +210,18 @@ public class MyProfile extends Fragment {
                         int status = _JsonObject.getInt("status");
                         if (status == 1) {
                             Constant.showToast(_JsonObject.getString("message"), getActivity());
+                            name_et.setFocusable(false);
+                            name_et.setFocusableInTouchMode(false);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Constant.showToast("Server Error ", getActivity());
                         Constant.hideLoader();
+                        Constant.showToast("Server Error ", getActivity());
+
                     }
                 } else {
-                    Constant.showToast("Server Error ", getActivity());
                     Constant.hideLoader();
+                    Constant.showToast("Server Error ", getActivity());
                 }
             }
         };
@@ -281,6 +292,8 @@ public class MyProfile extends Fragment {
 
     private static final int RESULT_LOAD_IMG = 1;
     private static final int TAKE_PHOTO_CODE = 0;
+    File sdImageMainDirectory;
+    Uri outputFileUri;
 
     private void selectCam() {
         final CharSequence[] options = {"Image From Camera", "Choose From Gallery", "Cancel"};
@@ -294,8 +307,17 @@ public class MyProfile extends Fragment {
             public void onClick(DialogInterface dialog, int item) {
 
                 if (options[item].equals("Image From Camera")) {
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+                    File root = new File(Environment
+                            .getExternalStorageDirectory()
+                            + File.separator + "SeekersImages" + File.separator);
+                    root.mkdirs();
+
+                    sdImageMainDirectory = new File(root, "SeekersProfilePicture_" + System.currentTimeMillis() + ".png");
+
+                    outputFileUri = Uri.fromFile(sdImageMainDirectory);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
                     startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
 
                 } else if (options[item].equals("Choose From Gallery")) {
@@ -320,6 +342,7 @@ public class MyProfile extends Fragment {
 
     @Bind(R.id.name_et)
     EditText name_et;
+    private boolean isEditOn = false;
 
     @Bind(R.id.emailInfo_tv)
     TextView emailInfo_tv;
@@ -367,11 +390,13 @@ public class MyProfile extends Fragment {
     private String user_id = "";
     private String name = "";
     private SharedPreferences sPref;
+    private SharedPreferences.Editor editor;
     private DisplayImageOptions options;
     com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
     private String imageURL = "";
     private String fileToUploadPath = "";
     private boolean isImgChoosed = false;
+    private boolean ISAGREED = false;
 
     @Nullable
     @Override
@@ -397,7 +422,18 @@ public class MyProfile extends Fragment {
 
 
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
         user_id = sPref.getString("id", "");
+        ISAGREED = sPref.getBoolean("ISAGREED", false);
+        if (ISAGREED) {
+            isChecked = true;
+            checkbox_terms.setBackgroundResource(R.mipmap.checked_box);
+
+        } else {
+            isChecked = false;
+            checkbox_terms.setBackgroundResource(R.mipmap.unchecked_box);
+        }
+
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callGetMyProfile();
@@ -417,6 +453,36 @@ public class MyProfile extends Fragment {
         menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
         menu.setVisibility(View.VISIBLE);
         MainActivity.drawerFragment.setDrawerState(true);
+
+
+        name_et.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (name_et.getRight() - name_et.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        // your action here
+
+//                        Constant.showToast("Clicked on Edit ICON.", getActivity());
+                        name_et.setFocusable(true);
+                        name_et.setFocusableInTouchMode(true);
+                        isEditOn = true;
+                        return true;
+                    } else {
+                        if (!isEditOn) {
+                            name_et.setFocusable(false);
+                            name_et.setFocusableInTouchMode(false);
+                        }
+
+                    }
+                }
+                return false;
+            }
+        });
         return view;
     }
 
@@ -629,6 +695,7 @@ public class MyProfile extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("onActivityResult Called For My Profile");
+//        Constant.showToast("onActivityResult Called", getActivity());
         try {
             // When an Image is picked
             if (requestCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK
@@ -656,12 +723,11 @@ public class MyProfile extends Fragment {
                 cursor.close();
 
 
-            } else if (requestCode == TAKE_PHOTO_CODE && resultCode == Activity.RESULT_OK
-                    && null != data) {
+            } else if (requestCode == TAKE_PHOTO_CODE && resultCode == Activity.RESULT_OK) {
                 // Get the Image from data
-
+//                Constant.showToast("onActivityResult Called Success", getActivity());
                 isImgChoosed = true;
-                Uri selectedImage = data.getData();
+                /*Uri selectedImage = outputFileUri;
                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
                 // Get the cursor
@@ -670,20 +736,25 @@ public class MyProfile extends Fragment {
                 // Move to first row
                 cursor.moveToFirst();
 
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                fileToUploadPath = cursor.getString(columnIndex);
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);*/
+//                fileToUploadPath = cursor.getString(columnIndex);
+                fileToUploadPath = outputFileUri.toString();
+
+                fileToUploadPath = fileToUploadPath.replace("file://", "");
+//                        "file://" + /storage/emulated/0/Rotate/11242015174423.jpg
                 System.out.println("File Path of Img From Camera : " + fileToUploadPath);
                 imageLoaderNew.displayImage("file://" + fileToUploadPath, user_img_iv,
                         options,
                         null);
 
-                cursor.close();
+//                cursor.close();
             } else {
                 isImgChoosed = false;
             }
         } catch (Exception e) {
             isImgChoosed = false;
-            Constant.showToast("Something went wrong", getActivity());
+
+            Constant.showToast("Something went wrong" , getActivity());
         }
 
 

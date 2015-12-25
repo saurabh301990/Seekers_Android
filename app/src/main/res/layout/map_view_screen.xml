@@ -13,9 +13,9 @@
         android:layout_height="wrap_content"
         android:background="@color/login_btn_bg_color"
         android:focusable="true"
-        android:visibility="gone"
         android:focusableInTouchMode="true"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/et_layout"
@@ -125,115 +125,127 @@
 
             </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/miles_btn_ll"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:layout_weight="5.6"
-                android:orientation="vertical">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/top_divider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="?android:listDivider"
-                    android:dividerPadding="2.5dp"
-                    android:orientation="horizontal"
-                    android:showDividers="middle"
-                    android:weightSum="4">
-
-                    <Button
-                        android:id="@+id/two_miles_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@android:color/white"
-                        android:text="@string/twoMiles"
-                        android:textAllCaps="false"
-
-                        android:textColor="@android:color/black" />
-
-                    <Button
-                        android:id="@+id/five_miles_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/miles_inactive_color"
-                        android:text="@string/fiveMiles"
-                        android:textAllCaps="false"
-                        android:textColor="#7e7e7e" />
-
-                    <Button
-                        android:id="@+id/ten_miles_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/miles_inactive_color"
-                        android:text="@string/tenMiles"
-                        android:textAllCaps="false"
-                        android:textColor="#7e7e7e" />
-
-                    <Button
-                        android:id="@+id/twenty_miles_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@color/miles_inactive_color"
-                        android:text="@string/twentyMiles"
-                        android:textAllCaps="false"
-                        android:textColor="#7e7e7e" />
-                </LinearLayout>
-
-
-            </LinearLayout>
         </LinearLayout>
 
 
     </RelativeLayout>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bottom_layout"
-        android:background="@mipmap/top_divider" />
-
     <LinearLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:layout_alignParentBottom="true"
-        android:divider="?android:listDivider"
-        android:dividerPadding="2.5dp"
-        android:orientation="horizontal"
-        android:showDividers="middle"
-        android:weightSum="2">
+        android:orientation="vertical">
 
-
-        <Button
-            android:id="@+id/map_btn"
+        <LinearLayout
+            android:id="@+id/miles_btn_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/white"
-            android:text="@string/mapText"
-            android:textAllCaps="false"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+            android:layout_gravity="bottom"
 
-        <Button
-            android:id="@+id/list_btn"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/top_divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="33dp"
+                android:divider="?android:listDivider"
+                android:dividerPadding="2.5dp"
+                android:orientation="horizontal"
+                android:showDividers="middle"
+                android:weightSum="4">
+
+                <Button
+                    android:id="@+id/two_miles_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    android:text="@string/twoMiles"
+                    android:textAllCaps="false"
+
+                    android:textColor="@android:color/black" />
+
+                <Button
+                    android:id="@+id/five_miles_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/miles_inactive_color"
+                    android:text="@string/fiveMiles"
+                    android:textAllCaps="false"
+                    android:textColor="#7e7e7e" />
+
+                <Button
+                    android:id="@+id/ten_miles_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/miles_inactive_color"
+                    android:text="@string/tenMiles"
+                    android:textAllCaps="false"
+                    android:textColor="#7e7e7e" />
+
+                <Button
+                    android:id="@+id/twenty_miles_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/miles_inactive_color"
+                    android:text="@string/twentyMiles"
+                    android:textAllCaps="false"
+                    android:textColor="#7e7e7e" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/miles_inactive_color"
-            android:text="@string/listText"
-            android:textAllCaps="false"
-            android:textColor="#7e7e7e"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content"
+
+            android:background="@mipmap/top_divider" />
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:divider="?android:listDivider"
+            android:dividerPadding="2.5dp"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/map_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/white"
+                android:text="@string/mapText"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/list_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/miles_inactive_color"
+                android:text="@string/listText"
+                android:textAllCaps="false"
+                android:textColor="#7e7e7e"
+                android:textSize="18sp" />
+        </LinearLayout>
     </LinearLayout>
+
+
 </RelativeLayout>

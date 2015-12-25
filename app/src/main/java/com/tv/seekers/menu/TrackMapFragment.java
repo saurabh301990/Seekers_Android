@@ -29,6 +29,7 @@ import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.utils.HttpConnection;
+import com.tv.seekers.utils.NetworkAvailablity;
 import com.tv.seekers.utils.PathJSONParser;
 
 import org.json.JSONObject;
@@ -185,23 +186,36 @@ public class TrackMapFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Initializing
-        markerPoints = new ArrayList<LatLng>();
-        markerPoints.add(0, LOWER_MANHATTAN);
-        markerPoints.add(1, BROOKLYN_BRIDGE);
-        markerPoints.add(2, WALL_STREET);
-        FragmentManager fm = getChildFragmentManager();
-        fragment = (SupportMapFragment) fm.findFragmentById(R.id.map_view);
-        if (fragment == null) {
-            fragment = SupportMapFragment.newInstance();
-            fm.beginTransaction().replace(R.id.map_view, fragment).commit();
+
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            // Initializing
+            markerPoints = new ArrayList<LatLng>();
+            markerPoints.add(0, LOWER_MANHATTAN);
+            markerPoints.add(1, BROOKLYN_BRIDGE);
+            markerPoints.add(2, WALL_STREET);
+            FragmentManager fm = getChildFragmentManager();
+            fragment = (SupportMapFragment) fm.findFragmentById(R.id.map_view);
+            if (fragment == null) {
+                fragment = SupportMapFragment.newInstance();
+                fm.beginTransaction().replace(R.id.map_view, fragment).commit();
+            }
+        } else {
+            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initMap();
+
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            initMap();
+        } else {
+            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+        }
+
+
     }
 
     private void initMap() {

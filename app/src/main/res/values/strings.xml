@@ -23,6 +23,7 @@
     <string name="enterNewPass">Please enter new password</string>
     <string name="enterConfirmPass">Please enter confirm password</string>
     <string name="passwordNotMatch">Password not matched.</string>
+    <string name="currentAndNewPssNotSame">Current and New password should not be same.</string>
 
 
     <!--Map View-->
@@ -70,6 +71,7 @@
     <string name="enddate">End Date</string>
     <string name="networktext">Network</string>
     <string name="fbtext">Facebook</string>
+    <string name="meetUpText">MeetUp</string>
     <string name="twittertext">Twitter</string>
     <string name="youtubetext">Youtube</string>
     <string name="Instatext">Instagram</string>
@@ -102,7 +104,7 @@
     <string name="upload_error">Error while uploading</string>
 
     <!--Forgot Password-->
-    <string name="forgotPassText">Forgot Password? No worry Enter your Registered Email to Receive further Instructions</string>
+    <string name="forgotPassText">Forgot Password? Enter your Registered Email to Receive further Instructions</string>
     <string name="submitText">Submit</string>
     <string name="backToLoginText">Back To Login</string>
     <string name="pleaseEnterEmail">Please enter email</string>

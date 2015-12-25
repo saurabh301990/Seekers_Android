@@ -55,7 +55,7 @@ import butterknife.ButterKnife;
 /**
  * Created by admin1 on 3/11/15.
  */
-public class MyKeyWords extends android.support.v4.app.Fragment implements View.OnClickListener{
+public class MyKeyWords extends android.support.v4.app.Fragment implements View.OnClickListener {
     SwipeMenuListView listview;
     List<MyKeywordsBean> rowItem;
     private SharedPreferences _sPrefs;
@@ -77,7 +77,7 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.my_keywords, container, false);
-        ButterKnife.bind(this, v)                                                                                               ;
+        ButterKnife.bind(this, v);
         Constant.setFont(getActivity(), _searchET, 0);
         _sPrefs = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         user_id = _sPrefs.getString("id", "");
@@ -125,14 +125,14 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
                 alertDialogBuilder
                         .setMessage("Are you sure ?")
                         .setCancelable(false)
-                        .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 MyKeywordsBean bean = rowItem.get(position);
-                                delete_keyword(bean.get_tglID(),position);
+                                delete_keyword(bean.get_tglID(), position);
                             }
                         })
-                        .setNegativeButton("No",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 // if this button is clicked, just close
                                 // the dialog box and do nothing
                                 dialog.cancel();
@@ -160,20 +160,26 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
         switch (v.getId()) {
             case R.id.addKeywords:
                 Constant.hideKeyBoard(getActivity());
-                if(!(_searchET.getText().toString().equalsIgnoreCase(""))){
-                    callSaveKeywordWS(_searchET.getText().toString());
+                if (!(_searchET.getText().toString().equalsIgnoreCase(""))) {
+
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        callSaveKeywordWS(_searchET.getText().toString());
+                    } else {
+                        Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                    }
+
                     // _searchET.setText("");
-                }else{
-                    Constant.showToast("Insert text",getActivity());
+                } else {
+                    Constant.showToast("Insert text", getActivity());
                 }
                 break;
             default:
                 break;
         }
     }
+
     private void callGetKeywordWS() {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-        {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             Uri.Builder builder;
 
@@ -255,15 +261,15 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
                     try {
                         JSONObject jo = new JSONObject(_responseMain);
                         String msg = jo.getString("message");
-                        if(msg.equalsIgnoreCase("success")){
+                        if (msg.equalsIgnoreCase("success")) {
                             JSONArray keyWordArray = jo.getJSONArray("user_keywords");
-                            for (int i=0;i<keyWordArray.length();i++){
-                               JSONObject kw = keyWordArray.getJSONObject(i);
+                            for (int i = 0; i < keyWordArray.length(); i++) {
+                                JSONObject kw = keyWordArray.getJSONObject(i);
                                 String keyW = kw.getString("keyword");
                                 String isActive = kw.getString("is_active");
                                 boolean _isA = (!isActive.equalsIgnoreCase("0"));
                                 String _ID = kw.getString("id");
-                                MyKeywordsBean rowItemC = new MyKeywordsBean(keyW,_isA,_ID);
+                                MyKeywordsBean rowItemC = new MyKeywordsBean(keyW, _isA, _ID);
                                 rowItem.add(rowItemC);
                             }
                             getActivity().runOnUiThread(new Runnable() {
@@ -294,8 +300,7 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
     }
 
     private void callSaveKeywordWS(final String keyword) {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-        {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             Uri.Builder builder;
 
@@ -379,7 +384,7 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
                     try {
                         JSONObject jo = new JSONObject(_responseMain);
                         String id = jo.getString("insert_id");
-                        MyKeywordsBean rowItemC = new MyKeywordsBean(keyword,false,id);
+                        MyKeywordsBean rowItemC = new MyKeywordsBean(keyword, false, id);
                         rowItem.add(rowItemC);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
@@ -405,8 +410,7 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
     }
 
     private void delete_keyword(final String kid, final int posi) {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-        {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             Uri.Builder builder;
 
