@@ -24,6 +24,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
+import com.tv.seekers.constant.Constant;
 
 import java.util.ArrayList;
 
@@ -80,6 +81,13 @@ public class ActivityReport extends Fragment{
         });
         return view;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
+
     private ArrayList<BarDataSet> getDataSet() {
         ArrayList<BarDataSet> dataSets = null;
 

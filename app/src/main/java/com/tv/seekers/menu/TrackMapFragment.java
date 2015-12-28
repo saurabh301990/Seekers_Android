@@ -379,8 +379,12 @@ public class TrackMapFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
     }
 }

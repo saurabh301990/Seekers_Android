@@ -182,7 +182,6 @@ public class MapView extends Fragment
     @Bind(R.id.map_btn)
     Button map_btn;
 
-
     @Bind(R.id.search_et)
     EditText search_et;
 
@@ -276,6 +275,7 @@ public class MapView extends Fragment
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        Constant.hideKeyBoard(getActivity());
     }
 
     private TextView header;
@@ -385,6 +385,8 @@ public class MapView extends Fragment
         listView_home.setXListViewListener(this);
         listView_home.setPullRefreshEnable(true);
         listView_home.setPullLoadEnable(false);
+
+//        listView_home.getFirstVisiblePosition();
 
         return view;
     }
@@ -938,4 +940,5 @@ public class MapView extends Fragment
         Toast.makeText(getActivity(), "Info window clicked",
                 Toast.LENGTH_SHORT).show();
     }
+
 }

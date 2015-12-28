@@ -31,10 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.Filter;
+
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -116,6 +113,7 @@ public class MyAreasFrag extends Fragment implements
     private double _long = 0.0;
     private String _address = "";
     private String input = "";
+    private TextView header;
 
     private int checkedCountTotal = 0;
     GPSTracker gps;
@@ -406,6 +404,12 @@ public class MyAreasFrag extends Fragment implements
                             parent.getAdapter().getItem(position);
                     String _locName = hm.get("description");
                     search_et.setText(_locName);
+
+                    if (_locName.length() > 0) {
+                        int lengthOfText = _locName.length();
+                        search_et.setSelection(lengthOfText);
+                    }
+
                     _address = search_et.getText().toString();
 
                     PlaceDetails mPlaceDetails = new PlaceDetails();
@@ -428,7 +432,14 @@ public class MyAreasFrag extends Fragment implements
 // TODO: 9/12/15 Checking first time or not.
         try {
             isDrawOption = getArguments().getBoolean("isDrawOption");
+            header = (TextView) getActivity().findViewById(R.id.hdr_title);
 
+
+            if (isDrawOption) {
+                header.setText("My Locations");
+            } else {
+                header.setText("Choose Location");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1502,14 +1513,13 @@ public class MyAreasFrag extends Fragment implements
 
     private void creatingDB() {
         try {
-             mDataBase = DBFactory.open(getActivity(), "SeekersDB");
+            mDataBase = DBFactory.open(getActivity(), "SeekersDB");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
 
 
     @Override
@@ -1557,5 +1567,11 @@ public class MyAreasFrag extends Fragment implements
 
 
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
     }
 }

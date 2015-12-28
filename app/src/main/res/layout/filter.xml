@@ -429,7 +429,7 @@
                         android:textSize="15sp" />
 
                     <ToggleButton
-                        android:id="@+id/filkertoggle"
+                        android:id="@+id/flikertoggle"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

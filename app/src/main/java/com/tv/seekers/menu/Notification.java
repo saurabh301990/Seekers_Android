@@ -23,9 +23,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by dheerendra on 4/11/15.
+ * Created by Shoeb on 4/11/15.
  */
 public class Notification extends Fragment {
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
 
     ArrayList<Notificationbean> notifydata = new ArrayList<Notificationbean>();
     Notificationbean notificationbean;

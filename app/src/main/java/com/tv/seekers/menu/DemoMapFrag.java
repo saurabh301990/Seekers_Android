@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,11 +25,16 @@ import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.tv.seekers.R;
+import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
+import com.tv.seekers.gpsservice.GPSTracker;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import butterknife.Bind;
@@ -41,12 +47,21 @@ public class DemoMapFrag extends Fragment {
     FrameLayout fram_map;
     Button btn_draw_State;
     Boolean Is_MAP_Moveable = false; // to detect map is movable
-    double latitude;
-    double longitude;
+    private double latitude = 0.0;
+    private double longitude = 0.0;
+    LatLng _latLong;
+    GPSTracker gps;
     private GoogleMap googleMap;
     CameraPosition cameraPosition;
     private SupportMapFragment fragment;
     HashSet<LatLng> val;
+    private ArrayList<HomeBean> mLatLongList = new ArrayList<HomeBean>();
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
 
     @Override
     public void onResume() {
@@ -69,14 +84,24 @@ public class DemoMapFrag extends Fragment {
             googleMap = fragment.getMap();
 //            googleMap.setMyLocationEnabled(false);
 
-            try {
+            gps = new GPSTracker(getActivity());
+            if (gps.canGetLocation()) {
+                latitude = gps.getLatitude();
+                longitude = gps.getLongitude();
+                if (!String.valueOf(latitude).equalsIgnoreCase("0.0") &&
+                        !String.valueOf(longitude).equalsIgnoreCase("0.0")) {
 
-//                mapWithZooming(12);
-
-
-            } catch (Exception e) {
-                System.out.println("exception " + e);
+                    _latLong = new LatLng(latitude, longitude);
+                    cameraPosition = new CameraPosition.Builder().target(_latLong)
+                            .zoom(13).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                } else {
+                    gps.showSettingsAlert();
+                }
+            } else {
+                gps.showSettingsAlert();
             }
+
 
         }
     }
@@ -139,7 +164,7 @@ public class DemoMapFrag extends Fragment {
 
             public boolean onTouch(View v, MotionEvent event) {
 
-                if (Is_MAP_Moveable){
+                if (Is_MAP_Moveable) {
                     float x = event.getX();
                     float y = event.getY();
 
@@ -153,8 +178,14 @@ public class DemoMapFrag extends Fragment {
                     latitude = latLng.latitude;
 
                     longitude = latLng.longitude;
+                    HomeBean bean = new HomeBean();
+                    bean.setPost_lat(String.valueOf(latitude));
+                    bean.setPost_long(String.valueOf(longitude));
+                    bean.setSource_id("3");
+                    mLatLongList.add(bean);
 
-                    System.out.println("LatLng : "+ latitude +" : "+ longitude);
+
+                    System.out.println("LatLng : " + latitude + " : " + longitude);
 
                     int eventaction = event.getAction();
                     switch (eventaction) {
@@ -174,19 +205,38 @@ public class DemoMapFrag extends Fragment {
                     }
 
                     if (Is_MAP_Moveable) {
+                        Log.e("DRAW on MAP : ", "LatLng ArrayList Size : " + mLatLongList.size());
                         return true;
 
                     } else {
                         return false;
                     }
+
+
                 } else {
                     return false;
                 }
+
 
             }
         });
 
         MainActivity.drawerFragment.setDrawerState(true);
+
+        if (mLatLongList.size() > 0) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+            for (int i = 0; i < mLatLongList.size(); i++) {
+                HomeBean bean = mLatLongList.get(i);
+                LatLng latLng = new LatLng(Double.parseDouble(bean.getPost_lat()), Double.parseDouble(bean.getPost_long()));
+                builder.include(latLng);
+
+            }
+
+            LatLngBounds bounds = builder.build();
+            bounds.getCenter();
+            Log.e("DRAW on MAP :  ", "Centre of LatLngs = " + bounds.getCenter());
+        }
         return view;
     }
 

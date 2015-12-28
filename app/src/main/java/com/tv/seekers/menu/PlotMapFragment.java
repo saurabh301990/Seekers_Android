@@ -32,6 +32,8 @@ import butterknife.ButterKnife;
  * Created by shoeb on 5/11/15.
  */
 public class PlotMapFragment extends Fragment {
+
+
     //map Related
     private GoogleMap googleMap;
     CameraPosition cameraPosition;
@@ -53,6 +55,7 @@ public class PlotMapFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        Constant.hideKeyBoard(getActivity());
     }
 
     public void setfont() {

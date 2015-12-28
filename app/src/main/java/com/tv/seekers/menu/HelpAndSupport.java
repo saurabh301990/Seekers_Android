@@ -33,6 +33,12 @@ import butterknife.ButterKnife;
  */
 public class HelpAndSupport extends Fragment {
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
+
     @Bind(R.id.web_view_helpsupport)
     WebView help_wv;
 

@@ -759,4 +759,10 @@ public class MyProfile extends Fragment {
 
 
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
 }

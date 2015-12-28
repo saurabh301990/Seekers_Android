@@ -40,6 +40,12 @@ import butterknife.ButterKnife;
  */
 public class LegalContent extends Fragment {
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
+
     @Bind(R.id.web_view_legal_content)
     WebView legal_wv;
 

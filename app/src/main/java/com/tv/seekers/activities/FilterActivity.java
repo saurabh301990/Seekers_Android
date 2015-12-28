@@ -130,7 +130,7 @@ public class FilterActivity extends FragmentActivity
     @Bind(R.id.instatoggle)
     ToggleButton instatgl;
 
-    @Bind(R.id.filkertoggle)
+    @Bind(R.id.flikertoggle)
     ToggleButton flickertgl;
 
     @Bind(R.id.tumbletoogle)
@@ -299,8 +299,9 @@ public class FilterActivity extends FragmentActivity
                                     String youtube = jsonObject1.getString("youtube");
                                     String meetup = jsonObject1.getString("meetup");
                                     String vk = jsonObject1.getString("vk");
-                                    String start_date = jsonObject1.getString("start_date");
-                                    String end_date = jsonObject1.getString("end_date");
+                                    String flickr = jsonObject1.getString("flickr");
+                                     start_date = jsonObject1.getString("start_date");
+                                     end_date = jsonObject1.getString("end_date");
                                     String filter_by_date = jsonObject1.getString("filter_by_date");
                                     String filter_by_keyword = jsonObject1.getString("filter_by_keyword");
 
@@ -342,6 +343,13 @@ public class FilterActivity extends FragmentActivity
                                         filterbydatetgl.setChecked(true);
                                     } else {
                                         filterbydatetgl.setChecked(false);
+                                    }
+
+                                    if (!flickr.equalsIgnoreCase("0") &&
+                                            !flickr.equalsIgnoreCase("")) {
+                                        flickertgl.setChecked(true);
+                                    } else {
+                                        flickertgl.setChecked(false);
                                     }
 
                                     if (!vk.equalsIgnoreCase("0") &&
@@ -389,10 +397,12 @@ public class FilterActivity extends FragmentActivity
                         e.printStackTrace();
 
                         Constant.hideLoader();
+                        Constant.showToast("Server Error ", FilterActivity.this);
                     }
                 } else {
 
                     Constant.hideLoader();
+                    Constant.showToast("Server Error ", FilterActivity.this);
                 }
             }
         };
@@ -458,7 +468,7 @@ public class FilterActivity extends FragmentActivity
             case R.id.instatoggle:
 
                 break;
-            case R.id.filkertoggle:
+            case R.id.flikertoggle:
 
                 break;
             case R.id.tumbletoogle:
@@ -522,6 +532,7 @@ public class FilterActivity extends FragmentActivity
             String insta = "";
             String meetUp = "";
             String vk = "";
+            String flicker = "";
             String filter_by_keyword = "";
             String filter_by_date = "";
 
@@ -565,6 +576,12 @@ public class FilterActivity extends FragmentActivity
                     vk = "0";
                 }
 
+                if (flickertgl.isChecked()) {
+                    flicker = "7";
+                } else {
+                    flicker = "0";
+                }
+
                 if (filterbykeywordtgl.isChecked()) {
                     filter_by_keyword = "1";
                 } else {
@@ -589,6 +606,7 @@ public class FilterActivity extends FragmentActivity
                         .appendQueryParameter("filter_by_date", filter_by_date)
                         .appendQueryParameter("start_date", start_date)
                         .appendQueryParameter("end_date", end_date)
+                        .appendQueryParameter("flickr", flicker)
                 ;
             }
 

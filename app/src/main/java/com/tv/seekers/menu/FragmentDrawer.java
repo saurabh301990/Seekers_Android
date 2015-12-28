@@ -31,6 +31,12 @@ import butterknife.ButterKnife;
 
 public class FragmentDrawer extends Fragment {
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
+
 
     @Bind(R.id.onlyMenu)
     TextView _onlyMenu;

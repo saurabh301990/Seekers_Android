@@ -34,6 +34,8 @@ import butterknife.ButterKnife;
  * Created by Saurabh on 4/11/15.
  */
 public class Track extends Fragment {
+
+
     @Nullable
     private ArrayList<TrackBean> userlist = new ArrayList<TrackBean>();
     TrackBean trackBean;
@@ -50,6 +52,7 @@ public class Track extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        Constant.hideKeyBoard(getActivity());
     }
 
     private TextView _header;

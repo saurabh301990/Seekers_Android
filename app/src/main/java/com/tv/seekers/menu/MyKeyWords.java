@@ -508,4 +508,10 @@ public class MyKeyWords extends android.support.v4.app.Fragment implements View.
             _Task.execute((String[]) null);
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Constant.hideKeyBoard(getActivity());
+    }
 }

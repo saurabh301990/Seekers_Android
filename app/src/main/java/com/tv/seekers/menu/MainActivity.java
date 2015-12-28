@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         finish();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 mBundle.putBoolean("isDrawOption", isDrawOption);
                 fragment.setArguments(mBundle);
 //                fragment = new Landing();
-                _header.setText("My Locations");
+                _header.setText("Choose Location");
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 4:
