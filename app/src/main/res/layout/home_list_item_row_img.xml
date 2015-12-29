@@ -52,7 +52,30 @@
 
                     android:layout_centerHorizontal="true"
                     android:src="@drawable/loader" />
+
             </RelativeLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/post_rl"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/clock_icon" />
+
+                <TextView
+                    android:id="@+id/date_time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+
+                    android:paddingLeft="3dp"
+                    android:paddingRight="5dp"
+                    android:text="2015-12-24 05:27:21" />
+            </LinearLayout>
 
 
         </RelativeLayout>

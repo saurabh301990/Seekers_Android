@@ -79,6 +79,7 @@ public class HomeListAdapter extends BaseAdapter {
         TextView tvUserType = null;
         TextView tvUserLocation = null;
         TextView tvUserPost = null;
+        TextView date_time_tv = null;
         ImageView userImage = null;
         ImageView userTypeImage = null;
         ImageView postImage = null;
@@ -125,6 +126,7 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
                 view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
                 view_holder.tvUserPost = (TextView) convertView.findViewById(R.id.userpostDescription_tv);
+                view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
 
@@ -134,6 +136,7 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
                 view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
                 view_holder.tvUserPost = (TextView) convertView.findViewById(R.id.userpostDescription_tv);
+                view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.postImage = (ImageView) convertView.findViewById(R.id.post_iv);
@@ -141,7 +144,7 @@ public class HomeListAdapter extends BaseAdapter {
                 convertView = context.getLayoutInflater().inflate(R.layout.home_list_item_row_img, null);
                 view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
                 view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
-
+                view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.postImage = (ImageView) convertView.findViewById(R.id.post_iv);
@@ -165,6 +168,9 @@ public class HomeListAdapter extends BaseAdapter {
         if (view_holder.tvUserPost != null) {
             view_holder.tvUserPost.setText(bean.getPost_text());
         }
+        if (view_holder.date_time_tv != null) {
+            view_holder.date_time_tv.setText(bean.getPost_time());
+        }
 
         if (bean.getSource().equalsIgnoreCase("Twitter")) {
             view_holder.userTypeImage.setImageResource(R.mipmap.twit_top_corner);
@@ -184,6 +190,7 @@ public class HomeListAdapter extends BaseAdapter {
         Constant.setFont(context, view_holder.tvUserType, 0);
         Constant.setFont(context, view_holder.tvUserLocation, 0);
         Constant.setFont(context, view_holder.tvUserPost, 0);
+        Constant.setFont(context, view_holder.date_time_tv, 0);
 
         try {
 

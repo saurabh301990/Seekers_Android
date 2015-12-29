@@ -66,9 +66,22 @@ public class CustomWindAdapter
 
 
         String snippet = marker.getSnippet();
-        System.out.println("User Img : " + snippet);
+        System.out.println("snippet : " + snippet);
+        String userImg = "";
+        String postId = "";
+        if (snippet.contains("&")){
+            String[] snippetWHole = snippet.split("&");
+            userImg= snippetWHole[0];
+            postId  =  snippetWHole[1];
 
-        imageLoaderNew.displayImage(snippet, imgView,
+        } else {
+            userImg = snippet;
+        }
+
+        System.out.println("User Img : " + userImg);
+        System.out.println("postId " + postId);
+
+        imageLoaderNew.displayImage(userImg, imgView,
                 options,
                 null);
 

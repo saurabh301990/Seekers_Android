@@ -391,10 +391,14 @@ public class MapView extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 final HomeBean bean = _mainList.get(position - 1);
-                if (bean.getType() == 2) {//TYPE_TEXT_IMG
+                Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                intentToTxtImg.putExtra("POSTID", bean.getPost_id());
+                startActivity(intentToTxtImg);
+              /*  if (bean.getType() == 2) {//TYPE_TEXT_IMG
                     Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                    intentToTxtImg.putExtra("POSTID", bean.getPost_id());
                     startActivity(intentToTxtImg);
-                }
+                }*/
 
             }
         });
@@ -564,6 +568,11 @@ public class MapView extends Fragment
                                         bean.setPost_text("");
                                     }
 
+                                    if (_jSubObject.has("post_id")) {
+                                        bean.setPost_id(_jSubObject.getString("post_id"));
+                                    } else {
+                                        bean.setPost_id("");
+                                    }
 
                                     if (_jSubObject.has("source")) {
                                         bean.setSource(_jSubObject.getString("source"));
@@ -624,6 +633,13 @@ public class MapView extends Fragment
                                     } else {
                                         bean.setPost_location("");
                                     }
+
+                                    if (_jSubObject.has("post_time")) {
+                                        bean.setPost_time(_jSubObject.getString("post_time"));
+                                    } else {
+                                        bean.setPost_time("");
+                                    }
+
 
                                     _mainList.add(bean);
 
@@ -843,9 +859,16 @@ public class MapView extends Fragment
                 } else {
                     userName = bean.getSource() + " User";
                 }
+                String postID = bean.getPost_id();
+                String snippet = "";
+                if (!postID.equalsIgnoreCase("")) {
+                    snippet = bean.getUser_image() + "&" + bean.getPost_id();
+                } else {
+                    snippet = bean.getUser_image();
+                }
                 googleMap.addMarker(new MarkerOptions().position(ll)
                         .title(userName)
-                        .snippet(bean.getUser_image())
+                        .snippet(snippet)
                         .icon(bitmapMarker));
 
             }
@@ -988,8 +1011,26 @@ public class MapView extends Fragment
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(getActivity(), "Info window clicked",
-                Toast.LENGTH_SHORT).show();
+
+
+        String snippet = marker.getSnippet();
+        System.out.println("snippet : " + snippet);
+        String userImg = "";
+        String postId = "";
+        if (snippet.contains("&")) {
+            String[] snippetWHole = snippet.split("&");
+            userImg = snippetWHole[0];
+            postId = snippetWHole[1];
+            System.out.println("postId " + postId);
+
+            Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+            intentToTxtImg.putExtra("POSTID", postId);
+            startActivity(intentToTxtImg);
+        } else {
+            Constant.showToast("Post not found.", getActivity());
+        }
+
+
     }
 
 }

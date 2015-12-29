@@ -29,6 +29,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/rl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -51,7 +52,7 @@
                         android:id="@+id/userType_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Facebook User"
+                        android:text=""
                         android:textSize="16sp" />
 
                     <TextView
@@ -59,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/userType_tv"
-                        android:text="Cafe Coffee Day"
+                        android:text=""
                         android:textSize="16sp" />
 
 
@@ -69,31 +70,65 @@
                     android:id="@+id/user_imgType_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:src="@mipmap/fb_icon_top_corner" />
+                    android:layout_alignParentRight="true" />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rl">
 
-                <ImageView
-                    android:id="@+id/post_iv"
+                <RelativeLayout
+                    android:id="@+id/post_rl"
                     android:layout_width="wrap_content"
-                    android:layout_height="300dp"
-
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/loader" />
+                    android:gravity="center">
+
+                    <ImageView
+
+                        android:id="@+id/post_iv"
+                        android:layout_width="240dp"
+                        android:layout_height="220dp"
+                        android:layout_centerHorizontal="true" />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/userpostDescription_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
-                    android:layout_below="@+id/post_iv"
+                    android:layout_below="@+id/post_rl"
+                    android:layout_marginLeft="50dp"
                     android:layout_marginTop="8dp"
-                    android:text="Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum,"
+
+
+                    android:paddingRight="5dp"
+
+                    android:text=""
                     android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/userpostDescription_tv"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/clock_icon" />
+
+                    <TextView
+                        android:id="@+id/date_time_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+
+                        android:paddingLeft="3dp"
+                        android:paddingRight="5dp"
+                        android:text="" />
+                </LinearLayout>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

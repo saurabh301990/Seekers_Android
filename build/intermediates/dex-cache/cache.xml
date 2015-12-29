@@ -58,18 +58,18 @@
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-40458e72091a04b7a0242437d1bddc19418f0676.jar" />
     </item>
     <item
-        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/8.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="993834cb17d07d51b92db89d2c330243592ebf77">
-        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-865a932e0a9d58adf82a13a0ad266d9e4de30d9b.jar" />
-    </item>
-    <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/8.1.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="325788a04b436a0bccbc5b4c54cf0f12ebdcbd2d">
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-faef6b9ec21010fce70f8543194bde11e9160559.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/8.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="993834cb17d07d51b92db89d2c330243592ebf77">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-865a932e0a9d58adf82a13a0ad266d9e4de30d9b.jar" />
     </item>
     <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/8.1.0/jars/classes.jar"
@@ -128,13 +128,6 @@
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-eced6f11943d3200d629731d4e3a9292a3dfe7d4.jar" />
     </item>
     <item
-        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/8.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="9cf8c0ef60847621c7ad00b4f78dbfc9daba4af2">
-        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-ab906be49e9485aeb3f51b241d3881a56b5a3d01.jar" />
-    </item>
-    <item
         jar="/home/shoeb/.gradle/caches/modules-2/files-2.1/com.esotericsoftware.kryo/kryo/2.24.0/c6b206e80cfd97e66a1364003724491c757b92f/kryo-2.24.0.jar"
         jumboMode="false"
         revision="23.0.1"
@@ -149,6 +142,13 @@
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-2ace1ba4bf17b55973023c48ae146599fad54e02.jar" />
     </item>
     <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/8.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="9cf8c0ef60847621c7ad00b4f78dbfc9daba4af2">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-ab906be49e9485aeb3f51b241d3881a56b5a3d01.jar" />
+    </item>
+    <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-measurement/8.1.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
@@ -156,18 +156,18 @@
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-657784a8daa6e31b3c42b96a7732cbd5f4b8de59.jar" />
     </item>
     <item
-        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/22.2.0/jars/libs/internal_impl-22.2.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="0632f06970823b7e3436f649bfa65b47035c91d0">
-        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-140f9a331b508e627efd7dc24eba44f00620c5fe.jar" />
-    </item>
-    <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appinvite/8.1.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="b92002cb2f0e11a226ac5bac6dff1dc2a9d0b774">
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-de42269a04523e3b826c2fc4a8db983c7ae8b70b.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/22.2.0/jars/libs/internal_impl-22.2.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="0632f06970823b7e3436f649bfa65b47035c91d0">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-140f9a331b508e627efd7dc24eba44f00620c5fe.jar" />
     </item>
     <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars/classes.jar"
@@ -233,18 +233,18 @@
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-0aac54f403a5aef3854edce9e167f1abc330315d.jar" />
     </item>
     <item
-        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/libs/mpandroidchartlibrary-2-1-6.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="3f8beaf2f9b5357717e0b1ef9f6820e517784ea1">
-        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/mpandroidchartlibrary-2-1-6-3a6189ff3e28d5ed60da9c30692b8cf75948071f.jar" />
-    </item>
-    <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.android.support/mediarouter-v7/22.2.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="dcf8c83c3dead00a6c4fe313e95f7aaca20dc641">
         <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/classes-4e2b79570f2d14f8cb266f17ddeb8af4ed640850.jar" />
+    </item>
+    <item
+        jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/libs/mpandroidchartlibrary-2-1-6.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3f8beaf2f9b5357717e0b1ef9f6820e517784ea1">
+        <dex dex="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/pre-dexed/debug/mpandroidchartlibrary-2-1-6-3a6189ff3e28d5ed60da9c30692b8cf75948071f.jar" />
     </item>
     <item
         jar="/home/shoeb/Desktop/back_up_of_D_Drive/Shoeb_D_drive/Seeker_App/seekers_ws_1_nov/SeekersApp3/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/8.1.0/jars/classes.jar"
