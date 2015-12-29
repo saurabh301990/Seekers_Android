@@ -126,4 +126,7 @@
 
     <!--My Areas-->
     <string name="locationAlreadySavedText">Location already saved.</string>
+
+    <!--Post Details Screen-->
+    <string name="postText">Post</string>
 </resources>

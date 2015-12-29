@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 
 /**
@@ -20,12 +23,24 @@ import com.tv.seekers.R;
 public class CustomWindAdapter
         implements GoogleMap.InfoWindowAdapter {
 
-    private  View mWindow;
+    private View mWindow;
     private Activity mContext;
+    private DisplayImageOptions options;
+    com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
     public CustomWindAdapter(Activity context) {
         this.mContext = context;
         mWindow = mContext.getLayoutInflater().inflate(R.layout.custom_info_window, null);
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(mContext));
+        imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+
+        options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.user)
+                .showImageForEmptyUri(R.mipmap.user)
+                .showImageOnFail(R.mipmap.user)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true).build();
 
     }
 
@@ -44,15 +59,23 @@ public class CustomWindAdapter
     }
 
     private void render(Marker marker, View view) {
+        System.out.println("render Called");
 
-        ImageView imgView = (ImageView)view.findViewById(R.id.badge);
-        imgView.setImageResource(R.mipmap.user);
+        ImageView imgView = (ImageView) view.findViewById(R.id.badge);
+//        imgView.setImageResource(R.mipmap.user);
 
+
+        String snippet = marker.getSnippet();
+        System.out.println("User Img : " + snippet);
+
+        imageLoaderNew.displayImage(snippet, imgView,
+                options,
+                null);
 
 
         String title = marker.getTitle();
         TextView titleUi = ((TextView) view.findViewById(R.id.title));
-        if (title != null) {
+        if (title != null && !title.equalsIgnoreCase("")) {
             // Spannable string allows us to edit the formatting of the text.
             SpannableString titleText = new SpannableString(title);
             titleText.setSpan(new ForegroundColorSpan(Color.BLACK), 0, titleText.length(), 0);
@@ -61,7 +84,7 @@ public class CustomWindAdapter
             titleUi.setText("");
         }
 
-        String snippet = marker.getSnippet();
+        /*String snippet = marker.getSnippet();
         TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
         if (snippet != null && snippet.length() > 12) {
             SpannableString snippetText = new SpannableString(snippet);
@@ -70,7 +93,7 @@ public class CustomWindAdapter
             snippetUi.setText(snippetText);
         } else {
             snippetUi.setText("");
-        }
+        }*/
     }
 
 }

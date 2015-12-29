@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -51,6 +52,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.AddFollowedActivity;
 import com.tv.seekers.activities.FilterActivity;
+import com.tv.seekers.activities.PostDetailsTextImg;
 import com.tv.seekers.adapter.CustomWindAdapter;
 import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.adapter.LandingAdapter;
@@ -348,7 +350,7 @@ public class MapView extends Fragment
         et_layout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                System.out.println("setOnTouchListener ");
+//                System.out.println("setOnTouchListener ");
                 search_et.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().
                         getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -385,6 +387,17 @@ public class MapView extends Fragment
         listView_home.setXListViewListener(this);
         listView_home.setPullRefreshEnable(true);
         listView_home.setPullLoadEnable(false);
+        listView_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                final HomeBean bean = _mainList.get(position - 1);
+                if (bean.getType() == 2) {//TYPE_TEXT_IMG
+                    Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                    startActivity(intentToTxtImg);
+                }
+
+            }
+        });
 
 //        listView_home.getFirstVisiblePosition();
 
@@ -579,6 +592,37 @@ public class MapView extends Fragment
                                         bean.setSource_id(_jSubObject.getString("source_id"));
                                     } else {
                                         bean.setSource_id("");
+                                    }
+
+                                    if (_jSubObject.has("view_type")) {
+                                        bean.setView_type(_jSubObject.getString("view_type"));
+                                        if (_jSubObject.getString("view_type").equalsIgnoreCase("T")) {
+                                            bean.setType(1);
+                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("TI")) {
+                                            bean.setType(2);
+                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("I")) {
+                                            bean.setType(3);
+                                        } else {
+                                            bean.setType(0);
+                                        }
+                                        /*else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")){
+                                            bean.setType(3);
+                                        }*/
+
+                                    } else {
+                                        bean.setView_type("");
+                                    }
+
+                                    if (_jSubObject.has("post_image")) {
+                                        bean.setPost_image(_jSubObject.getString("post_image"));
+                                    } else {
+                                        bean.setPost_image("");
+                                    }
+
+                                    if (_jSubObject.has("post_location")) {
+                                        bean.setPost_location(_jSubObject.getString("post_location"));
+                                    } else {
+                                        bean.setPost_location("");
                                     }
 
                                     _mainList.add(bean);
@@ -790,17 +834,24 @@ public class MapView extends Fragment
                     bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                 }
 
-
 //                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                 // Setting an info window adapter allows us to change the both the contents and look of the
-                // info window.
-                googleMap.setInfoWindowAdapter(new CustomWindAdapter(getActivity()));
+
+                String userName = "";
+                if (!bean.getUser_name().equalsIgnoreCase("")) {
+                    userName = bean.getUser_name();
+                } else {
+                    userName = bean.getSource() + " User";
+                }
                 googleMap.addMarker(new MarkerOptions().position(ll)
-                        .title("UserName")
-                        .snippet("Snippet")
+                        .title(userName)
+                        .snippet(bean.getUser_image())
                         .icon(bitmapMarker));
 
             }
+
+            // info window.
+            googleMap.setInfoWindowAdapter(new CustomWindAdapter(getActivity()));
         }
 
 

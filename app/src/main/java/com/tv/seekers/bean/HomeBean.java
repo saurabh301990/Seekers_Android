@@ -37,6 +37,25 @@ public class HomeBean {
     String is_active = "";
     String firstname = "";
     String lastname = "";
+    String view_type = "";
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    int  type = 0;
+
+    public String getView_type() {
+        return view_type;
+    }
+
+    public void setView_type(String view_type) {
+        this.view_type = view_type;
+    }
 
     public String getId() {
         return id;

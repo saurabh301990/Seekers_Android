@@ -52,8 +52,8 @@
         <activity
             android:name=".menu.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/MyMaterialTheme" />
+            android:theme="@style/MyMaterialTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".activities.ChangePassword"
@@ -79,6 +79,11 @@
 
         <activity
             android:name=".activities.TermsAndConditions"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyMaterialTheme" />
+
+        <activity
+            android:name=".activities.PostDetailsTextImg"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
 

@@ -27,8 +27,10 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
@@ -36,6 +38,7 @@ import com.tv.seekers.gpsservice.GPSTracker;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -187,20 +190,31 @@ public class DemoMapFrag extends Fragment {
 
                     System.out.println("LatLng : " + latitude + " : " + longitude);
 
+                    LatLng point = new LatLng(latitude, longitude);
+
                     int eventaction = event.getAction();
                     switch (eventaction) {
                         case MotionEvent.ACTION_DOWN:
                             // finger touches the screen
 
-                            val.add(new LatLng(latitude, longitude));
+//                            System.out.println("ACTION_DOWN");
+
+//                            val.add(new LatLng(latitude, longitude));
 
                         case MotionEvent.ACTION_MOVE:
                             // finger moves on the screen
+//                            System.out.println("ACTION_MOVE");
                             val.add(new LatLng(latitude, longitude));
 
                         case MotionEvent.ACTION_UP:
+
+                            System.out.println("ACTION_UP");
+
                             // finger leaves the screen
+
                             Draw_Map();
+                            break;
+                        default:
                             break;
                     }
 
@@ -261,8 +275,11 @@ public class DemoMapFrag extends Fragment {
         PolygonOptions rectOptions = new PolygonOptions();
         rectOptions.addAll(val);
         rectOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
-        rectOptions.strokeWidth(7);
-        rectOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+        rectOptions.strokeWidth(20);
+//        rectOptions.fillColor(Color.BLUE);
         polygon = googleMap.addPolygon(rectOptions);
+
     }
+
+
 }
