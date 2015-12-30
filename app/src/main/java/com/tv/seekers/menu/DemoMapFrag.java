@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.SphericalUtil;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
@@ -251,7 +252,19 @@ public class DemoMapFrag extends Fragment {
             bounds.getCenter();
             Log.e("DRAW on MAP :  ", "Centre of LatLngs = " + bounds.getCenter());
         }
+
+
+        // TODO: 30/12/15 Getting the way points  between 2 latLngs.
+        LatLng from = new LatLng(22.719569, 75.857726);
+        LatLng to = new LatLng(22.727009, 75.880990);
+        LatLng wayPoints = allWayPoints(from, to);
+        Log.e("DEMO MAP : ", "WAYPOINTS  :" + wayPoints);
         return view;
+    }
+
+    private LatLng allWayPoints(LatLng from, LatLng to) {
+
+        return SphericalUtil.interpolate(from, to, 2);
     }
 
 

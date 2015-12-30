@@ -611,8 +611,8 @@ public class MapView extends Fragment
                                             bean.setType(2);
                                         } else if (_jSubObject.getString("view_type").equalsIgnoreCase("I")) {
                                             bean.setType(3);
-                                        } else {
-                                            bean.setType(0);
+                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")) {
+                                            bean.setType(4);
                                         }
                                         /*else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")){
                                             bean.setType(3);
@@ -638,6 +638,12 @@ public class MapView extends Fragment
                                         bean.setPost_time(_jSubObject.getString("post_time"));
                                     } else {
                                         bean.setPost_time("");
+                                    }
+
+                                    if (_jSubObject.has("post_video")) {
+                                        bean.setPost_video(_jSubObject.getString("post_video"));
+                                    } else {
+                                        bean.setPost_video("");
                                     }
 
 

@@ -36,21 +36,27 @@
                 android:text="Cafe Coffee Day" />
 
 
-            <TextView
-                android:id="@+id/userpostDescription_tv"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/post_rl"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/userLocation_tv"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:text="Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum," />
+                android:gravity="center">
+
+                <VideoView
+                    android:id="@+id/post_vid"
+                    android:layout_width="220dp"
+                    android:layout_height="200dp"
+                    android:layout_centerHorizontal="true" />
+
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@+id/userpostDescription_tv"
+                android:layout_below="@+id/post_rl"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -63,12 +69,12 @@
                     android:id="@+id/date_time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
-
                     android:paddingLeft="3dp"
                     android:paddingRight="5dp"
                     android:text="2015-12-24 05:27:21" />
             </LinearLayout>
+
+
         </RelativeLayout>
 
         <ImageView

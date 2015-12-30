@@ -1,12 +1,15 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -23,10 +26,11 @@ import java.util.ArrayList;
  */
 public class HomeListAdapter extends BaseAdapter {
     private ArrayList<HomeBean> list = new ArrayList<HomeBean>();
-    Activity context;
+    private Activity context;
     private DisplayImageOptions optionsUser;
     private DisplayImageOptions optionsPostImg;
-    com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
+    private com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
+    private MediaController mMediaController;
 
 
     public HomeListAdapter(ArrayList<HomeBean> dataList, Activity context) {
@@ -56,6 +60,8 @@ public class HomeListAdapter extends BaseAdapter {
 //                .displayer(new CircleBitmapDisplayer())
                         //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                 .build();
+
+        mMediaController = new MediaController(context);
     }
 
     @Override
@@ -83,6 +89,7 @@ public class HomeListAdapter extends BaseAdapter {
         ImageView userImage = null;
         ImageView userTypeImage = null;
         ImageView postImage = null;
+        VideoView videoView = null;
 
 
     }
@@ -95,7 +102,7 @@ public class HomeListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -148,6 +155,14 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.postImage = (ImageView) convertView.findViewById(R.id.post_iv);
+            } else if (listViewItemType == TYPE_VID) {
+                convertView = context.getLayoutInflater().inflate(R.layout.home_list_item_row_vid, null);
+                view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
+                view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
+                view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
+                view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
+                view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
+                view_holder.videoView = (VideoView) convertView.findViewById(R.id.post_vid);
             }
 
 
@@ -192,6 +207,8 @@ public class HomeListAdapter extends BaseAdapter {
         Constant.setFont(context, view_holder.tvUserPost, 0);
         Constant.setFont(context, view_holder.date_time_tv, 0);
 
+
+
         try {
 
             if (listViewItemType == TYPE_TEXT_IMG) {
@@ -211,6 +228,14 @@ public class HomeListAdapter extends BaseAdapter {
                             null);
                 } else {
                     Log.e("HOME ADAPTER ", "Img Loader for Post Image. NULL");
+                }
+            } else if (listViewItemType == TYPE_VID){
+                if (view_holder.videoView != null) {
+                    // TODO: 30/12/15 Play Video Here
+
+                    Uri vidUri = Uri.parse(Constant.YOUTUBELINK + bean.getPost_video());
+                    view_holder.videoView.setVideoURI(vidUri);
+                    view_holder.videoView.setMediaController(mMediaController);
                 }
             }
 

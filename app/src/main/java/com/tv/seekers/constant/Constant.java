@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
  * Created by shoeb on 2/11/15.
  */
 public class Constant {
+
+    public static final String YOUTUBELINK = "https://www.youtube.com/watch?v=";
     public static Dialog dialog;
 
     ///////// key board hide
