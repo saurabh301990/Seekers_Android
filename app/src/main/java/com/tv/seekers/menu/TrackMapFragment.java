@@ -133,6 +133,7 @@ public class TrackMapFragment extends Fragment {
         View view = inflater.inflate(R.layout.track_map_screen, container, false);
 
         ButterKnife.bind(this, view);
+//        ErrorReporter.getInstance().Init(getActivity());
         setfont();
 
 
@@ -165,22 +166,25 @@ public class TrackMapFragment extends Fragment {
         if (_mainList.size() > 0) {
             _mainList.clear();
         }
-        for (int i = 0; i < 3; i++) {
+        /*for (int i = 0; i < 3; i++) {
 
             HomeBean bean = new HomeBean();
             bean.setPost_lat("");
             bean.setPost_long("");
             bean.setPost_text("Feeling Awesome");
-            bean.setSource("Twitter");
+            bean.setSource("FLIKER");
             bean.setUser_address("North Lois Avenue, Tampa ");
             bean.setUser_image("http://cs629312.vk.me/v629312246/180c9/8KDEIk0KsK4.jpg");
             bean.setUser_name("John");
             bean.setSource_id("");
+            bean.setPost_time("15-feb-2016");
+            bean.setType(1);
+            bean.setPost_location("US");
             _mainList.add(bean);
 
         }
         adapterList = new HomeListAdapter(_mainList, getActivity());
-        list.setAdapter(adapterList);
+        list.setAdapter(adapterList);*/
     }
 
     @Override

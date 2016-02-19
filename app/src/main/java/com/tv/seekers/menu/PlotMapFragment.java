@@ -16,11 +16,9 @@ import android.widget.FrameLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.gpsservice.GPSTracker;
@@ -72,6 +70,7 @@ public class PlotMapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.plotmap_screen, container, false);
         ButterKnife.bind(this, view);
+//        ErrorReporter.getInstance().Init(getActivity());
         mTouchView = new TouchableWrapper(getActivity());
         mTouchView.addView(view);
         setfont();

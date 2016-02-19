@@ -1,9 +1,12 @@
 package com.tv.seekers.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -18,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -53,11 +57,17 @@ public class TermsAndConditions extends Activity {
     @Bind(R.id.hdr_fltr)
     ImageView hdr_fltr;
 
+    private SharedPreferences sPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.terms_and_cond);
+
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+
+//        ErrorReporter.getInstance().Init(TermsAndConditions.this);
         ButterKnife.bind(this);
         hdr_title.setText(getResources().getString(R.string.termAndConditionsTExt));
         Constant.setFont(this, hdr_title, 0);
@@ -92,45 +102,34 @@ public class TermsAndConditions extends Activity {
                 if (NetworkAvailablity.checkNetworkStatus(TermsAndConditions.this)) {
 
                     try {
-
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
 
 
                         try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.TERMS));
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
 
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of TERMS : " + _responseMain);
 
-                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.TERMS));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-
-
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
+                            } else {
+                                Log.v("TERMS", "Response code:" + responseCode);
                             }
 
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of Terms Screen : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.showToast("Server Error ", TermsAndConditions.this);
+                                }
+                            });
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
                     } catch (Exception e) {
@@ -170,11 +169,17 @@ public class TermsAndConditions extends Activity {
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            JSONObject jsonObject1 = jsonObject.getJSONObject("terms");
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                             String id = jsonObject1.getString("id");
-                            webviewtxt = jsonObject1.getString("terms");
+                            webviewtxt = jsonObject1.getString("text");
                             web_vew_terms.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
+                        }else if (status == 0) {
+                            Constant.showToast("Server Error    ", TermsAndConditions.this);
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(TermsAndConditions.this);
                         }
+
 
                     } catch (Exception e) {
 
@@ -193,5 +198,28 @@ public class TermsAndConditions extends Activity {
         } else {
             _Task.execute((String[]) null);
         }
+    }
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 }

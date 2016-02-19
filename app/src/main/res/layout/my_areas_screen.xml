@@ -23,7 +23,7 @@
 
             >
 
-            <com.tv.seekers.utils.CustomAutoCompletetextview
+            <AutoCompleteTextView
                 android:id="@+id/search_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

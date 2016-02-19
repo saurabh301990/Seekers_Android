@@ -19,17 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.snappydb.DB;
-import com.snappydb.DBFactory;
-import com.snappydb.SnappyDB;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
-import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.login.LoginActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 /**
@@ -55,12 +52,21 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private SharedPreferences sPref;
     private SharedPreferences.Editor editor;
 
+    // In your activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+//        ErrorReporter.getInstance().Init(MainActivity.this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -73,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         drawerFragment.setDrawerState(false);
 
-        _tglMenu.setVisibility(View.GONE);
+        _tglMenu.setVisibility(View.VISIBLE);
 
         _tglMenu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             }
         });
 
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(MainActivity.this));
 
         /*_rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -155,67 +162,72 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             case 0:
                 fragment = new MapView();
                 _header.setText("Map");
+                Bundle mBundleMapView = new Bundle();
+                mBundleMapView.putBoolean("FROMMENU", true);
+                fragment.setArguments(mBundleMapView);
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.drawable.filtr);
                 break;
             case 1:
                 fragment = new Track();
-                _header.setText("Followed");
+                _header.setText("Saved Profiles");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 2:
-                fragment = new MyKeyWords();
+               /* fragment = new MyKeyWords();
                 _header.setText("My Keywords");
                 _rightIcon.setVisibility(View.GONE);
-//                _rightIcon.setImageResource(R.mipmap.plus);
-                break;
-            case 3:
+//                _rightIcon.setImageResource(R.mipmap.plus);*/
                 fragment = new MyAreasFrag();
                 Bundle mBundle = new Bundle();
                 mBundle.putBoolean("isDrawOption", isDrawOption);
+
                 fragment.setArguments(mBundle);
 //                fragment = new Landing();
                 _header.setText("Choose Location");
                 _rightIcon.setVisibility(View.GONE);
                 break;
-            case 4:
+            case 3:
                 fragment = new DemoMapFrag();
-                _header.setText("Draw");
+                _header.setText("Draw Area");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.mipmap.save);
                 break;
-            case 5:
+            case 4:
                 fragment = new ActivityReport();
                 _header.setText("Activity Report");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.drawable.filtr);
                 break;
-            case 6:
+            case 5:
                 fragment = new Notification();
                 _header.setText("Notifications");
                 _rightIcon.setVisibility(View.GONE);
                 break;
-            case 7:
+            case 6:
                 fragment = new MyProfile();
                 _header.setText("Profile");
                 _rightIcon.setVisibility(View.GONE);
                 break;
-            case 8:
+            case 7:
                 fragment = new LegalContent();
                 _header.setText("Legal Content");
                 _rightIcon.setVisibility(View.GONE);
                 break;
-            case 9:
+            case 8:
                 fragment = new HelpAndSupport();
                 _header.setText("Help & Support");
                 _rightIcon.setVisibility(View.GONE);
                 break;
-            case 10:
+            case 9:
                 logout();
-                /*fragment = new ;
-                _header.setText("");*/
                 break;
+           /* case 10:
+
+                *//*fragment = new ;
+                _header.setText("");*//*
+                break;*/
             default:
                 break;
         }

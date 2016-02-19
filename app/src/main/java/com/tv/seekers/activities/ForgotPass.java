@@ -60,7 +60,7 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.forgot_password_screen);
         ButterKnife.bind(this);
-
+//        ErrorReporter.getInstance().Init(ForgotPass.this);
         setFont();
         setOnClick();
     }

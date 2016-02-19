@@ -1,8 +1,6 @@
 package com.tv.seekers.menu;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +47,9 @@ public class Notification extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view  = inflater.inflate(R.layout.notification_screen , container,false);
         ButterKnife.bind(this,view);
+//        ErrorReporter.getInstance().Init(getActivity());
         adddata();
+
         notificationAdapter = new NotificationAdapter(notifydata , getActivity());
         lvnotify.setAdapter(notificationAdapter);
         Constant.setFont(getActivity() , tvnotification,0);

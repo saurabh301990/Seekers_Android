@@ -68,6 +68,7 @@ public class TrackAdapter extends BaseAdapter {
             view_holder.txtfolloweduser = (TextView) view.findViewById(R.id.txtfolloweduser);
             view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
             view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);
+
             Constant.setFont(context, view_holder.txtfolloweduser , 0);
             Constant.setFont(context, view_holder.txtnofolloweduser , 0);
             Constant.setFont(context, view_holder.txtnotrackuser , 0);

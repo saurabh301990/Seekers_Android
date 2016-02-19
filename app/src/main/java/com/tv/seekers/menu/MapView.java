@@ -1,63 +1,66 @@
 package com.tv.seekers.menu;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.net.Uri;
+
+import com.google.android.gms.common.api.Status;
+
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tv.seekers.R;
-import com.tv.seekers.activities.AddFollowedActivity;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.activities.PostDetailsTextImg;
 import com.tv.seekers.adapter.CustomWindAdapter;
 import com.tv.seekers.adapter.HomeListAdapter;
-import com.tv.seekers.adapter.LandingAdapter;
 import com.tv.seekers.bean.HomeBean;
-import com.tv.seekers.bean.LandingBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
@@ -76,7 +79,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -88,7 +93,10 @@ import butterknife.OnClick;
  */
 public class MapView extends Fragment
         implements XListView.IXListViewListener,
-        GoogleMap.OnInfoWindowClickListener {
+        GoogleMap.OnInfoWindowClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     //map Related
     private GoogleMap googleMap;
@@ -101,7 +109,7 @@ public class MapView extends Fragment
 
 
     LatLng _latLong;
-    //    GPSTracker gps;
+    GPSTracker gps;
     Circle mapCircle;
 
     @Bind(R.id.two_miles_btn)
@@ -278,6 +286,13 @@ public class MapView extends Fragment
         super.onDestroyView();
         ButterKnife.unbind(this);
         Constant.hideKeyBoard(getActivity());
+        System.out.println("onDestroyView : Called.");
+        editor.putString("LATITUDE", "");
+        editor.putString("LONGITUDE", "");
+        editor.putString("userLocationType", "");
+        editor.putString("LOCATIONID", "");
+
+        editor.commit();
     }
 
     private TextView header;
@@ -288,9 +303,12 @@ public class MapView extends Fragment
 
 
     SharedPreferences sPref;
+    SharedPreferences.Editor editor = null;
     private String user_id = "";
     private String mlatitude = "";
     private String mlongitude = "";
+    private String userLocationType = "";
+    private String locationId = "";
     private int _page_number = 1;
 
 
@@ -301,6 +319,7 @@ public class MapView extends Fragment
         View view = inflater.inflate(R.layout.map_view_screen, container, false);
         ButterKnife.bind(this, view);
 
+//        ErrorReporter.getInstance().Init(getActivity());
         MainActivity.drawerFragment.setDrawerState(true);
         header = (TextView) getActivity().findViewById(R.id.hdr_title);
 
@@ -315,10 +334,7 @@ public class MapView extends Fragment
             }
         });
         setfont();
-        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
-        user_id = sPref.getString("id", "");
-        mlongitude = sPref.getString("LONGITUDE", "");
-        mlatitude = sPref.getString("LATITUDE", "");
+
 
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
@@ -375,12 +391,6 @@ public class MapView extends Fragment
             }
         });
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callGetAllPostsWS(_radiusForWS);
-        } else {
-            Constant.showToast(getResources().getString(R.string.internet), getActivity());
-        }
-
 
         //Load More
         listView_home.setSelector(android.R.color.transparent);
@@ -408,35 +418,264 @@ public class MapView extends Fragment
         return view;
     }
 
-    private void callGetAllPostsWS(final String radius) {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+    private void gpsCheck() {
 
-        {
+        /**
+         *
+         * GPS CHECK
+         */
+
+
+        // check if GPS enabled
+        gps = new GPSTracker(getActivity());
+
+        if (gps.canGetLocation()) {
+
+//            Constant.showToast("GPS IS ON ",getActivity());
+            double latitude = gps.getLatitude();
+            mlatitude = String.valueOf(latitude);
+
+//            editor.putString("LATITUDE",String.valueOf(latitude));
+            double longitude = gps.getLongitude();
+            mlongitude = String.valueOf(longitude);
+//            editor.putString("LONGITUDE",String.valueOf(longitude));
+/*
+            editor.commit();
+
+
+            mlongitude = sPref.getString("LONGITUDE", "");
+            mlatitude = sPref.getString("LATITUDE", "");*/
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                callStartThread(20);
+            } else {
+                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        callGetAllPostsWS(_radiusForWS);
+                    } else {
+                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                    }
+
+                }
+            }, 2000);
+
+            // TODO: 10/2/16 GPS ON
+        } else {
+//            Constant.showToast("GPS IS OFF ",getActivity());
+            // showSettingsAlert();
+            showLocationAlertDialog(getActivity());
+           /* if (gps.canGetLocation()) {
+
+                double latitude = gps.getLatitude();
+                double longitude = gps.getLongitude();
+
+//                 \n is for new line
+                *//* Toast.makeText(getActivity(),
+                 "Your Location is - \nLat: " + latitude + "\nLong: " +
+                 longitude, Toast.LENGTH_LONG).show();*//*
+            }*/
+
+        }
+
+    }
+
+
+    private GoogleApiClient mGoogleApiClient;
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+
+
+    }
+
+    /**
+     * If connected get lat and long
+     */
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10 * 1000);      // 10 seconds, in milliseconds
+        mLocationRequest.setFastestInterval(1 * 1000); // 1 second, in milliseconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private LocationRequest mLocationRequest;
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        } else {
+            //If everything went fine lets get latitude and longitude
+            double currentLatitude = location.getLatitude();
+            double currentLongitude = location.getLongitude();
+
+            Toast.makeText(getActivity(), currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    @Override
+    public void onConnectionSuspended(int cause) {
+
+    }
+
+    /**
+     * Show dialog for location using Google API Client
+     *
+     * @param activity
+     */
+
+    @SuppressWarnings("unchecked")
+    public void showLocationAlertDialog(final Activity activity) {
+        if (android.os.Build.VERSION.SDK_INT >= 19) {
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API).build();
+                mGoogleApiClient.connect();
+                Object obj = LocationRequest.create();
+                ((LocationRequest) (obj)).setPriority(100);
+                ((LocationRequest) (obj)).setInterval(30000L);
+                ((LocationRequest) (obj)).setFastestInterval(5000L);
+                obj = new LocationSettingsRequest.Builder().addLocationRequest(
+                        ((LocationRequest) (obj))).setAlwaysShow(true);
+
+                LocationServices.SettingsApi.checkLocationSettings(
+                        mGoogleApiClient,
+                        ((LocationSettingsRequest.Builder) (obj)).build())
+                        .setResultCallback(
+                                new ResultCallback<LocationSettingsResult>() {
+
+                                    @Override
+                                    public void onResult(
+                                            LocationSettingsResult locationsettingsresult) {
+                                        // TODO Auto-generated method stub
+                                        Status status;
+                                        Log.e("result of yes no",
+                                                (new StringBuilder())
+                                                        .append("=")
+                                                        .append(locationsettingsresult
+                                                                .getStatus())
+                                                        .toString());
+                                        status = locationsettingsresult
+                                                .getStatus();
+                                        locationsettingsresult
+                                                .getLocationSettingsStates();
+                                        status.getStatusCode();
+
+                                        try {
+                                            status.startResolutionForResult(
+                                                    getActivity(), 1000);
+
+                                        } catch (IntentSender.SendIntentException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                });
+            }
+            return;
+        } else {
+            startActivityForResult(new Intent(
+                    "android.settings.LOCATION_SOURCE_SETTINGS"), 1);
+            return;
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 0) {
+            //NO
+//            Constant.showToast("NO:" , getActivity());
+
+
+            mlongitude = "-77.1546507";
+            mlatitude = "38.8992651";
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                callStartThread(20);
+            } else {
+                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        callGetAllPostsWS(_radiusForWS);
+                    } else {
+                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                    }
+
+                }
+            }, 2000);
+        } else if (resultCode == -1) {
+            //Yes
+            if (requestCode == 1000) {
+//                Constant.showToast("YES:" , getActivity());
+                gps = new GPSTracker(getActivity());
+                gpsCheck();
+
+            }
+        }
+
+    }
+
+    private void callStartThread(final int radius) {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
-            Uri.Builder builder;
+            JSONObject mJsonObject = new JSONObject();
+//            Uri.Builder builder;
 
             @Override
             protected void onPreExecute() {
 
+//                Constant.showLoader(getActivity());
 
-                Constant.showLoader(getActivity());
+                try {
+                    mJsonObject.put("latitude", mlatitude);
+                    mJsonObject.put("longitude", mlongitude);
+                    mJsonObject.put("radius", radius);
 
 
-                builder = new Uri.Builder();
-                builder.appendQueryParameter("user_id", user_id);
-                builder.appendQueryParameter("radius", radius);
-
-                builder.appendQueryParameter("cur_lat", mlatitude);
-                builder.appendQueryParameter("cur_long", mlongitude);
-
-                if (_isList) {
-                    builder.appendQueryParameter("isMap", "0");
-                    builder.appendQueryParameter("page_number", _page_number + "");
-                } else {
-                    builder.appendQueryParameter("isMap", "1");
-                    builder.appendQueryParameter("page_number", "1");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                System.out.println("Request : " + builder.toString());
+
+                System.out.println("Request of START THREAD: " + mJsonObject.toString());
 
             }
 
@@ -452,7 +691,168 @@ public class MapView extends Fragment
 
                         try {
 
-                            String query = builder.build().getEncodedQuery();
+//                            String query = builder.build().getEncodedQuery();
+                            String query = mJsonObject.toString();
+
+                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.START_THREAD));
+                            urlConnection = (HttpURLConnection) ((url.openConnection()));
+                           /* urlConnection.setDoInput(true);
+                            urlConnection.setDoOutput(true);
+                            urlConnection.setUseCaches(false);
+                            urlConnection.setChunkedStreamingMode(1024);*/
+                            urlConnection.setConnectTimeout(80 * 1000);
+                            urlConnection.setReadTimeout(80 * 1000);
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            urlConnection.setRequestMethod("POST");
+
+                            urlConnection.connect();
+
+                            //Write
+                            OutputStream outputStream = urlConnection.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                            writer.write(query);
+                            writer.close();
+                            outputStream.close();
+
+                            //Read
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                            String line = null;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((line = bufferedReader.readLine()) != null) {
+
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+                            _responseMain = sb.toString();
+                            System.out.println("Response of START_THREAD : " + _responseMain);
+
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", getActivity());
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+//                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+                        Constant.showToast("Server Error ", getActivity());
+                        Constant.hideLoader();
+                    }
+                } else {
+                    Constant.showToast("Server Error ", getActivity());
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+
+    }
+
+    private void callGetAllPostsWS(final String radius) {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
+            String _responseMain = "";
+            JSONObject mJsonObject = new JSONObject();
+//            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+
+                isFirstCall = true;
+                Constant.showLoader(getActivity());
+
+                try {
+                    mJsonObject.put("latitude", mlatitude);
+                    mJsonObject.put("longitude", mlongitude);
+                    mJsonObject.put("radius", radius);
+
+                    if (userLocationType.equalsIgnoreCase("CIRCULAR")) {
+                        mJsonObject.put("isArea", 0);
+                        mJsonObject.put("userLocationId", "");
+                    } else if (userLocationType.equalsIgnoreCase("AREA")) {
+
+                        mJsonObject.put("isArea", 1);
+                        mJsonObject.put("userLocationId", locationId);
+
+                    }
+
+
+                    if (_isList) {
+                        mJsonObject.put("isMap", 0);
+                        mJsonObject.put("pageNo", _page_number);
+                        mJsonObject.put("limit", 20);
+
+                    } else {
+                        mJsonObject.put("isMap", 1);
+                        mJsonObject.put("pageNo", 1);
+                        mJsonObject.put("limit", 1000);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+                System.out.println("Request of Get All Posts: " + mJsonObject.toString());
+                System.out.println("Request of Get All Posts: userLocationType " + userLocationType);
+
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+
+                        try {
+
+//                            String query = builder.build().getEncodedQuery();
+                            String query = mJsonObject.toString();
 
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_ALL_POSTS));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
@@ -462,7 +862,8 @@ public class MapView extends Fragment
                             urlConnection.setChunkedStreamingMode(1024);*/
                             urlConnection.setConnectTimeout(80 * 1000);
                             urlConnection.setReadTimeout(80 * 1000);
-
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             urlConnection.setRequestMethod("POST");
 
                             urlConnection.connect();
@@ -533,6 +934,7 @@ public class MapView extends Fragment
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
+
                             if (_page_number == 1) {
                                 if (_mainList.size() > 0) {
                                     _mainList.clear();
@@ -540,7 +942,7 @@ public class MapView extends Fragment
                             }
 
 
-                            JSONArray _resultJSONArray = jsonObject.getJSONArray("social_post");
+                            JSONArray _resultJSONArray = jsonObject.getJSONArray("data");
                             if (_resultJSONArray.length() > 0) {
 
                                 if (_isList) {
@@ -560,42 +962,84 @@ public class MapView extends Fragment
                                 for (int i = 0; i < length; i++) {
                                     JSONObject _jSubObject = _resultJSONArray.getJSONObject(i);
                                     HomeBean bean = new HomeBean();
-                                    bean.setPost_lat(_jSubObject.getString("post_lat"));
-                                    bean.setPost_long(_jSubObject.getString("post_long"));
-                                    if (_jSubObject.has("post_text")) {
-                                        bean.setPost_text(_jSubObject.getString("post_text"));
+                                    JSONObject mObjectLotLng = new JSONObject(_jSubObject.getString("loc"));
+                                    if (mObjectLotLng.has("x")) {
+                                        String userlong = String.valueOf(mObjectLotLng.getDouble("x"));
+                                        bean.setPost_long(userlong);
+                                    }
+                                    if (mObjectLotLng.has("y")) {
+                                        String userlat = String.valueOf(mObjectLotLng.getDouble("y"));
+                                        bean.setPost_lat(userlat);
+                                    }
+                                    /*System.out.println("userlong : " +userlong);
+                                    System.out.println("userlat : " +userlat);*/
+
+
+                                    JSONObject mJsonObjectUser = new JSONObject(_jSubObject.getString("user"));
+                                    if (mJsonObjectUser.has("username")) {
+                                        bean.setUser_name(mJsonObjectUser.getString("username"));
+                                    } else {
+                                        bean.setUser_name("");
+                                    }
+
+                                    if (mJsonObjectUser.has("isFollowed")) {
+                                        bean.setIsFollowed(mJsonObjectUser.getBoolean("isFollowed"));
+                                    } else {
+                                        bean.setIsFollowed(false);
+                                    }
+                                    if (mJsonObjectUser.has("id")) {
+                                        bean.setId(mJsonObjectUser.getString("id"));
+                                    } else {
+                                        bean.setId("");
+                                    }
+
+
+                                    if (mJsonObjectUser.has("profilePic")) {
+                                        JSONObject mJsonObjectPic = mJsonObjectUser.getJSONObject("profilePic");
+                                        String postImgUrl = "";
+                                        String mSmall = mJsonObjectPic.getString("small");
+                                        String medium = mJsonObjectPic.getString("medium");
+                                        String large = mJsonObjectPic.getString("large");
+                                        if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                            postImgUrl = mSmall;
+                                        } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                            postImgUrl = medium;
+                                        } else if (large != null && !large.equalsIgnoreCase("")) {
+                                            postImgUrl = large;
+                                        }
+                                        bean.setUser_image(postImgUrl);
+
+                                    } else {
+                                        bean.setUser_image("");
+                                    }
+
+
+                                    if (mJsonObjectUser.has("address")) {
+                                        bean.setUser_address(mJsonObjectUser.getString("address"));
+                                    } else {
+                                        bean.setUser_image("");
+                                    }
+
+
+                                    if (_jSubObject.has("postText")) {
+                                        bean.setPost_text(_jSubObject.getString("postText"));
                                     } else {
                                         bean.setPost_text("");
                                     }
 
-                                    if (_jSubObject.has("post_id")) {
-                                        bean.setPost_id(_jSubObject.getString("post_id"));
+                                    if (_jSubObject.has("id")) {
+                                        bean.setPost_id(_jSubObject.getString("id"));
+//                                        System.out.println("post Id : " +_jSubObject.getString("id"));
                                     } else {
                                         bean.setPost_id("");
                                     }
 
-                                    if (_jSubObject.has("source")) {
-                                        bean.setSource(_jSubObject.getString("source"));
+                                    if (_jSubObject.has("sourceType")) {
+                                        bean.setSource(_jSubObject.getString("sourceType"));
                                     } else {
                                         bean.setSource("");
                                     }
 
-                                    if (_jSubObject.has("user_address")) {
-                                        bean.setUser_address(_jSubObject.getString("user_address"));
-                                    } else {
-                                        bean.setUser_address("");
-                                    }
-
-                                    if (_jSubObject.has("user_image")) {
-                                        bean.setUser_image(_jSubObject.getString("user_image"));
-                                    } else {
-                                        bean.setUser_image("");
-                                    }
-                                    if (_jSubObject.has("user_name")) {
-                                        bean.setUser_name(_jSubObject.getString("user_name"));
-                                    } else {
-                                        bean.setUser_name("");
-                                    }
 
                                     if (_jSubObject.has("source_id")) {
                                         bean.setSource_id(_jSubObject.getString("source_id"));
@@ -603,16 +1047,19 @@ public class MapView extends Fragment
                                         bean.setSource_id("");
                                     }
 
-                                    if (_jSubObject.has("view_type")) {
-                                        bean.setView_type(_jSubObject.getString("view_type"));
-                                        if (_jSubObject.getString("view_type").equalsIgnoreCase("T")) {
+                                    if (_jSubObject.has("postType")) {
+                                        System.out.println("POst Type : " + _jSubObject.getString("postType"));
+                                        bean.setView_type(_jSubObject.getString("postType"));
+                                        if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_ONLY")) {
                                             bean.setType(1);
-                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("TI")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                             bean.setType(2);
-                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("I")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("I")) {
                                             bean.setType(3);
-                                        } else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("V")) {
                                             bean.setType(4);
+                                        } else {
+                                            bean.setType(1);
                                         }
                                         /*else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")){
                                             bean.setType(3);
@@ -622,20 +1069,37 @@ public class MapView extends Fragment
                                         bean.setView_type("");
                                     }
 
-                                    if (_jSubObject.has("post_image")) {
-                                        bean.setPost_image(_jSubObject.getString("post_image"));
+                                    if (_jSubObject.has("postImage")) {
+
+                                        JSONObject mpostImage = _jSubObject.getJSONObject("postImage");
+                                        String postImgUrl = "";
+                                        String mSmall = mpostImage.getString("small");
+                                        String medium = mpostImage.getString("medium");
+                                        String large = mpostImage.getString("large");
+                                        if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                            postImgUrl = mSmall;
+                                        } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                            postImgUrl = medium;
+                                        } else if (large != null && !large.equalsIgnoreCase("")) {
+                                            postImgUrl = large;
+                                        }
+
+
+                                        bean.setPost_image(postImgUrl);
                                     } else {
                                         bean.setPost_image("");
                                     }
 
-                                    if (_jSubObject.has("post_location")) {
-                                        bean.setPost_location(_jSubObject.getString("post_location"));
+                                    if (_jSubObject.has("postLocation")) {
+                                        bean.setPost_location(_jSubObject.getString("postLocation"));
                                     } else {
                                         bean.setPost_location("");
                                     }
 
-                                    if (_jSubObject.has("post_time")) {
-                                        bean.setPost_time(_jSubObject.getString("post_time"));
+                                    if (_jSubObject.has("postTime")) {
+                                        long postTime = _jSubObject.getLong("postTime");
+                                        postTime = postTime * 1000;
+                                        bean.setPost_time(getDateFromMilliseconds(postTime, "dd MMMM yyyy hh:mm a"));
                                     } else {
                                         bean.setPost_time("");
                                     }
@@ -688,9 +1152,9 @@ public class MapView extends Fragment
                                 list_layout.setVisibility(View.GONE);
                             }
 
-                            if (jsonObject.has("is_more")) {
-                                boolean _is_more = jsonObject.getBoolean("is_more");
-                                if (_is_more) {
+                            if (jsonObject.has("isMore")) {
+                                String _is_more = jsonObject.getString("isMore");
+                                if (_is_more.equalsIgnoreCase("Yes")) {
                                     listView_home.setPullLoadEnable(true);
                                 } else {
                                     listView_home.setPullLoadEnable(false);
@@ -699,6 +1163,11 @@ public class MapView extends Fragment
                             } else {
                                 listView_home.setPullLoadEnable(false);
                             }
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
                     } catch (Exception e) {
@@ -723,6 +1192,17 @@ public class MapView extends Fragment
     }
 
 
+    private String getDateFromMilliseconds(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+
     private void init() {
 //        gps = new GPSTracker(getActivity());
         if (!mlatitude.equalsIgnoreCase("") &&
@@ -739,7 +1219,7 @@ public class MapView extends Fragment
             }
 
         } else {
-            Constant.showToast("Server Error ", getActivity());
+//            Constant.showToast("Server Error ", getActivity());
         }
 
         /*if (gps.canGetLocation()) {
@@ -773,15 +1253,76 @@ public class MapView extends Fragment
         init();
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("onDestroy Called");
+        editor.putString("LATITUDE", "");
+        editor.putString("LONGITUDE", "");
+        editor.putString("userLocationType", "");
+        editor.putString("LOCATIONID", "");
+
+        editor.commit();
+    }
+
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        userLocationType = sPref.getString("userLocationType", "CIRCULAR");
+        locationId = sPref.getString("LOCATIONID", "");
+        editor = sPref.edit();
+        try {
 
+            boolean fromMenu = getArguments().getBoolean("FROMMENU");
+            if (fromMenu) {
+                //Clear location
+                editor.putString("LATITUDE", "");
+                editor.putString("LONGITUDE", "");
+
+                editor.commit();
+            }
+        } catch (Exception e) {
+//            e.printStackTrace();
+        }
+        createLocationRequest();
+        gps = new GPSTracker(getActivity());
         FragmentManager fm = getChildFragmentManager();
         fragment = (SupportMapFragment) fm.findFragmentById(R.id.mapView);
         if (fragment == null) {
             fragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.mapView, fragment).commit();
+        }
+
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
+        user_id = sPref.getString("id", "");
+        mlongitude = sPref.getString("LONGITUDE", "");
+        mlatitude = sPref.getString("LATITUDE", "");
+
+        if (mlatitude == null || mlatitude.equalsIgnoreCase("") || mlatitude.equalsIgnoreCase("0.0")) {
+            gpsCheck();
+        } else {
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                callStartThread(20);
+            } else {
+                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        callGetAllPostsWS(_radiusForWS);
+                    } else {
+                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                    }
+
+                }
+            }, 2000);
         }
 
 
@@ -822,6 +1363,7 @@ public class MapView extends Fragment
                 .position(_latLong).icon(BitmapDescriptorFactory.
                         defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
         int _length = _mainList.size();
+        System.out.println("latitude : mapWithZooming " + latitude);
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
             if (googleMap != null) {
@@ -837,17 +1379,19 @@ public class MapView extends Fragment
                 double _long = Double.parseDouble(bean.getPost_long());
                 LatLng ll = new LatLng(_lat, _long);
                 BitmapDescriptor bitmapMarker = null;
-                if (!bean.getSource_id().equalsIgnoreCase("")) {
-                    if (bean.getSource_id().equalsIgnoreCase("2")) { //Tweet
+                if (!bean.getSource().equalsIgnoreCase("")) {
+                    if (bean.getSource().equalsIgnoreCase("TWITTER")) { //Tweet
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.twitter_pin);
-                    } else if (bean.getSource_id().equalsIgnoreCase("3")) {//Instagram
+                    } else if (bean.getSource().equalsIgnoreCase("INSTAGRAM")) {//Instagram
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.instagram_pin);
-                    } else if (bean.getSource_id().equalsIgnoreCase("4")) {//Youtube
+                    } else if (bean.getSource().equalsIgnoreCase("YOUTUBE")) {//Youtube
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.youtube_pin);
-                    } else if (bean.getSource_id().equalsIgnoreCase("5")) {//MeetUp
+                    } else if (bean.getSource().equalsIgnoreCase("MEETUP")) {//MeetUp
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.meetup_pin);
-                    } else if (bean.getSource_id().equalsIgnoreCase("6")) {//Vk
+                    } else if (bean.getSource().equalsIgnoreCase("VK")) {//Vk
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
+                    } else if (bean.getSource().equalsIgnoreCase("FLIKER")) {//FLIKER
+                        bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.flicker_pin);
                     } else {
                         bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                     }
@@ -881,6 +1425,50 @@ public class MapView extends Fragment
 
             // info window.
             googleMap.setInfoWindowAdapter(new CustomWindAdapter(getActivity()));
+        }
+
+
+    }
+
+    /**
+     * If locationChanges change lat and long
+     *
+     * @param location
+     */
+    boolean isFirstCall = false;
+
+    @Override
+    public void onLocationChanged(Location location) {
+        double latitude = location.getLatitude();
+        mlatitude = String.valueOf(latitude);
+        double longitude = location.getLongitude();
+        mlongitude = String.valueOf(longitude);
+        init();
+        if (!isFirstCall) {
+            try {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    callStartThread(20);
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                            callGetAllPostsWS(_radiusForWS);
+                        } else {
+                            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                        }
+
+                    }
+                }, 2000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
         }
 
 

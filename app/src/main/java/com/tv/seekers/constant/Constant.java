@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tv.seekers.R;
+import com.tv.seekers.login.LoginActivity;
 
 import java.util.regex.Pattern;
 
@@ -27,6 +31,8 @@ import java.util.regex.Pattern;
 public class Constant {
 
     public static final String YOUTUBELINK = "https://www.youtube.com/watch?v=";
+    public static final String Cookie = "Cookie";
+    public static final String YOUTUBE_API_KEY = "AIzaSyBqq3WcNChgrNRMrN96oPpGQy3NFg94b60";
     public static Dialog dialog;
 
     ///////// key board hide
@@ -75,7 +81,7 @@ public class Constant {
             if (builder != null) {
                 builder.cancel();
             }
-        }catch (Exception  e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -95,9 +101,48 @@ public class Constant {
             frameAnimation.start();
             builder.setCancelable(false);
             builder.show();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
+    public  static SharedPreferences sPref;
+    public  static SharedPreferences.Editor editor;
+    public static void alertForLogin(final Activity context) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+
+        sPref = context.getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
+
+        // set title
+        alertDialogBuilder.setTitle("Session Expired!");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Please login again.")
+                .setCancelable(false)
+                .setNeutralButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        dialog.cancel();
+                        editor.clear();
+                        editor.commit();
+                        Intent i = new Intent(context, LoginActivity.class);
+                        context.startActivity(i);
+                        context.finish();
+
+                    }
+                });
+
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.setCancelable(false);
+        // show it
+        alertDialog.show();
+    }
+
+
 }

@@ -39,6 +39,16 @@ public class HomeBean {
     String lastname = "";
     String view_type = "";
 
+    public boolean isFollowed() {
+        return isFollowed;
+    }
+
+    public void setIsFollowed(boolean isFollowed) {
+        this.isFollowed = isFollowed;
+    }
+
+    boolean isFollowed = false;
+
     public int getType() {
         return type;
     }

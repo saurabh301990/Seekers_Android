@@ -2,7 +2,6 @@ package com.tv.seekers.activities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -22,7 +21,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
-import com.tv.seekers.menu.MainActivity;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.NetworkAvailablity;
 
@@ -40,7 +38,6 @@ import java.net.URL;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by shoeb on 4/11/15.
@@ -104,6 +101,8 @@ public class ChangePassword extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.change_pswd);
         ButterKnife.bind(this);
+
+//        ErrorReporter.getInstance().Init(ChangePassword.this);
         setFont();
         setData();
         setOnClick();
@@ -212,18 +211,22 @@ public class ChangePassword extends Activity implements View.OnClickListener {
 
         {
             String _responseMain = "";
-            Uri.Builder builder;
+            JSONObject mJsonObject;
 
             @Override
             protected void onPreExecute() {
 
 
                 Constant.showLoader(ChangePassword.this);
+                try {
+                    mJsonObject = new JSONObject();
+                    mJsonObject.put("oldPass", currentPass);
+                    mJsonObject.put("newPass", newPass);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("user_id", user_id)
-                        .appendQueryParameter("new_password", newPass)
-                        .appendQueryParameter("cur_password", currentPass);
+
             }
 
             @Override
@@ -237,7 +240,8 @@ public class ChangePassword extends Activity implements View.OnClickListener {
 
                         try {
 
-                            String query = builder.build().getEncodedQuery();
+                            String query = mJsonObject.toString();
+                            System.out.println("Request of Change password :" + query);
                             //			String temp=URLEncoder.encode(uri, "UTF-8");
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.CHANGE_PASSWORD));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
@@ -246,6 +250,8 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);
                             urlConnection.setReadTimeout(5000);
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
 
                             urlConnection.setRequestMethod("POST");
                             urlConnection.connect();
@@ -278,6 +284,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -313,10 +320,18 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                     try {
                         JSONObject _JsonObject = new JSONObject(_responseMain);
                         int status = _JsonObject.getInt("status");
-                        String message = _JsonObject.getString("message");
-                        Constant.showToast(message, ChangePassword.this);
+                        /*String message = _JsonObject.getString("message");
+                        Constant.showToast(message, ChangePassword.this);*/
                         if (status == 1) {
+                            Constant.showToast("Password changed successfully!", ChangePassword.this);
                             finish();
+                        }else if (status == 0) {
+                            Constant.showToast("Server Error", ChangePassword.this);
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(ChangePassword.this);
+                        } else if (status == -2){
+                            Constant.showToast("Invalid current password.", ChangePassword.this);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -359,7 +374,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
         } else if (!newPass.equals(confirmPass)) {
             Constant.showToast(getResources().getString(R.string.passwordNotMatch), ChangePassword.this);
             isValid = false;
-        }else if (currentPass.equals(newPass)) {
+        } else if (currentPass.equals(newPass)) {
             Constant.showToast(getResources().getString(R.string.currentAndNewPssNotSame), ChangePassword.this);
             isValid = false;
         } else {

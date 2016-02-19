@@ -4,9 +4,20 @@ package com.tv.seekers.bean;
  * Created by admin1 on 3/11/15.
  */
 public class MyKeywordsBean {
-    private String _title;
+    private String _title = "";;
     private boolean _tglState;
-    private String _tglID;
+    private String _tglID = "";;
+
+    public long getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(long createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    private long createdOn ;
+
 
 
     public MyKeywordsBean(String _title, boolean _tglState, String _tglID) {

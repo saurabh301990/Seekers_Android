@@ -37,15 +37,16 @@
     <FrameLayout
 
         android:id="@+id/fram_map"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="40dp"
+        android:visibility="visible">
 
         <Button
             android:id="@+id/btn_draw_State"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:text="Free Draw" />
     </FrameLayout>
 

@@ -17,17 +17,18 @@
 
             android:layout_height="wrap_content"
             android:layout_above="@+id/ets_rl"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
             android:src="@mipmap/logo" />
 
         <RelativeLayout
             android:id="@+id/ets_rl"
             android:layout_width="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical"
 
             android:paddingLeft="45dp"
@@ -75,16 +76,39 @@
         </RelativeLayout>
 
 
-        <TextView
-            android:id="@+id/forgot_pswd_tv"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ets_rl"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="@string/forgotPswrdText"
-            android:textColor="#666"
-            android:textSize="15sp" />
+            android:layout_marginTop="30dp"
+            android:gravity="center_horizontal"
+            android:paddingLeft="45dp"
+            android:paddingRight="45dp">
+
+            <TextView
+                android:id="@+id/forgot_pswd_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="@string/forgotPswrdText"
+                android:textColor="#666"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/term_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/forgot_pswd_tv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+
+                android:text="@string/termAndConditionsTExt"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
 
         <ImageView
             android:layout_width="match_parent"

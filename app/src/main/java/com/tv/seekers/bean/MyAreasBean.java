@@ -13,6 +13,15 @@ public class MyAreasBean {
     private String img_url = "";
     private String _lat = "";
     private String _long= "";
+    private String type= "";
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public boolean isSelected() {
         return isSelected;

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -51,7 +53,7 @@ public class HelpAndSupport extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.helpandsupport,container,false);
-
+//        ErrorReporter.getInstance().Init(getActivity());
         ButterKnife.bind(this, view);
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callHelpSupportWS();
@@ -88,46 +90,34 @@ public class HelpAndSupport extends Fragment {
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
 
                     try {
-
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
 
 
                         try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.HELP));
+                            urlConnection = (HttpURLConnection) url.openConnection();
+//                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
 
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of TERMS : " + _responseMain);
 
-                            URL url = new URL(WebServiceConstants.getMethodUrl(
-                                    WebServiceConstants.HELP));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-
-
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
+                            } else {
+                                Log.v("TERMS", "Response code:" + responseCode);
                             }
 
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of HELP : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.showToast("Server Error ", getActivity());
+                                }
+                            });
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
                     } catch (Exception e) {
@@ -167,10 +157,15 @@ public class HelpAndSupport extends Fragment {
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            JSONObject jsonObject1 = jsonObject.getJSONObject("terms");
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                             String id = jsonObject1.getString("id");
-                            webviewtxt = jsonObject1.getString("help");
+                            webviewtxt = jsonObject1.getString("text");
                             help_wv.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
+                        }else if (status == 0) {
+                            Constant.showToast("Server Error    ", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
                     } catch (Exception e) {
@@ -190,5 +185,28 @@ public class HelpAndSupport extends Fragment {
         } else {
             _Task.execute((String[]) null);
         }
+    }
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 }

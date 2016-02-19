@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Seeker</string>
-    <string name="internet">Please check your Internet Connection!</string>
+    <string name="internet">Failed to load request. Please check your internet connection and try again.</string>
+
 
 
     <!--Login-->
@@ -47,10 +48,10 @@
 
     <string-array name="nav_drawer_labels">
         <item>Home</item>
-        <item>Followed Profile</item>
-        <item>My Keywords</item>
-        <item>My Locations</item>
-        <item>Plot a New Area</item>
+        <item>Saved Profiles</item>
+        <!--<item>My Keywords</item>-->
+        <item>Saved Areas</item>
+        <item>Draw Area</item>
         <item>Activity Report</item>
         <item>Notifications</item>
         <item>My Profile</item>
@@ -82,6 +83,7 @@
     <string name="distext">Disqus</string>
     <string name="keywordtxt">Keywords</string>
     <string name="filterkeyword">Filter By Keyword</string>
+    <string name="clrFilterText">Clear Filters</string>
 
     <!--Landing Screen-->
     <string name="landingmiddletext">Search or Select a Location.</string>
@@ -104,7 +106,7 @@
     <string name="upload_error">Error while uploading</string>
 
     <!--Forgot Password-->
-    <string name="forgotPassText">Forgot Password? Enter your Registered Email to Receive further Instructions</string>
+    <string name="forgotPassText">Please enter your email address to receive your password.</string>
     <string name="submitText">Submit</string>
     <string name="backToLoginText">Back To Login</string>
     <string name="pleaseEnterEmail">Please enter email</string>
@@ -129,4 +131,10 @@
 
     <!--Post Details Screen-->
     <string name="postText">Post</string>
+
+    <!--Crash-->
+    <string name="CrashReport_MailSubject">Crash Exceptions</string>
+    <string name="CrashReport_MailBody">Hello Developer</string>
+    <string name="somethingWentWrongText">Oops something went wrong. Please drop an email to Developer.</string>
+    <string name="okText">Okay</string>
 </resources>

@@ -1,13 +1,8 @@
 package com.tv.seekers.menu;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.location.Address;
-import android.location.Geocoder;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +14,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -32,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 
+import android.widget.AutoCompleteTextView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -48,9 +43,7 @@ import com.google.android.gms.location.places.Places;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.tv.seekers.R;
-import com.tv.seekers.adapter.LandingAdapter;
 import com.tv.seekers.adapter.MyAreaAdapter;
-import com.tv.seekers.bean.LandingBean;
 import com.tv.seekers.bean.MyAreasBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
@@ -70,7 +63,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -93,7 +85,7 @@ public class MyAreasFrag extends Fragment implements
     GridView my_area_grid;
 
     @Bind(R.id.search_et)
-    CustomAutoCompletetextview search_et;
+    AutoCompleteTextView search_et;
 
     @Bind(R.id.search_iv)
     ImageView search_iv;
@@ -132,6 +124,8 @@ public class MyAreasFrag extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
         mGoogleApiClient = new GoogleApiClient
                 .Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
@@ -145,12 +139,14 @@ public class MyAreasFrag extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.my_areas_screen, container, false);
-
+//        ErrorReporter.getInstance().Init(getActivity());
         gps = new GPSTracker(getActivity());
         ButterKnife.bind(this, view);
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
         user_id = sPref.getString("id", "");
+
+//        System.out.println("Session ID : " +sPref.getString(Constant.Cookie, ""));
 
         setFont();
         creatingDB();
@@ -161,10 +157,10 @@ public class MyAreasFrag extends Fragment implements
             callsavedLocationWS();
         } else {
             try {
-                JSONArray user_locations = mDataBase.getObject("user_locations", JSONArray.class);
-                System.out.println("JSON ARRAY length : " + user_locations.length());
+                JSONArray data = mDataBase.getObject("data", JSONArray.class);
+                System.out.println("JSON ARRAY length : " + data.length());
 
-                if (user_locations.length() > 0) {
+                if (data.length() > 0) {
                     if (myAreasList.size() > 0) {
                         myAreasList.clear();
                     }
@@ -176,8 +172,8 @@ public class MyAreasFrag extends Fragment implements
                     }
 
 
-                    for (int i = 0; i < user_locations.length(); i++) {
-                        JSONObject jsonobj = user_locations.getJSONObject(i);
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject jsonobj = data.getJSONObject(i);
                         String loc_name = jsonobj.getString("loc_name");
                         String loc_address = jsonobj.getString("loc_address");
                         String userlat = jsonobj.getString("loc_lat");
@@ -270,6 +266,13 @@ public class MyAreasFrag extends Fragment implements
 
                 System.out.println("onDestroyActionMode");
                 // TODO Auto-generated method stub
+               /* if (myAreasList.size()>0){
+                    for (int i = 0 ; i< myAreasList.size();i++){
+                        MyAreasBean selectedItem = myAreasList.get(i);
+                        selectedItem.setIsSelected(false);
+                        myAreasList.add(i,selectedItem);
+                    }
+                }*/
                 areasAdapter.removeSelection();
             }
 
@@ -285,15 +288,17 @@ public class MyAreasFrag extends Fragment implements
                 switch (item.getItemId()) {
                     case R.id.delete_mode:
                         SparseBooleanArray selected = areasAdapter.getSelectedIds();
-                        String prefix = "";
+                        String prefix = "id=";
                         StringBuilder sb = new StringBuilder();
+
                         for (int i = (selected.size() - 1); i >= 0; i--) {
                             if (selected.valueAt(i)) {
                                 MyAreasBean selectedItem = myAreasList.get(selected.keyAt(i));
                                 loc_ids = selectedItem.getId();
 
+
                                 sb.append(prefix);
-                                prefix = ",";
+                                prefix = "&id=";
                                 sb.append(loc_ids);
 
                                 myAreasList.remove(selectedItem);
@@ -376,8 +381,8 @@ public class MyAreasFrag extends Fragment implements
                     input = input.replaceAll(" ", "+");
                 }*/
 
-                searchplacesTask = new SearchPlacesTask();
-                searchplacesTask.execute();
+             /*   searchplacesTask = new SearchPlacesTask();
+                searchplacesTask.execute();*/
             }
 
             @Override
@@ -395,12 +400,33 @@ public class MyAreasFrag extends Fragment implements
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Constant.hideKeyBoard(getActivity());
-                gps = new GPSTracker(getActivity());
+//                gps = new GPSTracker(getActivity());
 
 
                 try {
 
-                    HashMap<String, String> hm = (HashMap<String, String>)
+//                    MyAreasBean _bean = myAreasList.get(position);
+
+                    String _currentLoc = search_et.getText().toString();
+                    _currentLoc = _currentLoc.replaceAll("\\{", "");
+                    _currentLoc = _currentLoc.replaceAll("\\}", "");
+                    System.out.println("Current Location from Autocomplete : " + _currentLoc);
+                    String[] currentLocArray = _currentLoc.split("=");
+                    System.out.println("Current Location from Autocomplete FINAL: " + currentLocArray[1]);
+                    search_et.setText(currentLocArray[1] + "");
+                    for (int i = 0; i < myAreasList.size(); i++) {
+                        MyAreasBean bean = myAreasList.get(i);
+                        String savedLoc = bean.getLoc_name();
+                        if (savedLoc.equalsIgnoreCase(currentLocArray[1])) {
+                            position = i;
+                            break;
+                        }
+                    }
+
+                    saveCurrentLatLong(position);
+                    replaceFragment();
+
+                   /* HashMap<String, String> hm = (HashMap<String, String>)
                             parent.getAdapter().getItem(position);
                     String _locName = hm.get("description");
                     search_et.setText(_locName);
@@ -418,7 +444,7 @@ public class MyAreasFrag extends Fragment implements
                     } else {
                         mPlaceDetails.execute((String[]) null);
                     }
-
+*/
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -436,7 +462,7 @@ public class MyAreasFrag extends Fragment implements
 
 
             if (isDrawOption) {
-                header.setText("My Locations");
+                header.setText("Saved Areas");
             } else {
                 header.setText("Choose Location");
             }
@@ -579,7 +605,7 @@ public class MyAreasFrag extends Fragment implements
 
         {
             String _responseMain = "";
-            Uri.Builder builder;
+//            Uri.Builder builder;
 
             @Override
             protected void onPreExecute() {
@@ -587,8 +613,8 @@ public class MyAreasFrag extends Fragment implements
 
                 Constant.showLoader(getActivity());
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("location_id", loc_ids);
+             /*   builder = new Uri.Builder()
+                        .appendQueryParameter("location_id", loc_ids);*/
 
 
             }
@@ -600,45 +626,30 @@ public class MyAreasFrag extends Fragment implements
 
                     try {
 
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
 
 
-                        String query = builder.build().getEncodedQuery();
-                        //			String temp=URLEncoder.encode(uri, "UTF-8");
-                        URL url = new URL(WebServiceConstants.
-                                getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION));
-                        urlConnection = (HttpURLConnection) ((url.openConnection()));
-                        urlConnection.setDoInput(true);
-                        urlConnection.setDoOutput(true);
-                        urlConnection.setUseCaches(false);
-                        urlConnection.setChunkedStreamingMode(1024);
-                        urlConnection.setReadTimeout(30000);
+                        try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION) + "?" + loc_ids);
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
 
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of deleteSaveLocation : " + _responseMain);
 
-                        urlConnection.setRequestMethod("POST");
-                        urlConnection.connect();
+                            } else {
+                                Log.v("My area", "Response code:" + responseCode);
+                            }
 
-                        //Write
-                        OutputStream outputStream = urlConnection.getOutputStream();
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                        writer.write(query);
-                        writer.close();
-                        outputStream.close();
-
-                        //Read
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                        String line = null;
-                        StringBuilder sb = new StringBuilder();
-
-                        while ((line = bufferedReader.readLine()) != null) {
-                            //System.out.println("Uploading............");
-                            sb.append(line);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
-
-                        bufferedReader.close();
-                        _responseMain = sb.toString();
-                        System.out.println("Response of deleteSaveLocation : " + _responseMain);
 
 
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
@@ -679,10 +690,13 @@ public class MyAreasFrag extends Fragment implements
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            Constant.showToast(jsonObject.getString("message"), getActivity());
+                            Constant.showToast("Location deleted", getActivity());
 
-                        } else {
-                            Constant.showToast(jsonObject.getString("message"), getActivity());
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error    ", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
                     } catch (Exception e) {
@@ -704,12 +718,38 @@ public class MyAreasFrag extends Fragment implements
         }
     }
 
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
+    }
+
     private void callSaveUserLocation() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
 
         {
             String _responseMain = "";
-            Uri.Builder builder;
+            //            Uri.Builder builder;
+            JSONObject mainJsonObject = new JSONObject();
+            JSONObject locJsonObject = new JSONObject();
+
 
             @Override
             protected void onPreExecute() {
@@ -717,16 +757,33 @@ public class MyAreasFrag extends Fragment implements
 
                 Constant.showLoader(getActivity());
 
-                builder = new Uri.Builder()
+                try {
+
+                    locJsonObject.put("x", _long);
+                    locJsonObject.put("y", _lat);
+
+                    mainJsonObject.put("loc", locJsonObject);
+                    mainJsonObject.put("address", _address);
+                    mainJsonObject.put("locName", _address);
+                    mainJsonObject.put("userLocationType", "CIRCULAR");
+                    mainJsonObject.put("locImage", finalimgUrl);
+
+                    System.out.println("Request of USER_SAVE_LOCATION : " + mainJsonObject.toString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+           /*     builder = new Uri.Builder()
                         .appendQueryParameter("user_id", user_id)
                         .appendQueryParameter("loc_lat", String.valueOf(_lat))
                         .appendQueryParameter("loc_long", String.valueOf(_long))
                         .appendQueryParameter("loc_radius", "5")
                         .appendQueryParameter("loc_address", _address)
                         .appendQueryParameter("loc_img", finalimgUrl)
-                        .appendQueryParameter("loc_name", _address);
+                        .appendQueryParameter("loc_name", _address);*/
 
-                System.out.println("Request of USER_SAVE_LOCATION : " + builder);
+//
 
 
             }
@@ -741,7 +798,8 @@ public class MyAreasFrag extends Fragment implements
                         HttpURLConnection urlConnection;
 
 
-                        String query = builder.build().getEncodedQuery();
+//                        String query = builder.build().getEncodedQuery();
+                        String query = mainJsonObject.toString();
                         //			String temp=URLEncoder.encode(uri, "UTF-8");
                         URL url = new URL(WebServiceConstants.
                                 getMethodUrl(WebServiceConstants.USER_SAVE_LOCATION));
@@ -752,8 +810,9 @@ public class MyAreasFrag extends Fragment implements
                         urlConnection.setChunkedStreamingMode(1024);
                         urlConnection.setReadTimeout(200000);
 
-
                         urlConnection.setRequestMethod("POST");
+                        urlConnection.setRequestProperty("Content-Type", "application/json");
+                        urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                         urlConnection.connect();
 
                         //Write
@@ -818,26 +877,61 @@ public class MyAreasFrag extends Fragment implements
                         if (status == 1) {
                             search_et.setText("");
 
-                            Constant.showToast(jsonObject.getString("message"), getActivity());
+//                            Constant.showToast(jsonObject.getString("message"), getActivity());
                             if (!isDrawOption) {
                                 // TODO: 10/12/15 Redirect to Home Screen
                                 // TODO: 10/12/15  Replace Fragment here with Home Fragment
-                                replaceFragment();
-                            } else {
                                 MyAreasBean bean = new MyAreasBean();
                                 bean.setIsSelected(false);
-                                bean.setId(jsonObject.getInt("loction_id") + "");
+                                JSONObject mJsonObjectData = jsonObject.getJSONObject("data");
+                                String loc_id = mJsonObjectData.getString("id");
+                                String userLocationType = mJsonObjectData.getString("userLocationType");
+                                bean.setType(userLocationType);
+                                bean.setId(loc_id);
+
                                 bean.setLoc_name(_address);
                                 bean.setLoc_add(_address);
                                 bean.set_long(_long + "");
                                 bean.set_lat(_lat + "");
                                 bean.setImg_url(finalimgUrl);
                                 myAreasList.add(bean);
-                                areasAdapter.notifyDataSetChanged();
+                                saveCurrentLatLong(myAreasList.size() - 1);
+                                replaceFragment();
+                            } else {
+                                if (myAreasList.size() == 0) {
+
+                                    MyAreasBean beanDemo = new MyAreasBean();
+                                    beanDemo.setLoc_name("");
+                                    beanDemo.setLoc_add("");
+                                    myAreasList.add(beanDemo);
+                                }
+                                MyAreasBean bean = new MyAreasBean();
+                                bean.setIsSelected(false);
+                                JSONObject mJsonObjectData = jsonObject.getJSONObject("data");
+                                String loc_id = mJsonObjectData.getString("id");
+                                String userLocationType = mJsonObjectData.getString("userLocationType");
+                                bean.setType(userLocationType);
+                                bean.setId(loc_id);
+                                bean.setLoc_name(_address);
+                                bean.setLoc_add(_address);
+                                bean.set_long(_long + "");
+                                bean.set_lat(_lat + "");
+                                bean.setImg_url(finalimgUrl);
+                                myAreasList.add(bean);
+                                if (areasAdapter != null) {
+                                    areasAdapter.notifyDataSetChanged();
+                                } else {
+                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity(), isDrawOption);
+                                    my_area_grid.setAdapter(areasAdapter);
+                                }
+
                                 // TODO: 15/12/15 Add to List
                             }
-                        } else {
-                            Constant.showToast(jsonObject.getString("message"), getActivity());
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error    ", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
                     } catch (Exception e) {
@@ -1301,7 +1395,9 @@ public class MyAreasFrag extends Fragment implements
 
         {
             String _responseMain = "";
-            Uri.Builder builder;
+            //            Uri.Builder builder;
+            JSONObject mJsonObjectUser = new JSONObject();
+            JSONObject mJsonObjectUserID = new JSONObject();
 
             @Override
             protected void onPreExecute() {
@@ -1309,8 +1405,17 @@ public class MyAreasFrag extends Fragment implements
 
                 Constant.showLoader(getActivity());
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("user_id", user_id);
+                try {
+                    mJsonObjectUserID.put("id", user_id);
+                    mJsonObjectUser.put("user", mJsonObjectUserID);
+                    mJsonObjectUser.put("pageNo", 1);
+                    mJsonObjectUser.put("limit", 100);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+               /* builder = new Uri.Builder()
+                        .appendQueryParameter("user_id", user_id);*/
 
             }
 
@@ -1324,7 +1429,9 @@ public class MyAreasFrag extends Fragment implements
 
                         HttpURLConnection urlConnection;
 
-                        String query = builder.build().getEncodedQuery();
+//                        String query = builder.build().getEncodedQuery();
+                        String query = mJsonObjectUser.toString();
+                        System.out.println("query for Get Locations : " + query);
                         //			String temp=URLEncoder.encode(uri, "UTF-8");
                         URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_USER_SAVED_LOC));
                         urlConnection = (HttpURLConnection) ((url.openConnection()));
@@ -1333,6 +1440,8 @@ public class MyAreasFrag extends Fragment implements
                         urlConnection.setUseCaches(false);
                         urlConnection.setChunkedStreamingMode(1024);
                         urlConnection.setReadTimeout(200000);
+                        urlConnection.setRequestProperty("Content-Type", "application/json");
+                        urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
 
                         urlConnection.setRequestMethod("POST");
                         urlConnection.connect();
@@ -1398,13 +1507,13 @@ public class MyAreasFrag extends Fragment implements
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            if (jsonObject.has("user_locations")) {
+                            if (jsonObject.has("data")) {
 
-                                JSONArray user_locations = jsonObject.getJSONArray("user_locations");
+                                JSONArray data = jsonObject.getJSONArray("data");
                                 if (mDataBase.isOpen()) {
-                                    mDataBase.put("user_locations", user_locations);
+                                    mDataBase.put("data", data);
                                 }
-                                if (user_locations.length() > 0) {
+                                if (data.length() > 0) {
                                     if (myAreasList.size() > 0) {
                                         myAreasList.clear();
                                     }
@@ -1416,21 +1525,30 @@ public class MyAreasFrag extends Fragment implements
                                     }
 
 
-                                    for (int i = 0; i < user_locations.length(); i++) {
-                                        JSONObject jsonobj = user_locations.getJSONObject(i);
-                                        String loc_name = jsonobj.getString("loc_name");
-                                        String loc_address = jsonobj.getString("loc_address");
-                                        String userlat = jsonobj.getString("loc_lat");
-                                        String userlong = jsonobj.getString("loc_long");
-                                        String loc_radius = jsonobj.getString("loc_radius");
-                                        String id = jsonobj.getString("id");
-                                        String loc_image = jsonobj.getString("loc_image");
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject jsonobj = data.getJSONObject(i);
+                                        String loc_name = jsonobj.getString("locName");
+                                        String loc_address = jsonobj.getString("address");
 
+                                        String id = jsonobj.getString("id");
+                                        String loc_image = jsonobj.getString("locImage");
+                                        String userLocationType = jsonobj.getString("userLocationType");
+
+                                        JSONObject mObjectLotLng = new JSONObject(jsonobj.getString("loc"));
                                         MyAreasBean bean = new MyAreasBean();
+                                        bean.setType(userLocationType);
+                                        if (mObjectLotLng.has("x")) {
+                                            String userlong = String.valueOf(mObjectLotLng.getDouble("x"));
+                                            bean.set_long(userlong);
+                                        }
+                                        if (mObjectLotLng.has("y")) {
+                                            String userlat = String.valueOf(mObjectLotLng.getDouble("y"));
+                                            bean.set_lat(userlat);
+                                        }
+
                                         bean.setLoc_name(loc_name);
                                         bean.setLoc_add(loc_address);
-                                        bean.set_lat(userlat);
-                                        bean.set_long(userlong);
+
                                         bean.setId(id);
                                         bean.setImg_url(loc_image);
 
@@ -1489,7 +1607,13 @@ public class MyAreasFrag extends Fragment implements
 
                             }
 
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
+
 
                     } catch (Exception e) {
 
@@ -1544,8 +1668,13 @@ public class MyAreasFrag extends Fragment implements
     private void saveCurrentLatLong(int position) {
         try {
             MyAreasBean bean = myAreasList.get(position);
+            System.out.println("Current Location from Autocomplete after position: " + bean.getLoc_name());
+            System.out.println("Current Location from Autocomplete after position: POS" + position);
+            System.out.println("Current Location from Autocomplete after position: LAT" + bean.get_lat());
             editor.putString("LATITUDE", bean.get_lat());
             editor.putString("LONGITUDE", bean.get_long());
+            editor.putString("userLocationType", bean.getType());
+            editor.putString("LOCATIONID", bean.getId());
 
             editor.commit();
         } catch (Exception e) {

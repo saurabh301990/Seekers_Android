@@ -57,7 +57,7 @@ import butterknife.ButterKnife;
  */
 public class MyKeyWords extends android.support.v4.app.Fragment implements View.OnClickListener {
     SwipeMenuListView listview;
-    List<MyKeywordsBean> rowItem;
+    ArrayList<MyKeywordsBean> rowItem;
     private SharedPreferences _sPrefs;
     MyKeywordsAdaptor custombaseadapter;
     String user_id;

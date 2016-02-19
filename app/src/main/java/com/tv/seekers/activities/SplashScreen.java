@@ -25,6 +25,8 @@ public class SplashScreen extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash_screen);
+
+//        ErrorReporter.getInstance().Init(SplashScreen.this);
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
 
         isLogin = sPref.getBoolean("ISLOGIN", false);

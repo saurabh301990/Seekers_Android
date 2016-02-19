@@ -1,15 +1,21 @@
 package com.tv.seekers.activities;
 
-import android.app.Activity;
-import android.media.Image;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -22,14 +28,14 @@ import com.tv.seekers.utils.NetworkAvailablity;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +43,8 @@ import butterknife.ButterKnife;
 /**
  * Created by shoeb on 28/12/15.
  */
-public class PostDetailsTextImg extends Activity implements View.OnClickListener {
+public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnClickListener,
+        YouTubePlayer.OnInitializedListener{
 
     /*Header*/
     @Bind(R.id.tgl_menu)
@@ -70,7 +77,12 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
     @Bind(R.id.date_time_tv)
     TextView date_time_tv;
 
+    @Bind(R.id.post_vid)
+    YouTubePlayerView post_vid;
+
     private String mPostId = "";
+    SharedPreferences sPref;
+    private MediaController mMediaController;
 
     private DisplayImageOptions optionsUser;
     private DisplayImageOptions optionsPostImg;
@@ -83,11 +95,16 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
 
         setContentView(R.layout.post_details_txt_img_screen);
         ButterKnife.bind(this);
+        //ErrorReporter.getInstance().Init(PostDetailsTextImg.this);
         init();
         setFont();
         setData();
         setOnClick();
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        mMediaController = new MediaController(PostDetailsTextImg.this);
 
+        post_vid.setVisibility(View.GONE);
+        post_vid.initialize(Constant.YOUTUBE_API_KEY, this);
         gettingIntentData();
 
     }
@@ -149,8 +166,8 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
 
                 Constant.showLoader(PostDetailsTextImg.this);
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("post_id", mPostId);
+                /*builder = new Uri.Builder()
+                        .appendQueryParameter("id", mPostId);*/
             }
 
             @Override
@@ -160,51 +177,33 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
 
                     try {
 
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
+
 
                         try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS)+"?id="+mPostId);
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
 
-                            String query = builder.build().getEncodedQuery();
-                            System.out.println("Request : " + query);
-                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-                            urlConnection.setReadTimeout(300000);
+                            if(responseCode == 200){
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                Log.v("_responseMain", _responseMain);
 
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-                            //Write
-                            OutputStream outputStream = urlConnection.getOutputStream();
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                            writer.write(query);
-                            writer.close();
-                            outputStream.close();
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
+                            }else{
+                                Log.v("Post Details", "Response code:"+ responseCode);
                             }
 
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of Get Post Details : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } finally {
+                            if(urlConnection != null)
+                                urlConnection.disconnect();
                         }
+
+
+
 
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -241,61 +240,87 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
                         JSONObject _JsonObject = new JSONObject(_responseMain);
                         int status = _JsonObject.getInt("status");
 
-
                         if (status == 1) {
-                            JSONObject jsonObject = _JsonObject.getJSONObject("post_details");
-                            JSONObject _jSubObject = jsonObject.getJSONObject("result");
+
+                            JSONObject _jSubObject = _JsonObject.getJSONObject("data");
 
                             if (_jSubObject.has("id")) {
                                 String mID = _jSubObject.getString("id");
                             }
 
-                            if (_jSubObject.has("source_id")) {
+                           /* if (_jSubObject.has("source_id")) {
                                 String mSourceID = _jSubObject.getString("source_id");
-                            }
+                            }*/
                             if (_jSubObject.has("cop_id")) {
                                 String cop_id = _jSubObject.getString("cop_id");
                             }
-                            if (_jSubObject.has("post_text")) {
-                                String post_text = _jSubObject.getString("post_text");
+                            if (_jSubObject.has("postText")) {
+                                String post_text = _jSubObject.getString("postText");
                                 userpostDescription_tv.setText(post_text);
                             }
-                            if (_jSubObject.has("post_type")) {
-                                String post_type = _jSubObject.getString("post_type");
+                            if (_jSubObject.has("postType")) {
+                                String post_type = _jSubObject.getString("postType");
                             }
-                            if (_jSubObject.has("post_description")) {
-                                String post_description = _jSubObject.getString("post_description");
+                            if (_jSubObject.has("postDescription")) {
+                                String post_description = _jSubObject.getString("postDescription");
                             }
-                            if (_jSubObject.has("post_image")) {
-                                String post_image = _jSubObject.getString("post_image");
-                                imageLoaderNew.displayImage(post_image, post_iv,
-                                        optionsPostImg,
-                                        null);
+                            if (_jSubObject.has("postImage")) {
+
+                                JSONObject mpostImage = _jSubObject.getJSONObject("postImage");
+                                String postImgUrl = "";
+                                String mSmall = mpostImage.getString("small");
+                                String medium = mpostImage.getString("medium");
+                                String large = mpostImage.getString("large");
+                                if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                    postImgUrl = mSmall;
+                                    imageLoaderNew.displayImage(postImgUrl, post_iv,
+                                            optionsPostImg,
+                                            null);
+                                } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                    postImgUrl = medium;
+                                    imageLoaderNew.displayImage(postImgUrl, post_iv,
+                                            optionsPostImg,
+                                            null);
+                                } else if (large != null && !large.equalsIgnoreCase("")) {
+                                    postImgUrl = large;
+                                    imageLoaderNew.displayImage(postImgUrl, post_iv,
+                                            optionsPostImg,
+                                            null);
+                                } else {
+
+                                }
+
+
+
                             }
-                            if (_jSubObject.has("post_video")) {
-                                String post_video = _jSubObject.getString("post_video");
+
+                            if (_jSubObject.has("postVideo")) {
+                                String post_video = _jSubObject.getString("postVideo");
                             }
-                            if (_jSubObject.has("post_id")) {
-                                String post_id = _jSubObject.getString("post_id");
+                            if (_jSubObject.has("postId")) {
+                                String post_id = _jSubObject.getString("postId");
                             }
-                            if (_jSubObject.has("post_location")) {
-                                String post_location = _jSubObject.getString("post_location");
+                            if (_jSubObject.has("postLocation")) {
+                                String post_location = _jSubObject.getString("postLocation");
                                 userLocation_tv.setText(post_location);
                             }
-                            if (_jSubObject.has("post_lat")) {
-                                String post_lat = _jSubObject.getString("post_lat");
-                            }
-                            if (_jSubObject.has("post_long")) {
-                                String post_long = _jSubObject.getString("post_long");
-                            }
+
+                           /* JSONObject mObjectLotLng = new JSONObject(_jSubObject.getString("loc"));
+                            JSONArray mArrayCoordinates = mObjectLotLng.getJSONArray("coordinates");
+
+                            String post_lat = mArrayCoordinates.getString(0);
+                            String post_long = mArrayCoordinates.getString(1);
+                         */
                             if (_jSubObject.has("post_radius")) {
                                 String post_radius = _jSubObject.getString("post_radius");
                             }
-                            if (_jSubObject.has("post_url")) {
-                                String post_url = _jSubObject.getString("post_url");
+                            if (_jSubObject.has("postUrl")) {
+                                String post_url = _jSubObject.getString("postUrl");
                             }
-                            if (_jSubObject.has("post_time")) {
-                                String post_time = _jSubObject.getString("post_time");
+                            if (_jSubObject.has("postTime")) {
+                                long post_time = _jSubObject.getLong("postTime");
+                                post_time = post_time *1000;
+                                date_time_tv.setText(getDateFromMilliseconds(post_time,"dd MMMM yyyy hh:mm a"));
                             }
                             if (_jSubObject.has("post_fetch_time")) {
                                 String post_fetch_time = _jSubObject.getString("post_fetch_time");
@@ -304,12 +329,6 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
                                 String post_user_id = _jSubObject.getString("post_user_id");
                             }
 
-                            if (_jSubObject.has("user_image")) {
-                                String user_image = _jSubObject.getString("user_image");
-                                imageLoaderNew.displayImage(user_image, user_img_iv,
-                                        optionsUser,
-                                        null);
-                            }
                             if (_jSubObject.has("user_gender")) {
                                 String user_gender = _jSubObject.getString("user_gender");
                             }
@@ -326,40 +345,65 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
                                 String user_mobile = _jSubObject.getString("user_mobile");
                             }
                             String source = "";
-                            if (_jSubObject.has("source")) {
-                                source = _jSubObject.getString("source");
-                                if (source.equalsIgnoreCase("Twitter")) {
+                            if (_jSubObject.has("sourceType")) {
+                                source = _jSubObject.getString("sourceType");
+                                if (source.equalsIgnoreCase("TWITTER")) {
                                     user_imgType_iv.setImageResource(R.mipmap.twit_top_corner);
-                                } else if (source.equalsIgnoreCase("Instagram")) {
+                                } else if (source.equalsIgnoreCase("INSTAGRAM")) {
                                     user_imgType_iv.setImageResource(R.mipmap.instagr_top_corner);
-                                } else if (source.equalsIgnoreCase("Youtube")) {
+                                } else if (source.equalsIgnoreCase("YOUTUBE")) {
                                     user_imgType_iv.setImageResource(R.mipmap.youtube_top_corner);
-                                } else if (source.equalsIgnoreCase("Vk")) {
+                                } else if (source.equalsIgnoreCase("VK")) {
                                     user_imgType_iv.setImageResource(R.mipmap.vk_top_corner);
-                                } else if (source.equalsIgnoreCase("Meetup")) {
+                                } else if (source.equalsIgnoreCase("MEETUP")) {
                                     user_imgType_iv.setImageResource(R.mipmap.meetup_top_corner);
+                                }else if (source.equalsIgnoreCase("FLIKER")) {
+                                    user_imgType_iv.setImageResource(R.mipmap.flickr_top_corner);
                                 }
                             }
-                            if (_jSubObject.has("user_name")) {
-                                String user_name = _jSubObject.getString("user_name");
-                                if (user_name.equalsIgnoreCase("")) {
+
+                            JSONObject mJsonObjectUser = new JSONObject(_jSubObject.getString("user"));
+                            if (mJsonObjectUser.has("username")) {
+                                String user_name = mJsonObjectUser.getString("username");
+                                userType_tv.setText(user_name);
+                                /*if (user_name.equalsIgnoreCase("")) {
                                     userType_tv.setText(source + " User");
                                 } else {
                                     userType_tv.setText(user_name + " / " + source + " User");
+                                }*/
+                            }
+                            if (mJsonObjectUser.has("profilePic")) {
+
+                                JSONObject mJsonObjectPic = mJsonObjectUser.getJSONObject("profilePic");
+                                String postImgUrl = "";
+                                String mSmall = mJsonObjectPic.getString("small");
+                                String medium = mJsonObjectPic.getString("medium");
+                                String large = mJsonObjectPic.getString("large");
+                                if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                    postImgUrl = mSmall;
+                                } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                    postImgUrl = medium;
+                                } else if (large != null && !large.equalsIgnoreCase("")) {
+                                    postImgUrl = large;
                                 }
+                                imageLoaderNew.displayImage(postImgUrl, user_img_iv,
+                                        optionsUser,
+                                        null);
                             }
 
-                            if (_jSubObject.has("view_type")) {
-                                String view_type = _jSubObject.getString("view_type");
-                                if (view_type.equalsIgnoreCase("T")) {
+
+
+                            if (_jSubObject.has("postType")) {
+                                String view_type = _jSubObject.getString("postType");
+                                if (view_type.equalsIgnoreCase("TEXT_ONLY")) {
                                     post_iv.setVisibility(View.GONE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
 
-                                } else if (view_type.equalsIgnoreCase("TI")) {
+                                } else if (view_type.equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
 
-                                } else if (view_type.equalsIgnoreCase("I")) {
+                                } else if (view_type.equalsIgnoreCase("IMAGE_ONLY")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.GONE);
 
@@ -368,13 +412,12 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
                                 }
                             }
 
-                            if (_jSubObject.has("post_time")) {
-                                date_time_tv.setText(_jSubObject.getString("post_time"));
-                            }
 
-
-                        } else {
-                            Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error", PostDetailsTextImg.this);
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(PostDetailsTextImg.this);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -393,6 +436,39 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
         } else {
             _Task.execute((String[]) null);
         }
+    }
+    private  String getDateFromMilliseconds(long milliSeconds, String dateFormat)
+    {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 
     private void setOnClick() {
@@ -427,4 +503,72 @@ public class PostDetailsTextImg extends Activity implements View.OnClickListener
     }
 
 
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+/** add listeners to YouTubePlayer instance **/
+        youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+        youTubePlayer.setPlaybackEventListener(playbackEventListener);
+
+        /** Start buffering **/
+        if (!b) {
+            youTubePlayer.loadVideo("5LiD09JMqH8");
+        }
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+        Constant.showToast("Failured to Initialize!",PostDetailsTextImg.this);
+    }
+
+
+    private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
+
+        @Override
+        public void onBuffering(boolean arg0) {
+        }
+
+        @Override
+        public void onPaused() {
+        }
+
+        @Override
+        public void onPlaying() {
+        }
+
+        @Override
+        public void onSeekTo(int arg0) {
+        }
+
+        @Override
+        public void onStopped() {
+        }
+
+    };
+
+    private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
+
+        @Override
+        public void onAdStarted() {
+        }
+
+        @Override
+        public void onError(YouTubePlayer.ErrorReason arg0) {
+        }
+
+        @Override
+        public void onLoaded(String arg0) {
+        }
+
+        @Override
+        public void onLoading() {
+        }
+
+        @Override
+        public void onVideoEnded() {
+        }
+
+        @Override
+        public void onVideoStarted() {
+        }
+    };
 }

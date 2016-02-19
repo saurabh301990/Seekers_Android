@@ -91,6 +91,17 @@
                         android:layout_width="240dp"
                         android:layout_height="220dp"
                         android:layout_centerHorizontal="true" />
+
+                    <com.google.android.youtube.player.YouTubePlayerView
+                        android:id="@+id/post_vid"
+                        android:layout_width="280dp"
+                        android:layout_height="240dp"
+
+                        android:visibility="gone"
+                        android:background="#fff"
+                        android:layout_centerHorizontal="true"
+
+                         />
                 </RelativeLayout>
 
                 <TextView

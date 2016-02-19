@@ -5,10 +5,20 @@ package com.tv.seekers.bean;
  */
 public class TrackBean {
 
-    String imageURL;
-    String username;
-    String userfollowed;
-    String usertack;
+    String imageURL = "";
+    String username = "";
+    String userfollowed = "";
+    String usertack = "";
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    String id = "";
 
     public String getImageURL() {
         return imageURL;

@@ -1,11 +1,13 @@
 package com.tv.seekers.menu;
 
-import android.net.Uri;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +15,16 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 
 import com.tv.seekers.R;
-import com.tv.seekers.adapter.LandingAdapter;
-import com.tv.seekers.bean.LandingBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.utils.NetworkAvailablity;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -52,13 +49,17 @@ public class LegalContent extends Fragment {
     final String mimeType = "text/html";
     final String encoding = "UTF-8";
     private String webviewtxt = "";
+    private SharedPreferences sPref;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.legalcontent, container, false);
+//        ErrorReporter.getInstance().Init(getActivity());
         ButterKnife.bind(this, view);
+
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callLegalContentWS();
         } else {
@@ -94,45 +95,34 @@ public class LegalContent extends Fragment {
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
 
                     try {
-
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
 
 
                         try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.LEGAL_CONTENT));
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
 
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of LEGAL_CONTENT : " + _responseMain);
 
-                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.LEGAL_CONTENT));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
-
-
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
+                            } else {
+                                Log.v("LEGAL_CONTENT", "Response code:" + responseCode);
                             }
 
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of Location Screen : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.showToast("Server Error ", getActivity());
+                                }
+                            });
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
                     } catch (Exception e) {
@@ -172,10 +162,15 @@ public class LegalContent extends Fragment {
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
 
-                            JSONObject jsonObject1 = jsonObject.getJSONObject("privacy");
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                             String id = jsonObject1.getString("id");
-                            webviewtxt = jsonObject1.getString("privacy");
+                            webviewtxt = jsonObject1.getString("text");
                             legal_wv.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
+                        }else if (status == 0) {
+                            Constant.showToast("Server Error    ", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
                     } catch (Exception e) {
@@ -195,5 +190,27 @@ public class LegalContent extends Fragment {
         } else {
             _Task.execute((String[]) null);
         }
+    }
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 }

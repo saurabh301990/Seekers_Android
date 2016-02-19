@@ -2,6 +2,7 @@ package com.tv.seekers.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,6 +20,8 @@ import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.utils.NetworkAvailablity;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -28,21 +31,24 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by admin1 on 3/11/15.
  */
 public class MyKeywordsAdaptor extends BaseAdapter {
-    Context context;
-    List<MyKeywordsBean> rowItem;
+    Activity context;
+    private ArrayList<MyKeywordsBean> rowItem;
+    private SharedPreferences sPref;
 
-    public MyKeywordsAdaptor(Context context, List<MyKeywordsBean> rowItem) {
+    public MyKeywordsAdaptor(Activity context, ArrayList<MyKeywordsBean> rowItem) {
         this.context = context;
         this.rowItem = rowItem;
+        sPref = context.getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
     }
 
-    private class ViewHolder {
+    public class ViewHolder {
         TextView _title;
         ToggleButton _tglBtn;
     }
@@ -67,13 +73,14 @@ public class MyKeywordsAdaptor extends BaseAdapter {
         ViewHolder holder = null;
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        final MyKeywordsBean rowItems = (MyKeywordsBean) rowItem
-                .get(position);
+        final MyKeywordsBean rowItems = rowItem.get(position);
+
+//        System.out.println("GetView Keywords with Pos : " + position+"ID "+ rowItems.get_tglID() );
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.mykeywords_row, null);
             holder = new ViewHolder();
             holder._title = (TextView) convertView.findViewById(R.id.mykeywords_title);
-            Constant.setFont(context,holder._title,0);
+            Constant.setFont(context, holder._title, 0);
             holder._tglBtn = (ToggleButton) convertView.findViewById(R.id.mykeywords_tgl);
             convertView.setTag(holder);
         } else {
@@ -83,11 +90,11 @@ public class MyKeywordsAdaptor extends BaseAdapter {
         holder._tglBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println(position+" <<<" +isChked);
-                if(isChked){
-                    tglSaveKeywordWS("0",rowItems.get_tglID());
-                }else{
-                    tglSaveKeywordWS("1",rowItems.get_tglID());
+                System.out.println(position + " <<<" + isChked);
+                if (isChked) {
+                    tglSaveKeywordWS(false, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title());
+                } else {
+                    tglSaveKeywordWS(true, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title());
                 }
             }
         });
@@ -98,19 +105,26 @@ public class MyKeywordsAdaptor extends BaseAdapter {
         return convertView;
     }
 
-    private void tglSaveKeywordWS(final String isActive, final String id) {
-        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
-        {
+    private void tglSaveKeywordWS(final boolean isActive, final String id, final long mCreatedOn, final String title) {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
-            Uri.Builder builder;
+            JSONObject mJsonObject;
+
 
             @Override
             protected void onPreExecute() {
                 Constant.showLoader(context);
-                builder = new Uri.Builder()
-                        .appendQueryParameter("keyword_id", id)
-                        .appendQueryParameter("is_active", isActive);
-                System.out.println("BUI: "+builder);
+                mJsonObject = new JSONObject();
+                try {
+                    mJsonObject.put("id", id);
+                    mJsonObject.put("createdOn", mCreatedOn);
+                    mJsonObject.put("keyword", title);
+                    mJsonObject.put("isActive", isActive);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             @Override
@@ -119,13 +133,16 @@ public class MyKeywordsAdaptor extends BaseAdapter {
                     try {
                         HttpURLConnection urlConnection;
                         try {
-                            String query = builder.build().getEncodedQuery();
+                            String query = mJsonObject.toString();
+                            System.out.println("Request of Update Keyword : " + query);
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.TGL_SAVE_KEYWORD));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
                             urlConnection.setDoInput(true);
                             urlConnection.setDoOutput(true);
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             urlConnection.setRequestMethod("POST");
                             urlConnection.connect();
 
@@ -171,6 +188,21 @@ public class MyKeywordsAdaptor extends BaseAdapter {
             protected void onPostExecute(String result) {
                 Constant.hideLoader();
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+                        JSONObject mJsonObject = new JSONObject(_responseMain);
+                        int status = mJsonObject.getInt("status");
+                        if (status == 1) {
+
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(context);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                 } else {
                     Constant.hideLoader();

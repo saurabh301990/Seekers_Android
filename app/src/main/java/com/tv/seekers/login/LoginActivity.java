@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.activities.ForgotPass;
+import com.tv.seekers.activities.TermsAndConditions;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.menu.MainActivity;
@@ -25,7 +26,6 @@ import com.tv.seekers.menu.MainActivity;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -37,10 +37,10 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.Executor;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
@@ -64,6 +64,14 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
     @Bind(R.id.main_rl)
     RelativeLayout main_rl;
 
+    @Bind(R.id.term_tv)
+    TextView term_tv;
+
+    @OnClick(R.id.term_tv)
+    public void term_tv(View view) {
+        startActivity(new Intent(LoginActivity.this, TermsAndConditions.class));
+    }
+
     private String username = "";
     private String pswrd = "";
     private SharedPreferences sPref;
@@ -75,6 +83,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.loginscreen);
+
+//        ErrorReporter.getInstance().Init(LoginActivity.this);
         ButterKnife.bind(this);
 
         main_rl.setOnTouchListener(this);
@@ -85,6 +95,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         Constant.setFont(LoginActivity.this, login_btn, 0);
         Constant.setFont(LoginActivity.this, email_et, 0);
         Constant.setFont(LoginActivity.this, pswd_et, 0);
+        Constant.setFont(LoginActivity.this, term_tv, 0);
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
@@ -100,6 +111,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         {
             String _responseMain = "";
             Uri.Builder builder;
+            JSONObject mJsonObject = new JSONObject();
 
             @Override
             protected void onPreExecute() {
@@ -107,9 +119,16 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
                 Constant.showLoader(LoginActivity.this);
 
-                builder = new Uri.Builder()
+                try {
+                    mJsonObject.put("username",username);
+                    mJsonObject.put("password",pswrd);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+               /* builder = new Uri.Builder()
                         .appendQueryParameter("username", username)
-                        .appendQueryParameter("password", pswrd);
+                        .appendQueryParameter("password", pswrd);*/
             }
 
             @Override
@@ -123,7 +142,9 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
                         try {
 
-                            String query = builder.build().getEncodedQuery();
+//                            String query = builder.build().getEncodedQuery();
+                            String query = mJsonObject.toString();
+                            System.out.println("query FOr Login : " + query);
                             //			String temp=URLEncoder.encode(uri, "UTF-8");
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.LOGIN));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
@@ -132,10 +153,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);
 
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
 
                             urlConnection.setRequestMethod("POST");
-                            urlConnection.setReadTimeout(5000);
+                            urlConnection.setReadTimeout(30000);
                             urlConnection.connect();
+
 
                             //Write
                             OutputStream outputStream = urlConnection.getOutputStream();
@@ -143,6 +166,22 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                             writer.write(query);
                             writer.close();
                             outputStream.close();
+
+                            if (urlConnection.getResponseCode()==200){
+                                String responseHeader  =  urlConnection.getHeaderField("Set-Cookie");
+
+                                if (responseHeader!=null&&!responseHeader.equalsIgnoreCase("")){
+                                    String response[] = responseHeader.split(";");
+                                    if (response.length>0){
+                                        responseHeader = response[0];
+                                        System.out.println("Response Header : " +responseHeader);
+                                        editor.putString(Constant.Cookie,responseHeader);
+                                        editor.commit();
+                                    }
+
+
+                                }
+                            }
 
                             //Read
                             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
@@ -202,21 +241,26 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                         JSONObject _jJsonObject = new JSONObject(_responseMain);
                         if (_jJsonObject.has("status")) {
                             int status = _jJsonObject.getInt("status");
-                            String message = _jJsonObject.getString("message");
+//                            String message = _jJsonObject.getString("message");
 
                             if (status == 1) { // Success Login
 
-                                if (_jJsonObject.has("user_details")) {
-                                    JSONObject _jSonSub = _jJsonObject.getJSONObject("user_details");
+                                if (_jJsonObject.has("data")) {
+                                    JSONObject _jSonSub = _jJsonObject.getJSONObject("data");
                                     String id = _jSonSub.getString("id");
-                                    String firstname = _jSonSub.getString("firstname");
-                                    String lastname = _jSonSub.getString("lastname");
-                                    String image = _jSonSub.getString("image");
+                                    String firstname = _jSonSub.getString("firstName");
+                                    String lastname = _jSonSub.getString("lastName");
+                                    String profilePic = _jSonSub.getString("profilePic");
 
                                     editor.putString("id", id);
-                                    editor.putString("firstname", firstname);
-                                    editor.putString("lastname", lastname);
-                                    editor.putString("image", image);
+                                    editor.putString("firstName", firstname);
+                                    editor.putString("lastName", lastname);
+                                    if (_jJsonObject.has("profilePic")){
+                                        JSONObject mJsonObjectPic = _jJsonObject.getJSONObject("profilePic");
+                                        String mMedPic = mJsonObjectPic.getString("medium");
+                                        editor.putString("profilePic", mMedPic);
+                                    }
+
                                     editor.putBoolean("ISLOGIN", true);
                                     editor.commit();
 
@@ -226,7 +270,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                                 }
 
                             } else {
-                                Constant.showToast(message, LoginActivity.this);
+                                Constant.showToast("Incorrect Username or Password.", LoginActivity.this);
                             }
                         } else {
                             Constant.showToast("Server Error ", LoginActivity.this);

@@ -17,12 +17,11 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,11 +32,9 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -49,6 +46,7 @@ import com.tv.seekers.activities.TermsAndConditions;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
+import com.tv.seekers.uploadimg.AbstractUploadServiceReceiver;
 import com.tv.seekers.uploadimg.ContentType;
 import com.tv.seekers.uploadimg.UploadRequest;
 import com.tv.seekers.uploadimg.UploadService;
@@ -61,6 +59,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -111,7 +110,8 @@ public class MyProfile extends Fragment {
         if (validData()) {
             editor.putBoolean("ISAGREED", true);
             editor.commit();
-            if (isImgChoosed) {
+            callSaveWS();
+         /*   if (isImgChoosed) {
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                     isImgChoosed = false;
                     callSaveWS();
@@ -119,12 +119,12 @@ public class MyProfile extends Fragment {
                     Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
                 }
             } else {
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                *//*if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                     callSaveWSOnlyParam();
                 } else {
                     Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-                }
-            }
+                }*//*
+            }*/
 
         }
 
@@ -258,15 +258,16 @@ public class MyProfile extends Fragment {
                 UUID.randomUUID().toString()
                 , WebServiceConstants.getMethodUrl(WebServiceConstants.UPDATE_USER_PROF));
 
-        //and parameters
+        //add header
+        request.addHeader(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+        //add parameters
 
-        request.addParameter("user_id", user_id);
+       /* request.addParameter("user_id", user_id);
         request.addParameter("cur_lat", latitude + "");
         request.addParameter("cur_long", longitude + "");
-        request.addParameter("fullname", name);
+        request.addParameter("fullname", name);*/
 
-        request.addFileToUpload(fileToUploadPath, "image", System.currentTimeMillis() + ".jpeg", ContentType.APPLICATION_OCTET_STREAM);
-
+        request.addFileToUpload(fileToUploadPath, "file", System.currentTimeMillis() + ".jpeg", ContentType.APPLICATION_OCTET_STREAM);
 
         System.err.println("request of Upload img : " + request.toString());
         request.setNotificationConfig(R.mipmap.app_icon, getString(R.string.app_name),
@@ -294,6 +295,39 @@ public class MyProfile extends Fragment {
     private static final int TAKE_PHOTO_CODE = 0;
     File sdImageMainDirectory;
     Uri outputFileUri;
+
+    private final AbstractUploadServiceReceiver receiver = new AbstractUploadServiceReceiver() {
+
+
+        @Override
+        public void onProgress(String uploadId, int progress) {
+            Log.i("TAG", "The progress of the upload with ID "
+                    + uploadId + " is: " + progress);
+
+        }
+
+
+        @Override
+        public void onError(String uploadId, Exception exception) {
+            Log.e("TAG", "Error in upload with ID: " + uploadId + ". "
+                    + exception.getLocalizedMessage(), exception);
+
+            ;
+
+        }
+
+        @Override
+        public void onCompleted(String uploadId,
+                                int serverResponseCode, String serverResponseMessage) {
+
+            System.out.println("serverResponseMessage : " + serverResponseMessage);
+            if (serverResponseCode == 200) {
+
+                System.out.println("UPLOAD COMPLETED");
+            }
+        }
+    };
+
 
     private void selectCam() {
         final CharSequence[] options = {"Image From Camera", "Choose From Gallery", "Cancel"};
@@ -405,6 +439,8 @@ public class MyProfile extends Fragment {
 
         ButterKnife.bind(this, view);
         setFont();
+        receiver.register(getActivity());
+//        ErrorReporter.getInstance().Init(getActivity());
 
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
@@ -416,7 +452,7 @@ public class MyProfile extends Fragment {
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
-                .displayer(new CircleBitmapDisplayer())
+//                .displayer(new CircleBitmapDisplayer())
                         //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                 .build();
 
@@ -499,62 +535,67 @@ public class MyProfile extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initMap();
+//        initMap();
     }
 
 
     private void callGetMyProfile() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
-            Uri.Builder builder;
+
 
             @Override
             protected void onPreExecute() {
                 Constant.showLoader(getActivity());
-                builder = new Uri.Builder()
-                        .appendQueryParameter("user_id", user_id);
+
             }
 
             @Override
             protected String doInBackground(String... arg0) {
                 if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
                     try {
-                        HttpURLConnection urlConnection;
-                        String query = builder.build().getEncodedQuery();
-                        //String temp=URLEncoder.encode(uri, "UTF-8");
-                        URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_USER_PROFILE));
-                        urlConnection = (HttpURLConnection) ((url.openConnection()));
-                        urlConnection.setDoInput(true);
-                        urlConnection.setDoOutput(true);
-                        urlConnection.setUseCaches(false);
-                        urlConnection.setChunkedStreamingMode(1024);
-                        urlConnection.setRequestMethod("POST");
-                        urlConnection.setReadTimeout(30 * 1000);
-                        urlConnection.connect();
 
-                        //Write
-                        OutputStream outputStream = urlConnection.getOutputStream();
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                        writer.write(query);
-                        writer.close();
-                        outputStream.close();
+                        URL url;
+                        HttpURLConnection urlConnection = null;
 
-                        //Read
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-                        String line = null;
-                        StringBuilder sb = new StringBuilder();
-                        while ((line = bufferedReader.readLine()) != null) {
-                            //System.out.println("Uploading............");
-                            sb.append(line);
+
+                        try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_USER_PROFILE));
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
+
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of GET_USER_PROFILE : " + _responseMain);
+
+                            } else {
+                                Log.v("My area", "Response code:" + responseCode);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
-                        bufferedReader.close();
-                        _responseMain = sb.toString();
-                        System.out.println("Response of My Profile : " + _responseMain);
-                    } catch (UnsupportedEncodingException e) {
+
+
+                        //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
+                    } catch (Exception e) {
+                        // TODO: handle exception
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", getActivity());
+                            }
+                        });
+
                     }
+
+
                 } else {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
@@ -575,25 +616,28 @@ public class MyProfile extends Fragment {
                         JSONObject _JsonObject = new JSONObject(_responseMain);
                         int status = _JsonObject.getInt("status");
                         if (status == 1) {
-                            JSONObject user_details = _JsonObject.getJSONObject("user_details");
+                            JSONObject user_details = _JsonObject.getJSONObject("data");
                             String id = user_details.getString("id");
                             String username = user_details.getString("username");
-                            String firstname = user_details.getString("firstname");
-                            String lastname = user_details.getString("lastname");
-                            String fullname = user_details.getString("fullname");
+                            String firstname = user_details.getString("firstName");
+                            String lastname = user_details.getString("lastName");
+//                            String fullname = user_details.getString("fullname");
                             String email = user_details.getString("email");
                             String password = user_details.getString("password");
-                            String role_type = user_details.getString("role_type");
+//                            String role_type = user_details.getString("role_type");
                             String gender = user_details.getString("gender");
-                            String mobile_no = user_details.getString("mobile_no");
-                            String lat = user_details.getString("lat");
-                            String _long = user_details.getString("long");
+                            String phone = user_details.getString("phone");
+                            /*String lat = user_details.getString("lat");
+                            String _long = user_details.getString("long");*/
                             String address = user_details.getString("address");
-                            imageURL = user_details.getString("image");
-                            imageURL = WebServiceConstants.IMAGE_URL + imageURL;
+
+                            JSONObject profilePicJSON = user_details.getJSONObject("profilePic");
+
+                            imageURL = profilePicJSON.getString("medium");
+//                            imageURL = WebServiceConstants.IMAGE_URL + imageURL;
 
                             email_et.setText(email);
-                            name_et.setText(fullname);
+                            name_et.setText(firstname + " " + lastname);
                             username_et.setText(username);
 
                             imageLoaderNew.displayImage(imageURL, user_img_iv,
@@ -614,13 +658,19 @@ public class MyProfile extends Fragment {
                                         }
                                     });
 
-                            if (_long != null && !_long.equalsIgnoreCase("")
+                          /*  if (_long != null && !_long.equalsIgnoreCase("")
                                     && lat != null && !lat.equalsIgnoreCase("")) {
                                 latitude = Double.parseDouble(lat);
                                 longitude = Double.parseDouble(_long);
                                 showMap();
-                            }
+                            }*/
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error    ", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                         Constant.showToast("Server Error ", getActivity());
@@ -637,6 +687,29 @@ public class MyProfile extends Fragment {
         } else {
             _Task.execute((String[]) null);
         }
+    }
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 
     @Override
@@ -691,7 +764,7 @@ public class MyProfile extends Fragment {
                         defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
     }
 
-    @Override
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("onActivityResult Called For My Profile");
@@ -754,7 +827,7 @@ public class MyProfile extends Fragment {
         } catch (Exception e) {
             isImgChoosed = false;
 
-            Constant.showToast("Something went wrong" , getActivity());
+            Constant.showToast("Something went wrong", getActivity());
         }
 
 
@@ -764,5 +837,6 @@ public class MyProfile extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         Constant.hideKeyBoard(getActivity());
+        receiver.unregister(getActivity());
     }
 }

@@ -85,7 +85,7 @@ public class AddFollowedAdapter extends BaseAdapter {
         view_holder.userimage.setImageResource(R.mipmap.user);
         view_holder.right_img.setImageResource(R.mipmap.plus_icon_blue_bg);
         view_holder.txtfolloweduser.setText(trackBean.getUsername());
-        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed());
+        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed()+ " Followed");
         view_holder.txtnotrackuser.setText(trackBean.getUsertack());
 
         return view;

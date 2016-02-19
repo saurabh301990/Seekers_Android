@@ -131,8 +131,9 @@ public class GPSTracker extends Service implements LocationListener {
 					}
 
 				}
-				if (String.valueOf(latitude).equalsIgnoreCase("0.0") && String.valueOf(longitude).equalsIgnoreCase("0.0")) {
+				if (String.valueOf(latitude).equalsIgnoreCase("0.0") || String.valueOf(longitude).equalsIgnoreCase("0.0")) {
 //					showSettingsAlert();
+					canGetLocation = false;
 
 				}
 
@@ -207,7 +208,7 @@ public class GPSTracker extends Service implements LocationListener {
 		alertDialog.setTitle("GPS settings");
 
 		// Setting Dialog Message
-		alertDialog.setMessage("GPS is not enabled. Please turn ON GPS for Grab Your Location");
+		alertDialog.setMessage("GPS is not enabled. Please turn ON GPS.");
 
 		// On pressing Settings button
 		alertDialog.setNeutralButton("Settings", new DialogInterface.OnClickListener() {
