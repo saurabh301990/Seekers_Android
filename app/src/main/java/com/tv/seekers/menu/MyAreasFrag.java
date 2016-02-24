@@ -40,6 +40,7 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.tv.seekers.R;
@@ -877,6 +878,8 @@ public class MyAreasFrag extends Fragment implements
                         if (status == 1) {
                             search_et.setText("");
 
+                            // TODO: 23/2/16 Fetching Array List of latlng
+
 //                            Constant.showToast(jsonObject.getString("message"), getActivity());
                             if (!isDrawOption) {
                                 // TODO: 10/12/15 Redirect to Home Screen
@@ -1406,8 +1409,8 @@ public class MyAreasFrag extends Fragment implements
                 Constant.showLoader(getActivity());
 
                 try {
-                    mJsonObjectUserID.put("id", user_id);
-                    mJsonObjectUser.put("user", mJsonObjectUserID);
+               /*     mJsonObjectUserID.put("id", user_id);
+                    mJsonObjectUser.put("user", mJsonObjectUserID);*/
                     mJsonObjectUser.put("pageNo", 1);
                     mJsonObjectUser.put("limit", 100);
                 } catch (Exception e) {
@@ -1533,9 +1536,36 @@ public class MyAreasFrag extends Fragment implements
                                         String id = jsonobj.getString("id");
                                         String loc_image = jsonobj.getString("locImage");
                                         String userLocationType = jsonobj.getString("userLocationType");
+                                        MyAreasBean bean = new MyAreasBean();
+                                        if (userLocationType.equalsIgnoreCase("AREA")) {
+                                            if (jsonobj.has("areaLatLng")) {
+                                                JSONArray areaLatLngARRAY = jsonobj.getJSONArray("areaLatLng");
+                                                if (areaLatLngARRAY.length() > 0) {
+                                                    // TODO: 23/2/16  For Loop
+
+                                                    ArrayList<LatLng> arrayPointsList = new ArrayList<LatLng>();
+                                                    for (int j = 0; j < areaLatLngARRAY.length(); j++) {
+                                                        JSONObject areaLatLngJSON = areaLatLngARRAY.getJSONObject(j);
+                                                        double longitudeArea = areaLatLngJSON.getDouble("x");
+                                                        double latitudeArea = areaLatLngJSON.getDouble("y");
+                                                        LatLng areaLatLng = new LatLng(latitudeArea, longitudeArea);
+                                                        arrayPointsList.add(areaLatLng);
+
+                                                    }
+                                                    JSONObject areaLatLngJSON = areaLatLngARRAY.getJSONObject(0);
+                                                    double longitudeArea = areaLatLngJSON.getDouble("x");
+                                                    double latitudeArea = areaLatLngJSON.getDouble("y");
+                                                    LatLng areaLatLng = new LatLng(latitudeArea, longitudeArea);
+                                                    arrayPointsList.add(areaLatLng);
+                                                    bean.setAreaLatLng(arrayPointsList);
+
+
+                                                }
+                                            }
+                                        }
 
                                         JSONObject mObjectLotLng = new JSONObject(jsonobj.getString("loc"));
-                                        MyAreasBean bean = new MyAreasBean();
+
                                         bean.setType(userLocationType);
                                         if (mObjectLotLng.has("x")) {
                                             String userlong = String.valueOf(mObjectLotLng.getDouble("x"));
@@ -1675,8 +1705,13 @@ public class MyAreasFrag extends Fragment implements
             editor.putString("LONGITUDE", bean.get_long());
             editor.putString("userLocationType", bean.getType());
             editor.putString("LOCATIONID", bean.getId());
-
             editor.commit();
+            if (MapView.arrayPoints.size() > 0) {
+                MapView.arrayPoints.clear();
+            }
+            MapView.arrayPoints = bean.getAreaLatLng();
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

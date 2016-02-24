@@ -44,7 +44,7 @@ import butterknife.ButterKnife;
  * Created by shoeb on 28/12/15.
  */
 public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnClickListener,
-        YouTubePlayer.OnInitializedListener{
+        YouTubePlayer.OnInitializedListener {
 
     /*Header*/
     @Bind(R.id.tgl_menu)
@@ -182,27 +182,26 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
 
                         try {
-                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS)+"?id="+mPostId);
+                            System.out.println("Request of Post Details screen : "+ WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS) + "?id=" + mPostId);
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS) + "?id=" + mPostId);
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             int responseCode = urlConnection.getResponseCode();
 
-                            if(responseCode == 200){
+                            if (responseCode == 200) {
                                 _responseMain = readStream(urlConnection.getInputStream());
                                 Log.v("_responseMain", _responseMain);
 
-                            }else{
-                                Log.v("Post Details", "Response code:"+ responseCode);
+                            } else {
+                                Log.v("Post Details", "Response code:" + responseCode);
                             }
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
-                            if(urlConnection != null)
+                            if (urlConnection != null)
                                 urlConnection.disconnect();
                         }
-
-
 
 
                     } catch (Exception e) {
@@ -271,8 +270,8 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                 String mSmall = mpostImage.getString("small");
                                 String medium = mpostImage.getString("medium");
                                 String large = mpostImage.getString("large");
-                                if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
-                                    postImgUrl = mSmall;
+                                if (large != null && !large.equalsIgnoreCase("")) {
+                                    postImgUrl = large;
                                     imageLoaderNew.displayImage(postImgUrl, post_iv,
                                             optionsPostImg,
                                             null);
@@ -281,15 +280,13 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     imageLoaderNew.displayImage(postImgUrl, post_iv,
                                             optionsPostImg,
                                             null);
-                                } else if (large != null && !large.equalsIgnoreCase("")) {
-                                    postImgUrl = large;
+                                }
+                                if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                    postImgUrl = mSmall;
                                     imageLoaderNew.displayImage(postImgUrl, post_iv,
                                             optionsPostImg,
                                             null);
-                                } else {
-
                                 }
-
 
 
                             }
@@ -319,8 +316,8 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             }
                             if (_jSubObject.has("postTime")) {
                                 long post_time = _jSubObject.getLong("postTime");
-                                post_time = post_time *1000;
-                                date_time_tv.setText(getDateFromMilliseconds(post_time,"dd MMMM yyyy hh:mm a"));
+                                post_time = post_time * 1000;
+                                date_time_tv.setText(getDateFromMilliseconds(post_time, "dd MMMM yyyy hh:mm a"));
                             }
                             if (_jSubObject.has("post_fetch_time")) {
                                 String post_fetch_time = _jSubObject.getString("post_fetch_time");
@@ -357,7 +354,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     user_imgType_iv.setImageResource(R.mipmap.vk_top_corner);
                                 } else if (source.equalsIgnoreCase("MEETUP")) {
                                     user_imgType_iv.setImageResource(R.mipmap.meetup_top_corner);
-                                }else if (source.equalsIgnoreCase("FLIKER")) {
+                                } else if (source.equalsIgnoreCase("FLIKER")) {
                                     user_imgType_iv.setImageResource(R.mipmap.flickr_top_corner);
                                 }
                             }
@@ -390,7 +387,6 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                         optionsUser,
                                         null);
                             }
-
 
 
                             if (_jSubObject.has("postType")) {
@@ -437,8 +433,8 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
             _Task.execute((String[]) null);
         }
     }
-    private  String getDateFromMilliseconds(long milliSeconds, String dateFormat)
-    {
+
+    private String getDateFromMilliseconds(long milliSeconds, String dateFormat) {
         // Create a DateFormatter object for displaying date in specified format.
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
 
@@ -517,7 +513,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        Constant.showToast("Failured to Initialize!",PostDetailsTextImg.this);
+        Constant.showToast("Failured to Initialize!", PostDetailsTextImg.this);
     }
 
 

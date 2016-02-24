@@ -41,23 +41,26 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by shoeb on 4/12/15.
  */
 public class HomeListAdapter extends BaseAdapter {
-    private ArrayList<HomeBean> list = new ArrayList<HomeBean>();
+    private List<HomeBean> list = new ArrayList<HomeBean>();
     private Activity context;
     private DisplayImageOptions optionsUser;
     private DisplayImageOptions optionsPostImg;
     private com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
     private SharedPreferences sPref;
+    private boolean isUserDetails = false;
 //    private MediaController mMediaController;
 
 
-    public HomeListAdapter(ArrayList<HomeBean> dataList, Activity context) {
+    public HomeListAdapter(List<HomeBean> dataList, Activity context, boolean isUserDetails ) {
         this.list = dataList;
         this.context = context;
+        this.isUserDetails = isUserDetails;
 
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
@@ -208,6 +211,9 @@ public class HomeListAdapter extends BaseAdapter {
         } else {
             view_holder.tvUserType.setText(bean.getUser_name() + " / " + bean.getSource() + " User");
         }*/
+        if (isUserDetails){
+            view_holder.isFollow.setVisibility(View.GONE);
+        }
 
         if (view_holder.isFollow != null) {
             if (bean.isFollowed()) {

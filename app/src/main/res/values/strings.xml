@@ -3,7 +3,6 @@
     <string name="internet">Failed to load request. Please check your internet connection and try again.</string>
 
 
-
     <!--Login-->
     <string name="loginText">Login</string>
     <string name="forgotPswrdText">Forgot Password?</string>
@@ -47,15 +46,15 @@
     <string name="drawer_close">Close</string>
 
     <string-array name="nav_drawer_labels">
-        <item>Home</item>
-        <item>Saved Profiles</item>
-        <!--<item>My Keywords</item>-->
-        <item>Saved Areas</item>
+        <item>Near by Location</item>
         <item>Draw Area</item>
-        <item>Activity Report</item>
+        <item>Saved Areas</item>
+        <!--<item>My Keywords</item>-->
+        <item>Saved Profiles</item>
         <item>Notifications</item>
-        <item>My Profile</item>
-        <item>Legal Content</item>
+        <item>Activity Report</item>
+        <item>Legal Correspondence</item>
+        <item>Profile</item>
         <item>Help &amp; Support</item>
         <item>Logout</item>
     </string-array>

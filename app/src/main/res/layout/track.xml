@@ -41,7 +41,7 @@
     </RelativeLayout>
 
 
-    <ListView
+    <com.tv.seekers.utils.XListView
         android:id="@+id/lvtrack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

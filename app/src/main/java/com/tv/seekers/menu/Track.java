@@ -29,6 +29,7 @@ import com.tv.seekers.bean.TrackBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.utils.NetworkAvailablity;
+import com.tv.seekers.utils.XListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,7 +51,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Saurabh on 4/11/15.
  */
-public class Track extends Fragment {
+public class Track extends Fragment implements XListView.IXListViewListener {
 
 
     @Nullable
@@ -63,7 +64,8 @@ public class Track extends Fragment {
     EditText search_et;
 
     @Bind(R.id.lvtrack)
-    ListView listuser;
+    XListView listuser;
+    private int _page_number = 1;
 
     private SharedPreferences sPref;
 
@@ -107,13 +109,16 @@ public class Track extends Fragment {
         addData();
 
 
-
-
+        //Load More
+        listuser.setSelector(android.R.color.transparent);
+        listuser.setXListViewListener(this);
+        listuser.setPullRefreshEnable(true);
+        listuser.setPullLoadEnable(false);
         listuser.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                replaceFragment();
+                replaceFragment(position-1);
             }
         });
 
@@ -175,8 +180,8 @@ public class Track extends Fragment {
                 Constant.showLoader(getActivity());
 
                 try {
-                    mJsonObject.put("pageNo", 1);
-                    mJsonObject.put("limit", 50000);
+                    mJsonObject.put("pageNo", _page_number);
+                    mJsonObject.put("limit", 20);
 
 
                 } catch (Exception e) {
@@ -297,8 +302,22 @@ public class Track extends Fragment {
                                             bean.setId(id);
                                             String username = mSubJsonObject.getString("username");
                                             bean.setUsername(username);
-                                            String profilePic = mSubJsonObject.getString("profilePic");
-                                            bean.setImageURL(profilePic);
+                                            JSONObject _picJsonObject = mSubJsonObject.getJSONObject("profilePic");
+
+                                            String userImgUrl = "";
+                                            String mSmall = _picJsonObject.getString("small");
+                                            String medium = _picJsonObject.getString("medium");
+                                            String large = _picJsonObject.getString("large");
+                                            if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                                userImgUrl = mSmall;
+                                            } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                                userImgUrl = medium;
+                                            } else if (large != null && !large.equalsIgnoreCase("")) {
+                                                userImgUrl = large;
+                                            }
+                                            bean.setImageURL(userImgUrl);
+
+
                                             String follower_count = mSubJsonObject.getString("follower_count");
                                             bean.setUserfollowed(follower_count);
 
@@ -320,6 +339,20 @@ public class Track extends Fragment {
                                 } else {
                                     Constant.showToast("Server Error    ", getActivity());
                                 }
+
+
+                                if (mJsonObject.has("isMore")) {
+                                    String _is_more = mJsonObject.getString("isMore");
+                                    if (_is_more.equalsIgnoreCase("Yes")) {
+                                        listuser.setPullLoadEnable(true);
+                                    } else {
+                                        listuser.setPullLoadEnable(false);
+                                    }
+
+                                } else {
+                                    listuser.setPullLoadEnable(false);
+                                }
+                                listuser.stopLoadMore();
                             } else if (mStatus == 0) {
                                 Constant.showToast("Server Error    ", getActivity());
                             } else if (mStatus == -1) {
@@ -356,10 +389,15 @@ public class Track extends Fragment {
         Constant.setFont(getActivity(), _header, 0);
     }
 
-    private void replaceFragment() {
+    private void replaceFragment(int mPosition) {
 
         TrackMapFragment fragment = new TrackMapFragment();
         if (fragment != null) {
+
+            TrackBean bean = userlist.get(mPosition);
+            Bundle mBundle = new Bundle();
+            mBundle.putString("USERID", bean.getId());
+            fragment.setArguments(mBundle);
 
 
             FragmentManager fragmentManager = getFragmentManager();
@@ -382,5 +420,20 @@ public class Track extends Fragment {
             trackBean.setUsertack("1 track");
             userlist.add(trackBean);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+//For Pull To Refresh
+        _page_number = 1;
+        callGetFollowedUsers();
+    }
+
+    @Override
+    public void onLoadMore() {
+//For Load More from Bottom
+        _page_number = _page_number + 1;
+        callGetFollowedUsers();
+
     }
 }

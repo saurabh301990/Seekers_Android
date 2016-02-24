@@ -161,8 +161,10 @@
                 android:background="@mipmap/top_divider" />
 
             <LinearLayout
+                android:id="@+id/miles_tabs"
                 android:layout_width="match_parent"
                 android:layout_height="33dp"
+
                 android:divider="?android:listDivider"
                 android:dividerPadding="2.5dp"
                 android:orientation="horizontal"

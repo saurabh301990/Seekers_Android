@@ -110,9 +110,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
 
 
-
         // display the first navigation drawer view on app launch
-        displayView(3, false);
+        displayView(1, false);
     }
 
 
@@ -169,12 +168,17 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setImageResource(R.drawable.filtr);
                 break;
             case 1:
-                fragment = new Track();
-                _header.setText("Saved Profiles");
+
+                fragment = new DemoMapFrag();
+                _header.setText("Draw Area");
                 _rightIcon.setVisibility(View.VISIBLE);
-                _rightIcon.setImageResource(R.mipmap.plus);
+                _rightIcon.setImageResource(R.mipmap.save);
+
                 break;
             case 2:
+
+
+
                /* fragment = new MyKeyWords();
                 _header.setText("My Keywords");
                 _rightIcon.setVisibility(View.GONE);
@@ -189,30 +193,38 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 3:
-                fragment = new DemoMapFrag();
-                _header.setText("Draw Area");
+
+
+                fragment = new Track();
+                _header.setText("Saved Profiles");
                 _rightIcon.setVisibility(View.VISIBLE);
-                _rightIcon.setImageResource(R.mipmap.save);
+                _rightIcon.setImageResource(R.mipmap.plus);
                 break;
             case 4:
+
+                fragment = new Notification();
+                _header.setText("Notifications");
+                _rightIcon.setVisibility(View.GONE);
+
+                break;
+            case 5:
+
                 fragment = new ActivityReport();
                 _header.setText("Activity Report");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.drawable.filtr);
                 break;
-            case 5:
-                fragment = new Notification();
-                _header.setText("Notifications");
-                _rightIcon.setVisibility(View.GONE);
-                break;
             case 6:
-                fragment = new MyProfile();
-                _header.setText("Profile");
+
+                fragment = new LegalContent();
+                _header.setText("Legal Correspondence");
                 _rightIcon.setVisibility(View.GONE);
+
                 break;
             case 7:
-                fragment = new LegalContent();
-                _header.setText("Legal Content");
+
+                fragment = new MyProfile();
+                _header.setText("Profile");
                 _rightIcon.setVisibility(View.GONE);
                 break;
             case 8:

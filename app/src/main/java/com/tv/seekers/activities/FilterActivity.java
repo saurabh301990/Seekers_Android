@@ -51,12 +51,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -186,6 +191,7 @@ public class FilterActivity extends FragmentActivity
 
     private String user_id = "";
     private SharedPreferences sPref;
+    private SharedPreferences.Editor editor;
     private boolean isDate = false;
     private boolean isTime = false;
     private String start_date = "";
@@ -204,10 +210,13 @@ public class FilterActivity extends FragmentActivity
         ButterKnife.bind(this);
         rowItem = new ArrayList<MyKeywordsBean>();
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        editor = sPref.edit();
         user_id = sPref.getString("id", "");
 //        ErrorReporter.getInstance().Init(FilterActivity.this);
         setfont();
         setonclick();
+        setDefaultDate();
+        setDefaultFilters();
 
        /* if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
             callGetUserFilterWS();
@@ -302,6 +311,76 @@ public class FilterActivity extends FragmentActivity
 
     }
 
+    /**
+     * Return date in specified format.
+     *
+     * @param milliSeconds Date in milliseconds
+     * @param dateFormat   Date format
+     * @return String representing date in specified format
+     */
+    public static String getDate(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
+
+    private boolean isDateFilter = false;
+    private boolean isMeetUpFilter = false;
+    private boolean isTwitterFilter = false;
+    private boolean isYoutubeFilter = false;
+    private boolean isInstaFilter = false;
+    private boolean isFlikerFilter = false;
+    private boolean isVKFilter = false;
+
+
+    private void setDefaultFilters() {
+        isDateFilter = sPref.getBoolean("DATE", false);
+        if (isDateFilter) {
+            long STARTDATE = sPref.getLong("STARTDATE", 0);
+            Sdatetime.setText(getDate(STARTDATE, DateTime.DATE_FORMAT));
+            long ENDDATE = sPref.getLong("ENDDATE", 0);
+            Edatetime.setText(getDate(ENDDATE, DateTime.DATE_FORMAT));
+        }
+        isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+        isTwitterFilter = sPref.getBoolean("TWITTER", false);
+        isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+        isInstaFilter = sPref.getBoolean("INSTA", false);
+        isFlikerFilter = sPref.getBoolean("FLICKER", false);
+        isVKFilter = sPref.getBoolean("VK", false);
+
+        meetUpTgl.setChecked(isMeetUpFilter);
+        twittertoggle.setChecked(isTwitterFilter);
+        youtubetoggle.setChecked(isYoutubeFilter);
+        instatgl.setChecked(isInstaFilter);
+        flickertgl.setChecked(isFlikerFilter);
+        vktgl.setChecked(isVKFilter);
+        filterbydatetgl.setChecked(isDateFilter);
+
+    }
+
+    private void setDefaultDate() {
+
+        Calendar c = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat(DateTime.DATE_FORMAT);
+        String mCurrentDate = df.format(c.getTime());
+        System.out.println("Current Date  => " + mCurrentDate);
+        Edatetime.setText(mCurrentDate);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        Date oneMonthAgoDate = cal.getTime();
+
+        DateTime mDateTime = new DateTime(oneMonthAgoDate);
+        System.out.println("1 month ago Date  => " + mDateTime.getDateString());
+        Sdatetime.setText(mDateTime.getDateString());
+    }
+
     private void callGetKewordsWS() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
@@ -386,14 +465,18 @@ public class FilterActivity extends FragmentActivity
 
                             JSONArray mJsonArray = jo.getJSONArray("data");
                             if (mJsonArray.length() > 0) {
+                                if (rowItem.size() > 0) {
+                                    rowItem.clear();
+                                }
                                 for (int i = 0; i < mJsonArray.length(); i++) {
                                     JSONObject kw = mJsonArray.getJSONObject(i);
                                     String keyW = kw.getString("keyword");
                                     long createdOn = kw.getLong("createdOn");
+                                    boolean isActive = kw.getBoolean("isActive");
                                    /* String isActive = kw.getString("is_active");
                                     boolean _isA = (!isActive.equalsIgnoreCase("0"));*/
                                     String _ID = kw.getString("id");
-                                    MyKeywordsBean rowItemC = new MyKeywordsBean(keyW, true, _ID);
+                                    MyKeywordsBean rowItemC = new MyKeywordsBean(keyW, isActive, _ID);
                                     rowItemC.setCreatedOn(createdOn);
                                     rowItem.add(rowItemC);
                                 }
@@ -1032,11 +1115,109 @@ public class FilterActivity extends FragmentActivity
                 break;
             case R.id.txtapply:
 
+                if (twittertoggle.isChecked()) {
+                    editor.putBoolean("TWITTER", true);
+                } else {
+                    editor.putBoolean("TWITTER", false);
+                }
+                if (instatgl.isChecked()) {
+                    editor.putBoolean("INSTA", true);
+                } else {
+                    editor.putBoolean("INSTA", false);
+                }
+                if (youtubetoggle.isChecked()) {
+                    editor.putBoolean("YOUTUBE", true);
+                } else {
+                    editor.putBoolean("YOUTUBE", false);
+                }
+                if (meetUpTgl.isChecked()) {
+                    editor.putBoolean("MEETUP", true);
+                } else {
+                    editor.putBoolean("MEETUP", false);
+                }
+                if (vktgl.isChecked()) {
+                    editor.putBoolean("VK", true);
+                } else {
+                    editor.putBoolean("VK", false);
+                }
+
+                if (flickertgl.isChecked()) {
+                    editor.putBoolean("FLICKER", true);
+                } else {
+                    editor.putBoolean("FLICKER", false);
+                }
+
+
+                if (filterbydatetgl.isChecked()) {
+                    editor.putBoolean("DATE", true);
+                    start_date = Sdatetime.getText().toString().trim();
+                    SimpleDateFormat sdf = new SimpleDateFormat(DateTime.DATE_FORMAT);
+                    long startDateMillisec = 0;
+                    try {
+                        Date mDate = sdf.parse(start_date);
+                        startDateMillisec = mDate.getTime();
+                        System.out.println("startDateMillisec :: " + startDateMillisec);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    editor.putLong("STARTDATE", startDateMillisec);
+
+
+                    end_date = Edatetime.getText().toString().trim();
+
+                    SimpleDateFormat sdfEndDate = new SimpleDateFormat(DateTime.DATE_FORMAT);
+                    long endDateMillisec = 0;
+                    try {
+                        Date mDate = sdfEndDate.parse(end_date);
+                        endDateMillisec = mDate.getTime();
+                        System.out.println("startDateMillisec :: " + endDateMillisec);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    editor.putLong("ENDDATE", endDateMillisec);
+                } else {
+                    editor.putBoolean("DATE", false);
+
+                }
+
+
+
+                /*Key words*/
+
+                ArrayList<String> tempListOfActiveKeywords = new ArrayList<String>();
+
+                if (rowItem.size() > 0) {
+                    for (int i = 0; i < rowItem.size(); i++) {
+                        MyKeywordsBean bean = rowItem.get(i);
+                        if (bean.get_tglState()) {
+                            tempListOfActiveKeywords.add(bean.get_title());
+                        }
+
+
+                    }
+                }
+
+                if (tempListOfActiveKeywords.size() > 0) {
+                    editor.putInt("KEYWORDSIZE", tempListOfActiveKeywords.size());
+                    for (int j = 0; j < tempListOfActiveKeywords.size(); j++) {
+                        editor.putString("KEYWORD_" + j, tempListOfActiveKeywords.get(j));
+                    }
+                }
+
+
+                editor.commit();
+
+                finish();
+/*
+
                 if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
                     callupdateUserFilterWS();
                 } else {
                     Constant.showToast(getResources().getString(R.string.internet), FilterActivity.this);
                 }
+*/
 
 
                 break;
@@ -1070,6 +1251,20 @@ public class FilterActivity extends FragmentActivity
         flickertgl.setChecked(false);
         filterbydatetgl.setChecked(false);
 
+
+        editor.putBoolean("DATE", false);
+        editor.putBoolean("MEETUP", false);
+        editor.putBoolean("TWITTER", false);
+        editor.putBoolean("YOUTUBE", false);
+        editor.putBoolean("INSTA", false);
+        editor.putBoolean("FLICKER", false);
+        editor.putBoolean("VK", false);
+        editor.putLong("STARTDATE", 0);
+        editor.putLong("ENDDATE", 0);
+        editor.putInt("KEYWORDSIZE", 0);
+
+        editor.commit();
+
         if (rowItem.size() > 0) {
 
             String id = "";
@@ -1088,6 +1283,8 @@ public class FilterActivity extends FragmentActivity
 
 
         }
+
+
 
 
     }
@@ -1541,6 +1738,8 @@ public class FilterActivity extends FragmentActivity
                 mdate = inputFormat.parse(mDateTime.getDateString());
                 start_date = outputFormat.format(mdate);
                 System.out.println("Final DAte : in New format : " + start_date);
+                long milliseconds = date.getTime();
+                System.out.println("Final DAte : Millisecond : " + milliseconds);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -1559,6 +1758,9 @@ public class FilterActivity extends FragmentActivity
                 mdate = inputFormat.parse(mDateTime.getDateString());
                 end_date = outputFormat.format(mdate);
                 System.out.println("Final DAte : in New format : " + end_date);
+
+                long milliseconds = date.getTime();
+                System.out.println("Final DAte : Millisecond : " + milliseconds);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

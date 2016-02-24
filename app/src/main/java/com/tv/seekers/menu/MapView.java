@@ -55,6 +55,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.activities.PostDetailsTextImg;
@@ -63,6 +66,7 @@ import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.date.DateTime;
 import com.tv.seekers.gpsservice.GPSTracker;
 import com.tv.seekers.utils.NetworkAvailablity;
 import com.tv.seekers.utils.XListView;
@@ -77,11 +81,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -264,6 +273,10 @@ public class MapView extends Fragment
     @Bind(R.id.map_layout)
     LinearLayout map_layout;
 
+
+    @Bind(R.id.miles_tabs)
+    LinearLayout miles_tabs;
+
     @Bind(R.id.mapView)
     RelativeLayout map_view;
 
@@ -286,13 +299,16 @@ public class MapView extends Fragment
         super.onDestroyView();
         ButterKnife.unbind(this);
         Constant.hideKeyBoard(getActivity());
-        System.out.println("onDestroyView : Called.");
+        System.out.println("onDestroyView : Called");
         editor.putString("LATITUDE", "");
         editor.putString("LONGITUDE", "");
         editor.putString("userLocationType", "");
         editor.putString("LOCATIONID", "");
 
         editor.commit();
+        if (arrayPoints.size() > 0) {
+            arrayPoints.clear();
+        }
     }
 
     private TextView header;
@@ -310,6 +326,69 @@ public class MapView extends Fragment
     private String userLocationType = "";
     private String locationId = "";
     private int _page_number = 1;
+    public static ArrayList<LatLng> arrayPoints = new ArrayList<LatLng>();
+    private static final LatLng DAVV = new LatLng(22.7188222, 75.8708128);
+    private static final LatLng TI = new LatLng(22.7188222, 75.8708128);
+    private static final LatLng MILAN = new LatLng(22.7188222, 75.8708128);
+
+    public static ArrayList<LatLng> sortLocations(ArrayList<LatLng> locations, final double myLatitude, final double myLongitude) {
+        Comparator comp = new Comparator<LatLng>() {
+            @Override
+            public int compare(LatLng o, LatLng o2) {
+                float[] result1 = new float[3];
+                android.location.Location.distanceBetween(myLatitude, myLongitude, o.latitude, o.longitude, result1);
+                Float distance1 = result1[0];
+
+                float[] result2 = new float[3];
+                android.location.Location.distanceBetween(myLatitude, myLongitude, o2.latitude, o2.longitude, result2);
+                Float distance2 = result2[0];
+
+                return distance1.compareTo(distance2);
+            }
+        };
+
+
+        Collections.sort(locations, comp);
+        return locations;
+    }
+
+    public void drawPolygonOnMap() {
+        System.out.println("PolyGon List Size : " + arrayPoints.size());
+        if (arrayPoints.size() >= 3) {
+
+         /*   BitmapDescriptor bitmapMarker = null;
+            for (int k = 0 ; k>arrayPoints.size();k++){
+                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+                LatLng ll = arrayPoints.get(k);
+                googleMap.addMarker(new MarkerOptions().position(ll)
+
+                        .icon(bitmapMarker));
+            }*/
+/*
+            PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+            for (int z = 0; z < arrayPoints.size(); z++) {
+                LatLng point = arrayPoints.get(z);
+                options.add(point);
+            }
+            googleMap.addPolyline(options);*/
+/*
+
+            ArrayList<LatLng> finalArrayList = new ArrayList<LatLng>();
+            finalArrayList = sortLocations(arrayPoints, arrayPoints.get(0).latitude, arrayPoints.get(0).longitude);
+*/
+
+           /* googleMap.addPolyline((new PolylineOptions())
+                    .addAll(arrayPoints).width(5).color(Color.BLACK)
+                    .geodesic(true));*/
+
+            PolygonOptions polygonOptions = new PolygonOptions();
+            polygonOptions.addAll(arrayPoints);
+            polygonOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+            polygonOptions.strokeWidth(1);
+            polygonOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+            Polygon polygon = googleMap.addPolygon(polygonOptions);
+        }
+    }
 
 
     @Nullable
@@ -795,6 +874,13 @@ public class MapView extends Fragment
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             JSONObject mJsonObject = new JSONObject();
+            boolean isDateFilter = false;
+            boolean isMeetUpFilter = false;
+            boolean isTwitterFilter = false;
+            boolean isYoutubeFilter = false;
+            boolean isInstaFilter = false;
+            boolean isFlikerFilter = false;
+            boolean isVKFilter = false;
 //            Uri.Builder builder;
 
             @Override
@@ -818,7 +904,6 @@ public class MapView extends Fragment
 
                     }
 
-
                     if (_isList) {
                         mJsonObject.put("isMap", 0);
                         mJsonObject.put("pageNo", _page_number);
@@ -829,10 +914,86 @@ public class MapView extends Fragment
                         mJsonObject.put("pageNo", 1);
                         mJsonObject.put("limit", 1000);
                     }
+
+
+                    isDateFilter = sPref.getBoolean("DATE", false);
+                    if (isDateFilter) {
+                        long STARTDATE = sPref.getLong("STARTDATE", 0);
+                        if (STARTDATE > 0) {
+                            STARTDATE = STARTDATE / 1000;
+                        }
+                        long ENDDATE = sPref.getLong("ENDDATE", 0);
+                        if (ENDDATE > 0) {
+                            ENDDATE = ENDDATE / 1000;
+                        }
+
+                        mJsonObject.put("startDate", STARTDATE);
+                        mJsonObject.put("endDate", ENDDATE);
+
+                    }
+                    Set<String> stringArrayList = new HashSet<>();
+                    editor.putStringSet("", stringArrayList);
+
+
+                    isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+                    isTwitterFilter = sPref.getBoolean("TWITTER", false);
+                    isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+                    isInstaFilter = sPref.getBoolean("INSTA", false);
+                    isFlikerFilter = sPref.getBoolean("FLICKER", false);
+                    isVKFilter = sPref.getBoolean("VK", false);
+
+
+                    JSONArray sourcesArray = new JSONArray();
+                    if (isMeetUpFilter) {
+                        sourcesArray.put("MEETUP");
+                    }
+
+                    if (isTwitterFilter) {
+                        sourcesArray.put("TWITTER");
+                    }
+
+                    if (isYoutubeFilter) {
+                        sourcesArray.put("YOUTUBE");
+                    }
+
+                    if (isInstaFilter) {
+                        sourcesArray.put("INSTAGRAM");
+                    }
+
+                    if (isFlikerFilter) {
+                        sourcesArray.put("FLIKER");
+                    }
+
+                    if (isVKFilter) {
+                        sourcesArray.put("VK");
+                    }
+
+                    if (sourcesArray.length() > 0) {
+                        mJsonObject.put("sources", sourcesArray);
+                    }
+
+
+                    int KEYWORDSIZE = sPref.getInt("KEYWORDSIZE", 0);
+                    JSONArray keywords = new JSONArray();
+                    if (KEYWORDSIZE > 0) {
+
+                        for (int i = 0; i < KEYWORDSIZE; i++) {
+
+                            keywords.put(sPref.getString("KEYWORD_" + i, ""));
+
+
+                        }
+                    }
+
+                    if (keywords.length() > 0) {
+                        mJsonObject.put("keywords", keywords);
+                    }
+
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
 
                 System.out.println("Request of Get All Posts: " + mJsonObject.toString());
                 System.out.println("Request of Get All Posts: userLocationType " + userLocationType);
@@ -933,6 +1094,14 @@ public class MapView extends Fragment
                         JSONObject jsonObject = new JSONObject(_responseMain);
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
+
+                            if (userLocationType.equalsIgnoreCase("AREA")) {
+                                // TODO: 23/2/16 HIDDEN Miles tabs
+                                miles_tabs.setVisibility(View.GONE);
+                                drawPolygonOnMap();
+                            } else {
+                                miles_tabs.setVisibility(View.VISIBLE);
+                            }
 
 
                             if (_page_number == 1) {
@@ -1119,7 +1288,7 @@ public class MapView extends Fragment
                                     //todo setting Adapter here
 
                                     if (_page_number == 1) {
-                                        adapterList = new HomeListAdapter(_mainList, getActivity());
+                                        adapterList = new HomeListAdapter(_mainList, getActivity(), false);
                                         listView_home.setAdapter(adapterList);
 //                                        onLoad();
                                         listView_home.stopRefresh();
@@ -1131,18 +1300,24 @@ public class MapView extends Fragment
 
                                 } else {
 
-                                    // TODO: 4/12/15 setting Map here
-                                    if (radius.equalsIgnoreCase("2")) {
+
+                                    if (!userLocationType.equalsIgnoreCase("AREA")) {
+                                        // TODO: 4/12/15 setting Map here
+                                        if (radius.equalsIgnoreCase("2")) {
+                                            mapWithZooming(12);
+                                        } else if (radius.equalsIgnoreCase("5")) {
+                                            mapWithZooming(11);
+                                        } else if (radius.equalsIgnoreCase("10")) {
+                                            mapWithZooming(10);
+                                        } else if (radius.equalsIgnoreCase("20")) {
+                                            mapWithZooming(9);
+                                        }
+
+                                        addCircleToMap(Integer.parseInt(radius));
+                                    } else {
                                         mapWithZooming(12);
-                                    } else if (radius.equalsIgnoreCase("5")) {
-                                        mapWithZooming(11);
-                                    } else if (radius.equalsIgnoreCase("10")) {
-                                        mapWithZooming(10);
-                                    } else if (radius.equalsIgnoreCase("20")) {
-                                        mapWithZooming(9);
                                     }
 
-                                    addCircleToMap(Integer.parseInt(radius));
                                 }
 
 
@@ -1264,6 +1439,10 @@ public class MapView extends Fragment
         editor.putString("LOCATIONID", "");
 
         editor.commit();
+
+        if (arrayPoints.size() > 0) {
+            arrayPoints.clear();
+        }
     }
 
 
@@ -1341,7 +1520,7 @@ public class MapView extends Fragment
             try {
 
                 mapWithZooming(12);
-                addCircleToMap(2);
+//                addCircleToMap(2);
 
 
             } catch (Exception e) {
@@ -1366,9 +1545,9 @@ public class MapView extends Fragment
         System.out.println("latitude : mapWithZooming " + latitude);
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
-            if (googleMap != null) {
+       /*     if (googleMap != null) {
                 googleMap.clear();
-            }
+            }*/
 
             cameraPosition = new CameraPosition.Builder().target(_latLong)
                     .zoom(zoom).build();

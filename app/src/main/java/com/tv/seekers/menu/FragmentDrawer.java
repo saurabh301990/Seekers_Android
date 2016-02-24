@@ -81,10 +81,10 @@ public class FragmentDrawer extends Fragment {
         // drawer labels
         titles = getActivity().getResources().getStringArray(R.array.nav_drawer_labels);
         dra_img = new Integer[]{
-                R.mipmap.home,R.mipmap.followed_profile,
-                R.mipmap.my_keywords,R.mipmap.my_locations,R.mipmap.plot_a_new_area,
-                R.mipmap.activity_report,R.mipmap.notifications,R.mipmap.my_profile,
-                R.mipmap.legal_content,R.mipmap.helpnsupport,R.mipmap.logout};
+                R.mipmap.home,R.mipmap.plot_a_new_area,
+                R.mipmap.my_locations,R.mipmap.followed_profile,R.mipmap.notifications,
+                R.mipmap.activity_report,R.mipmap.legal_content,R.mipmap.my_profile,
+                R.mipmap.helpnsupport,R.mipmap.logout};
     }
 
     @Override

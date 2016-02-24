@@ -2,6 +2,10 @@ package com.tv.seekers.bean;
 
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
 /**
  * Created by shoeb on 21/11/15.
  */
@@ -14,6 +18,16 @@ public class MyAreasBean {
     private String _lat = "";
     private String _long= "";
     private String type= "";
+
+    public ArrayList<LatLng> getAreaLatLng() {
+        return areaLatLng;
+    }
+
+    public void setAreaLatLng(ArrayList<LatLng> areaLatLng) {
+        this.areaLatLng = areaLatLng;
+    }
+
+    private ArrayList<LatLng> areaLatLng = new ArrayList<LatLng>();
 
     public String getType() {
         return type;

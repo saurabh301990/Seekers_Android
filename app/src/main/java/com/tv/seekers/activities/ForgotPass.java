@@ -1,10 +1,13 @@
 package com.tv.seekers.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +25,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -53,7 +57,8 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
     RelativeLayout main_rl;
 
 
-    private String email = "";
+    SharedPreferences sPref;
+    String email = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,8 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
         setContentView(R.layout.forgot_password_screen);
         ButterKnife.bind(this);
 //        ErrorReporter.getInstance().Init(ForgotPass.this);
+
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         setFont();
         setOnClick();
     }
@@ -85,7 +92,7 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
 
         {
             String _responseMain = "";
-            Uri.Builder builder;
+
 
             @Override
             protected void onPreExecute() {
@@ -93,8 +100,6 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
 
                 Constant.showLoader(ForgotPass.this);
 
-                builder = new Uri.Builder()
-                        .appendQueryParameter("email", email);
             }
 
             @Override
@@ -104,51 +109,32 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
 
                     try {
 
-                        HttpURLConnection urlConnection;
+                        URL url;
+                        HttpURLConnection urlConnection = null;
+
 
                         try {
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.FORGOT_PASSWORD) + "?email=" + email);
+                            urlConnection = (HttpURLConnection) url.openConnection();
 
-                            String query = builder.build().getEncodedQuery();
-                            //			String temp=URLEncoder.encode(uri, "UTF-8");
-                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.FORGOT_PASSWORD));
-                            urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setDoInput(true);
-                            urlConnection.setDoOutput(true);
-                            urlConnection.setUseCaches(false);
-                            urlConnection.setChunkedStreamingMode(1024);
+                            int responseCode = urlConnection.getResponseCode();
 
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of FORGOT_PASSWORD : " + _responseMain);
 
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.connect();
-
-                            //Write
-                            OutputStream outputStream = urlConnection.getOutputStream();
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-                            writer.write(query);
-                            writer.close();
-                            outputStream.close();
-
-                            //Read
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-
-                            String line = null;
-                            StringBuilder sb = new StringBuilder();
-
-                            while ((line = bufferedReader.readLine()) != null) {
-                                //System.out.println("Uploading............");
-                                sb.append(line);
+                            } else {
+                                Log.v("FORGOT_PASSWORD", "Response code:" + responseCode);
                             }
 
-                            bufferedReader.close();
-                            _responseMain = sb.toString();
-                            System.out.println("Response of FORGOT PASSWORD : " + _responseMain);
-
-
-                        } catch (UnsupportedEncodingException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
                         }
+
+
                         //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -186,8 +172,16 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
                         JSONObject _jJsonObject = new JSONObject(_responseMain);
                         if (_jJsonObject.has("status")) {
                             int status = _jJsonObject.getInt("status");
-                            String message = _jJsonObject.getString("message");
-                            Constant.showToast(message, ForgotPass.this);
+                            if (status == 1) {
+                                Constant.showToast("Please check your mail box. ", ForgotPass.this);
+                                finish();
+                            } else if (status == -2) {
+                                Constant.showToast("Invalid email!", ForgotPass.this);
+                            } else {
+                                Constant.showToast("Server Error ", ForgotPass.this);
+                            }
+//                            String message = _jJsonObject.getString("message");
+//                            Constant.showToast(message, ForgotPass.this);
                         } else {
                             Constant.showToast("Server Error ", ForgotPass.this);
                         }
@@ -252,5 +246,28 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
     public boolean onTouch(View v, MotionEvent event) {
         Constant.hideKeyBoard(this);
         return false;
+    }
+
+    private String readStream(InputStream in) {
+        BufferedReader reader = null;
+        StringBuffer response = new StringBuffer();
+        try {
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return response.toString();
     }
 }
