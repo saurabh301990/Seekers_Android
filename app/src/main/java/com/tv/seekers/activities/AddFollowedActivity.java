@@ -22,6 +22,7 @@ import com.tv.seekers.bean.TrackBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.utils.NetworkAvailablity;
+import com.tv.seekers.utils.XListView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,7 +46,7 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 8/11/15.
  */
-public class AddFollowedActivity extends Activity {
+public class AddFollowedActivity extends Activity implements  XListView.IXListViewListener {
 
     /*Header*/
     @Bind(R.id.tgl_menu)
@@ -66,7 +67,7 @@ public class AddFollowedActivity extends Activity {
     EditText search_et;
 
     @Bind(R.id.listView)
-    ListView listView;
+    XListView listView;
 
     private ArrayList<TrackBean> userlist = new ArrayList<TrackBean>();
     TrackBean trackBean;
@@ -74,6 +75,7 @@ public class AddFollowedActivity extends Activity {
 
     private String user_id = "";
     private SharedPreferences sPref;
+    private int _page_number = 1;
 
 
     @Override
@@ -88,6 +90,11 @@ public class AddFollowedActivity extends Activity {
         setFont();
         setData();
         setOnClick();
+        //Load More
+        listView.setSelector(android.R.color.transparent);
+        listView.setXListViewListener(this);
+        listView.setPullRefreshEnable(true);
+        listView.setPullLoadEnable(false);
         setOnItemClick();
 
 
@@ -131,6 +138,7 @@ public class AddFollowedActivity extends Activity {
     }
 
     private void setOnItemClick() {
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -306,7 +314,7 @@ public class AddFollowedActivity extends Activity {
                 Constant.showLoader(AddFollowedActivity.this);
 
                 try {
-                    mJsonObject.put("pageNo", 1);
+                    mJsonObject.put("pageNo", _page_number);
                     mJsonObject.put("limit", 20);
 
                 } catch (Exception e) {
@@ -417,9 +425,13 @@ public class AddFollowedActivity extends Activity {
                                     JSONArray mData = mJsonObject.getJSONArray("data");
                                     if (mData.length() > 0) {
 
-                                        if (userlist.size() > 0) {
-                                            userlist.clear();
+                                        if (_page_number==1){
+                                            if (userlist.size() > 0) {
+                                                userlist.clear();
+                                            }
                                         }
+
+
                                         for (int i = 0; i < mData.length(); i++) {
                                             JSONObject mSubJsonObject = mData.getJSONObject(i);
                                             TrackBean bean = new TrackBean();
@@ -431,17 +443,49 @@ public class AddFollowedActivity extends Activity {
                                             bean.setImageURL(profilePic);
                                             String follower_count = mSubJsonObject.getString("follower_count");
                                             bean.setUserfollowed(follower_count);
+                                            JSONObject _picJsonObject = mSubJsonObject.getJSONObject("profilePic");
 
+                                            String userImgUrl = "";
+                                            String mSmall = _picJsonObject.getString("small");
+                                            String medium = _picJsonObject.getString("medium");
+                                            String large = _picJsonObject.getString("large");
+                                            if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                                userImgUrl = mSmall;
+                                            } else if (medium != null && !medium.equalsIgnoreCase("")) {
+                                                userImgUrl = medium;
+                                            } else if (large != null && !large.equalsIgnoreCase("")) {
+                                                userImgUrl = large;
+                                            }
+                                            bean.setImageURL(userImgUrl);
                                             userlist.add(bean);
                                         }
 
                                         if (userlist.size() > 0) {
                                             //Set Adapter
-                                            adapter = new AddFollowedAdapter(userlist, AddFollowedActivity.this);
-                                            listView.setAdapter(adapter);
+
+                                            if (_page_number==1){
+                                                adapter = new AddFollowedAdapter(userlist, AddFollowedActivity.this);
+                                                listView.setAdapter(adapter);
+                                                listView.stopRefresh();
+                                            } else{
+                                                adapter.notifyDataSetChanged();
+                                            }
+
 
                                         } else {
                                             Constant.showToast("No users found!", AddFollowedActivity.this);
+                                        }
+
+                                        if (mJsonObject.has("isMore")) {
+                                            String _is_more = mJsonObject.getString("isMore");
+                                            if (_is_more.equalsIgnoreCase("Yes")) {
+                                                listView.setPullLoadEnable(true);
+                                            } else {
+                                                listView.setPullLoadEnable(false);
+                                            }
+
+                                        } else {
+                                            listView.setPullLoadEnable(false);
                                         }
 
                                     } else {
@@ -508,5 +552,19 @@ public class AddFollowedActivity extends Activity {
             trackBean.setUsertack("1 track");
             userlist.add(trackBean);
         }
+    }
+    @Override
+    public void onRefresh() {
+//For Pull To Refresh
+        _page_number = 1;
+        callGetAllUsers();
+    }
+
+    @Override
+    public void onLoadMore() {
+//For Load More from Bottom
+        _page_number = _page_number + 1;
+        callGetAllUsers();
+//        onLoad();
     }
 }

@@ -325,6 +325,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                                         }
 
                                         if (userlist.size() > 0) {
+                                            listuser.stopRefresh();
                                             //Set Adapter
                                             trackAdapter = new TrackAdapter(userlist, getActivity());
                                             listuser.setAdapter(trackAdapter);
@@ -352,7 +353,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                                 } else {
                                     listuser.setPullLoadEnable(false);
                                 }
-                                listuser.stopLoadMore();
+
                             } else if (mStatus == 0) {
                                 Constant.showToast("Server Error    ", getActivity());
                             } else if (mStatus == -1) {
@@ -427,6 +428,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
 //For Pull To Refresh
         _page_number = 1;
         callGetFollowedUsers();
+
     }
 
     @Override

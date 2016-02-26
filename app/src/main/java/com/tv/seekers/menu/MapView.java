@@ -1302,6 +1302,10 @@ public class MapView extends Fragment
 
 
                                     if (!userLocationType.equalsIgnoreCase("AREA")) {
+
+                                        if (googleMap != null) {
+                                            googleMap.clear();
+                                        }
                                         // TODO: 4/12/15 setting Map here
                                         if (radius.equalsIgnoreCase("2")) {
                                             mapWithZooming(12);
@@ -1315,7 +1319,8 @@ public class MapView extends Fragment
 
                                         addCircleToMap(Integer.parseInt(radius));
                                     } else {
-                                        mapWithZooming(12);
+
+                                        mapWithZooming(13);
                                     }
 
                                 }
@@ -1519,7 +1524,7 @@ public class MapView extends Fragment
 
             try {
 
-                mapWithZooming(12);
+                mapWithZooming(13);
 //                addCircleToMap(2);
 
 

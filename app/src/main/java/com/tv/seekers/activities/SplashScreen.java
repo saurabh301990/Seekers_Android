@@ -10,6 +10,7 @@ import android.os.Handler;
 import com.tv.seekers.R;
 import com.tv.seekers.login.LoginActivity;
 import com.tv.seekers.menu.MainActivity;
+import com.tv.seekers.pushnotification.GCMPushNotifHandler;
 
 /**
  * Created by shoeb on 2/11/15.
@@ -19,6 +20,7 @@ public class SplashScreen extends Activity {
     protected int SPLASH_TIME_OUT = 3000;
     private SharedPreferences sPref;
     private boolean isLogin = false;
+    private GCMPushNotifHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,8 @@ public class SplashScreen extends Activity {
 //        ErrorReporter.getInstance().Init(SplashScreen.this);
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
 
+        handler = new GCMPushNotifHandler(SplashScreen.this);
+        handler.register();
         isLogin = sPref.getBoolean("ISLOGIN", false);
         new Handler().postDelayed(new Runnable() {
             @Override

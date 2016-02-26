@@ -23,6 +23,7 @@ import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.menu.MainActivity;
 
+import com.tv.seekers.pushnotification.GCMPushNotifHandler;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 
@@ -73,9 +74,11 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
     }
 
     private String username = "";
+    private String device_token = "";
     private String pswrd = "";
     private SharedPreferences sPref;
     private SharedPreferences.Editor editor;
+    private GCMPushNotifHandler handler;
 
 
     @Override
@@ -99,6 +102,11 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
+
+        handler = new GCMPushNotifHandler(LoginActivity.this);
+        device_token = handler.getRegistrationId();
+        System.out.println("Device Token during login : " + device_token);
+
 
 
     }

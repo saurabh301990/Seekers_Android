@@ -43,7 +43,6 @@ public class TrackAdapter extends BaseAdapter {
                 .cacheOnDisk(true)
                 .considerExifParams(true)
                 .displayer(new CircleBitmapDisplayer())
-                        //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                 .build();
     }
 
@@ -72,7 +71,7 @@ public class TrackAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
 
         LayoutInflater inflater = context.getLayoutInflater();
 
@@ -100,16 +99,20 @@ public class TrackAdapter extends BaseAdapter {
         }
 
         final TrackBean trackBean = slist.get(position);
-//        view_holder.userimage.setImageResource(R.mipmap.user);
         view_holder.txtfolloweduser.setText(trackBean.getUsername());
-        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed());
+        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed() + " Followed");
         view_holder.txtnotrackuser.setText(trackBean.getUsertack());
 
-        if (trackBean.getImageURL() != null && !trackBean.getImageURL().equalsIgnoreCase("")) {
-            imageLoaderNew.displayImage(trackBean.getImageURL(), view_holder.userimage,
-                    optionsUser,
-                    null);
-        }
+       /* System.out.println("Name : " + trackBean.getUsername());
+        System.out.println("Name  WITH Image: " + trackBean.getImageURL());*/
+        imageLoaderNew.displayImage(trackBean.getImageURL(), view_holder.userimage,
+                optionsUser,
+                null);
+              /*  if (trackBean.getImageURL() != null && !trackBean.getImageURL().equalsIgnoreCase("")) {
+
+        }else{
+
+        }*/
 
         return view;
     }

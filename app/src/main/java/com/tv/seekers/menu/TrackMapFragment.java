@@ -617,7 +617,13 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                 lastName = _resultJSONArray.getString("lastName");
                             }
 
-                            name_tv.setText(firstName + " " + lastName);
+                            if (firstName != null && !firstName.equalsIgnoreCase("") && lastName != null && !lastName.equalsIgnoreCase("")) {
+                                name_tv.setText(firstName + " " + lastName);
+                            } else {
+                                name_tv.setText(username);
+                            }
+
+
                             if (_resultJSONArray.has("userType")) {
                                 userType = _resultJSONArray.getString("userType");
                             }

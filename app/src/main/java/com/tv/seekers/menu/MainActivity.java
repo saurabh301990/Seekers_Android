@@ -25,6 +25,8 @@ import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.login.LoginActivity;
 
+import org.json.JSONObject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -107,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
+        editor.putString("userLocationType", "");
+                editor.putString("LOCATIONID", "");
+        editor.commit();
 
 
 

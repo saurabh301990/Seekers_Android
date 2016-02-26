@@ -65,7 +65,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2.2"
+            android:layout_weight="2.16"
             android:orientation="horizontal"
             android:paddingBottom="8dp"
             android:paddingLeft="3dp"

@@ -33,6 +33,11 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -48,8 +53,15 @@
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="1dp" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineChart"
+            android:padding="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 </LinearLayout>

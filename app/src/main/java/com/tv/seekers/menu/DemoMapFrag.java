@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -293,7 +294,7 @@ public class DemoMapFrag extends Fragment {
                             } else {
                                 System.out.println("ACTION_UP ELSE CAse");
                                 Is_MAP_Moveable = false; // to detect map is movable
-                                btn_draw_State.setImageResource(R.mipmap.edit_off);
+                                btn_draw_State.setImageResource(R.mipmap.erase_icon);
                                 source = 0;
                                 destination = 1;
                                 draw_final_polygon();
@@ -772,7 +773,19 @@ public class DemoMapFrag extends Fragment {
         etKeywordName.setHint("Enter location name.");
 
         alert.setView(view);
-        alert.setTitle("Name of Location");
+
+
+        TextView title = new TextView(getActivity());
+       // You Can Customise your Title here
+        title.setText("Name of Location");
+        title.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.whiteShade));
+        title.setPadding(10, 10, 10, 10);
+        title.setGravity(Gravity.LEFT);
+        title.setTextColor(Color.BLACK);
+        title.setTextSize(20);
+
+        alert.setCustomTitle(title);
+
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -1037,6 +1050,8 @@ public class DemoMapFrag extends Fragment {
                         } else if (status == -1) {
                             //Redirect to Login
                             Constant.alertForLogin(getActivity());
+                        } else if (status==-4){
+                            Constant.showToast("Location name already exists.", getActivity());
                         }
 
                     } catch (Exception e) {
@@ -1312,6 +1327,8 @@ public class DemoMapFrag extends Fragment {
                         } else if (status == -3) {
 
                             Constant.showToast("Invalid shape.", getActivity());
+                        } else if (status==-4){
+                            Constant.showToast("Location name already exists.", getActivity());
                         }
 
                     } catch (Exception e) {

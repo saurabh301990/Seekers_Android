@@ -8,9 +8,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.TrackBean;
 import com.tv.seekers.constant.Constant;
+import com.tv.seekers.utils.CircleBitmapDisplayer;
 
 import java.util.ArrayList;
 
@@ -20,10 +24,25 @@ import java.util.ArrayList;
 public class AddFollowedAdapter extends BaseAdapter {
     ArrayList<TrackBean> slist = new ArrayList<TrackBean>();
     Activity context;
+    private DisplayImageOptions optionsUser;
+
+    private com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
     public AddFollowedAdapter(ArrayList<TrackBean> slist, Activity context) {
         this.slist = slist;
         this.context = context;
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
+        imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+
+        optionsUser = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.user)
+                .showImageForEmptyUri(R.mipmap.user)
+                .showImageOnFail(R.mipmap.user)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true)
+                .displayer(new CircleBitmapDisplayer())
+                .build();
     }
 
     @Override
@@ -87,7 +106,9 @@ public class AddFollowedAdapter extends BaseAdapter {
         view_holder.txtfolloweduser.setText(trackBean.getUsername());
         view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed()+ " Followed");
         view_holder.txtnotrackuser.setText(trackBean.getUsertack());
-
+        imageLoaderNew.displayImage(trackBean.getImageURL(), view_holder.userimage,
+                optionsUser,
+                null);
         return view;
     }
 }

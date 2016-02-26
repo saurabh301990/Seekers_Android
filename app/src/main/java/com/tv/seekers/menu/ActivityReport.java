@@ -15,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.tv.seekers.R;
@@ -39,7 +42,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.ButterKnife;
 
@@ -50,7 +55,18 @@ public class ActivityReport extends Fragment {
 
 
     private BarChart chart;
+    private LineChart lineChart;
     private BarData data;
+    private SharedPreferences sPref;
+    boolean isDateFilter = false;
+    boolean isMeetUpFilter = false;
+    boolean isTwitterFilter = false;
+    boolean isYoutubeFilter = false;
+    boolean isInstaFilter = false;
+    boolean isFlikerFilter = false;
+    boolean isVKFilter = false;
+
+    private ArrayList<Boolean> listOfBooleans = new ArrayList<Boolean>();
 
     @Nullable
     @Override
@@ -58,9 +74,19 @@ public class ActivityReport extends Fragment {
         View view = inflater.inflate(R.layout.activity_report, container, false);
         ButterKnife.bind(this, view);
 
-//        ErrorReporter.getInstance().Init(getActivity());
-        chart = (BarChart) view.findViewById(R.id.chart);
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
 
+//        ErrorReporter.getInstance().Init(getActivity());
+
+        lineChart = (LineChart) view.findViewById(R.id.lineChart);
+        lineChart.setDescription(" ");
+        lineChart.animateXY(2000, 2000);
+        lineChart.getAxisLeft().setDrawGridLines(false);
+        lineChart.getXAxis().setDrawGridLines(false);
+        lineChart.setScaleEnabled(false);
+        lineChart.invalidate();
+
+        chart = (BarChart) view.findViewById(R.id.chart);
         chart.setDescription(" ");
         chart.animateXY(2000, 2000);
         chart.getAxisLeft().setDrawGridLines(false);
@@ -97,19 +123,315 @@ public class ActivityReport extends Fragment {
             }
         });
 
-        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+        isTwitterFilter = sPref.getBoolean("TWITTER", false);
+        isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+        isInstaFilter = sPref.getBoolean("INSTA", false);
+        isFlikerFilter = sPref.getBoolean("FLICKER", false);
+        isVKFilter = sPref.getBoolean("VK", false);
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callGetActivityReportBar();
+
+        listOfBooleans.add(isMeetUpFilter);
+        listOfBooleans.add(isTwitterFilter);
+        listOfBooleans.add(isYoutubeFilter);
+        listOfBooleans.add(isInstaFilter);
+        listOfBooleans.add(isFlikerFilter);
+        listOfBooleans.add(isVKFilter);
+
+        int trueCount = 0;
+
+        for (int i = 0; i < listOfBooleans.size(); i++) {
+
+            if (listOfBooleans.get(i)) {
+                trueCount = trueCount + 1;
+            }
+        }
+
+        System.out.println("Final True Count : " + trueCount);
+
+
+        isDateFilter = sPref.getBoolean("DATE", false);
+
+
+        if (trueCount == 1) {
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                chart.setVisibility(View.GONE);
+                lineChart.setVisibility(View.VISIBLE);
+                callGetActivityReportLineChart();
+            } else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
+
         } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                chart.setVisibility(View.VISIBLE);
+                lineChart.setVisibility(View.GONE);
+                callGetActivityReportBar();
+            } else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
         }
 
 
         return view;
     }
 
-    SharedPreferences sPref;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        System.out.println("onAttach");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        System.out.println("onDetach");
+    }
+
+    private void demoDataLineChart() {
+        // creating list of entry
+        ArrayList<Entry> entries = new ArrayList<>();
+        entries.add(new Entry(4f, 0));
+        entries.add(new Entry(8f, 1));
+        entries.add(new Entry(6f, 2));
+        entries.add(new Entry(2f, 3));
+        entries.add(new Entry(18f, 4));
+        entries.add(new Entry(9f, 5));
+
+        LineDataSet dataset = new LineDataSet(entries, "# of Calls");
+        // creating labels
+        ArrayList<String> labels = new ArrayList<String>();
+        labels.add("January");
+        labels.add("February");
+        labels.add("March");
+        labels.add("April");
+        labels.add("May");
+        labels.add("June");
+        LineData data = new LineData(labels, dataset);
+        lineChart.setData(data);
+    }
+
+    private void callGetActivityReportLineChart() {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
+            String _responseMain = "";
+            String sourceString= "";
+            JSONObject mJsonObject = new JSONObject();
+
+//            Uri.Builder builder;
+
+            @Override
+            protected void onPreExecute() {
+
+                Constant.showLoader(getActivity());
+
+                try {
+                    isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+                    isTwitterFilter = sPref.getBoolean("TWITTER", false);
+                    isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+                    isInstaFilter = sPref.getBoolean("INSTA", false);
+                    isFlikerFilter = sPref.getBoolean("FLICKER", false);
+                    isVKFilter = sPref.getBoolean("VK", false);
+                    isDateFilter = sPref.getBoolean("DATE", false);
+                    if (isDateFilter) {
+                        long STARTDATE = sPref.getLong("STARTDATE", 0);
+                        if (STARTDATE > 0) {
+                            STARTDATE = STARTDATE / 1000;
+                        }
+                        long ENDDATE = sPref.getLong("ENDDATE", 0);
+                        if (ENDDATE > 0) {
+                            ENDDATE = ENDDATE / 1000;
+                        }
+
+                        mJsonObject.put("startDate", STARTDATE);
+                        mJsonObject.put("endDate", ENDDATE);
+
+                    }
+
+
+                    if (isMeetUpFilter) {
+                        mJsonObject.put("source", "MEETUP");
+                        sourceString= "MEETUP";
+                    } else if (isTwitterFilter) {
+                        mJsonObject.put("source", "TWITTER");
+                        sourceString= "TWITTER";
+                    } else if (isYoutubeFilter) {
+                        mJsonObject.put("source", "YOUTUBE");
+                        sourceString= "YOUTUBE";
+                    } else if (isInstaFilter) {
+                        mJsonObject.put("source", "INSTAGRAM");
+                        sourceString= "INSTAGRAM";
+                    } else if (isFlikerFilter) {
+                        mJsonObject.put("source", "FLIKER");
+                        sourceString= "FLICKR";
+                    } else if (isVKFilter) {
+                        mJsonObject.put("source", "VK");
+                        sourceString= "VK";
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("Request of GET_ACTIVITY_REPORT_SINGLE: " + mJsonObject.toString());
+
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
+                    try {
+
+                        HttpURLConnection urlConnection;
+
+
+                        try {
+
+
+                            String query = mJsonObject.toString();
+
+                            URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_ACTIVITY_REPORT_SINGLE));
+                            urlConnection = (HttpURLConnection) ((url.openConnection()));
+                            urlConnection.setConnectTimeout(80 * 1000);
+                            urlConnection.setReadTimeout(80 * 1000);
+                            urlConnection.setRequestProperty("Content-Type", "application/json");
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            urlConnection.setRequestMethod("POST");
+
+                            urlConnection.connect();
+
+                            //Write
+                            OutputStream outputStream = urlConnection.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+                            writer.write(query);
+                            writer.close();
+                            outputStream.close();
+
+                            //Read
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
+
+                            String line = null;
+                            StringBuilder sb = new StringBuilder();
+
+                            while ((line = bufferedReader.readLine()) != null) {
+
+                                sb.append(line);
+                            }
+
+                            bufferedReader.close();
+                            _responseMain = sb.toString();
+                            System.out.println("Response of GET_ACTIVITY_REPORT_SINGLE : " + _responseMain);
+
+
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", getActivity());
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject mJsonObject = new JSONObject(_responseMain);
+
+                        int status = mJsonObject.getInt("status");
+                        if (status == 1) {
+
+                            JSONObject mJsonObjectdata = mJsonObject.getJSONObject("data");
+                            JSONArray mJsonArrayrecords = mJsonObjectdata.getJSONArray("records");
+                            int lengthOfArray = mJsonArrayrecords.length();
+                            if (lengthOfArray > 0) {
+
+                                ArrayList<Entry> entriesCount = new ArrayList<>();
+                                // creating labels
+                                ArrayList<String> labelsDate = new ArrayList<String>();
+                                for (int i = 0; i < lengthOfArray; i++) {
+                                    JSONObject mJsonObjectSub = mJsonArrayrecords.getJSONObject(i);
+                                    long timestamp = mJsonObjectSub.getLong("timestamp");
+                                    long count = mJsonObjectSub.getLong("count");
+                                    entriesCount.add(new Entry(count, i));
+                                    labelsDate.add(getDateFromMilliseconds(timestamp * 1000, "dd MMM"));
+                                }
+
+
+                                LineDataSet dataset = new LineDataSet(entriesCount, sourceString);
+//                                dataset.setDrawFilled(true);
+
+
+                                LineData data = new LineData(labelsDate, dataset);
+                                lineChart.setData(data);
+                            }
+
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
+                        }
+
+
+                    } catch (Exception e) {
+
+                        e.printStackTrace();
+                        Constant.showToast("Server Error ", getActivity());
+                        Constant.hideLoader();
+                    }
+                } else {
+                    Constant.showToast("Server Error ", getActivity());
+
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
+        }
+    }
+
+    private String getDateFromMilliseconds(long milliSeconds, String dateFormat) {
+        // Create a DateFormatter object for displaying date in specified format.
+        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
+
+        // Create a calendar object that will convert the date and time value in milliseconds to date.
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(milliSeconds);
+        return formatter.format(calendar.getTime());
+    }
+
 
     private void callGetActivityReportBar() {
 
@@ -331,8 +653,11 @@ public class ActivityReport extends Fragment {
                             System.out.println("XVAlues : " + getXAxisValues());
                             data = new BarData(getXAxisValues(), dataSets);
                             chart.setData(data);
-                        } else {
-
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error", getActivity());
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(getActivity());
                         }
 
 

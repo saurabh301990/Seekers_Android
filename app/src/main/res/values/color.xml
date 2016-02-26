@@ -13,4 +13,5 @@
     <color name="miles_inactive_color">#eee</color>
     <color name="grey_color">#7e7e7e</color>
     <color name="divider">#E8E8E8</color>
+    <color name="whiteShade">#EEEEEE</color>
 </resources>
