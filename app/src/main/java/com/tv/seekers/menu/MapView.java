@@ -90,6 +90,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -115,6 +116,7 @@ public class MapView extends Fragment
     private double latitude = 0.0;
     private double longitude = 0.0;
     private ArrayList<HomeBean> _mainList = new ArrayList<HomeBean>();
+    private ArrayList<HomeBean> arrayTemplist = new ArrayList<HomeBean>();
 
 
     LatLng _latLong;
@@ -126,12 +128,15 @@ public class MapView extends Fragment
 
     @OnClick(R.id.two_miles_btn)
     public void two_miles_btn(View view) {
-
+        if (arrayTemplist.size() > 0) {
+            arrayTemplist.clear();
+        }
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             _page_number = 1;
             activeMilesBtn(2);
             _radiusForWS = "2";
+            Constant.showLoader(getActivity());
             callGetAllPostsWS(_radiusForWS);
         } else {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -145,11 +150,14 @@ public class MapView extends Fragment
     public void five_miles_btn(View view) {
         if (view.getId() == R.id.five_miles_btn) {
 
-
+            if (arrayTemplist.size() > 0) {
+                arrayTemplist.clear();
+            }
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(5);
                 _radiusForWS = "5";
+                Constant.showLoader(getActivity());
                 callGetAllPostsWS(_radiusForWS);
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -165,12 +173,15 @@ public class MapView extends Fragment
     @OnClick(R.id.ten_miles_btn)
     public void ten_miles_btn(View view) {
         if (view.getId() == R.id.ten_miles_btn) {
-
+            if (arrayTemplist.size() > 0) {
+                arrayTemplist.clear();
+            }
 
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(10);
                 _radiusForWS = "10";
+                Constant.showLoader(getActivity());
                 callGetAllPostsWS(_radiusForWS);
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -184,11 +195,14 @@ public class MapView extends Fragment
     @OnClick(R.id.twenty_miles_btn)
     public void twenty_miles_btn(View view) {
         if (view.getId() == R.id.twenty_miles_btn) {
-
+            if (arrayTemplist.size() > 0) {
+                arrayTemplist.clear();
+            }
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _page_number = 1;
                 activeMilesBtn(20);
                 _radiusForWS = "20";
+                Constant.showLoader(getActivity());
                 callGetAllPostsWS(_radiusForWS);
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -234,6 +248,7 @@ public class MapView extends Fragment
 
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _isList = false;
+                Constant.showLoader(getActivity());
                 callGetAllPostsWS(_radiusForWS);
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -261,6 +276,7 @@ public class MapView extends Fragment
 
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                 _isList = true;
+                Constant.showLoader(getActivity());
                 callGetAllPostsWS(_radiusForWS);
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -431,6 +447,52 @@ public class MapView extends Fragment
                 } else {
                     search_et.setCompoundDrawables(null, null, null, null);
                 }
+
+                String searchString = search_et.getText().toString().toLowerCase();
+                Log.d("Search Text : ", "" + searchString);
+                int realtext = searchString.length();
+                if (arrayTemplist.size() > 0) {
+                    arrayTemplist.clear();
+                }
+
+                for (int i = 0; i < _mainList.size(); i++) {
+                    HomeBean bean = _mainList.get(i);
+                    String userName = bean.getUser_name();
+                    String postText = bean.getPost_text();
+
+                    if (realtext <= userName.length() && realtext <= postText.length()) {
+
+
+                        if (searchString.equalsIgnoreCase(userName.substring(0, realtext)) ||
+                                searchString.equalsIgnoreCase(postText.substring(0, realtext))) {
+                            arrayTemplist.add(bean);
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapterList = new HomeListAdapter(arrayTemplist, getActivity(), false);
+                                    listView_home.setAdapter(adapterList);
+                                    listView_home.requestLayout();
+                                }
+                            });
+
+
+                        }
+
+                    } else {
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapterList.notifyDataSetChanged();
+                                listView_home.requestLayout();
+
+                            }
+                        });
+
+                    }
+
+                }
             }
 
             @Override
@@ -479,10 +541,29 @@ public class MapView extends Fragment
         listView_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                final HomeBean bean = _mainList.get(position - 1);
-                Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
-                intentToTxtImg.putExtra("POSTID", bean.getPost_id());
-                startActivity(intentToTxtImg);
+
+                String editTextValue = search_et.getText().toString().trim();
+
+
+                if (editTextValue.length() > 0 && arrayTemplist.size() > 0) {
+                    // TODO: 26/2/16 Search YES
+                    /*Fetch value from Temp array list*/
+                    final HomeBean bean = arrayTemplist.get(position - 1);
+                    Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                    intentToTxtImg.putExtra("POSTID", bean.getPost_id());
+                    startActivity(intentToTxtImg);
+
+                } else {
+                    // TODO: 26/2/16 Search NO
+                    /*Fetch value from Main array list*/
+                    final HomeBean bean = _mainList.get(position - 1);
+                    Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                    intentToTxtImg.putExtra("POSTID", bean.getPost_id());
+                    startActivity(intentToTxtImg);
+                }
+
+
+
               /*  if (bean.getType() == 2) {//TYPE_TEXT_IMG
                     Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
                     intentToTxtImg.putExtra("POSTID", bean.getPost_id());
@@ -530,7 +611,7 @@ public class MapView extends Fragment
             } else {
                 Constant.showToast(getResources().getString(R.string.internet), getActivity());
             }
-
+            Constant.showLoader(getActivity());
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -708,6 +789,7 @@ public class MapView extends Fragment
             } else {
                 Constant.showToast(getResources().getString(R.string.internet), getActivity());
             }
+            Constant.showLoader(getActivity());
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -887,7 +969,7 @@ public class MapView extends Fragment
             protected void onPreExecute() {
 
                 isFirstCall = true;
-                Constant.showLoader(getActivity());
+//                Constant.showLoader(getActivity());
 
                 try {
                     mJsonObject.put("latitude", mlatitude);
@@ -988,7 +1070,6 @@ public class MapView extends Fragment
                     if (keywords.length() > 0) {
                         mJsonObject.put("keywords", keywords);
                     }
-
 
 
                 } catch (Exception e) {
@@ -1494,6 +1575,7 @@ public class MapView extends Fragment
             } else {
                 Constant.showToast(getResources().getString(R.string.internet), getActivity());
             }
+            Constant.showLoader(getActivity());
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -1635,6 +1717,7 @@ public class MapView extends Fragment
                 } else {
                     Constant.showToast(getResources().getString(R.string.internet), getActivity());
                 }
+                Constant.showLoader(getActivity());
 
                 new Handler().postDelayed(new Runnable() {
                     @Override

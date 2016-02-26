@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -33,7 +36,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
@@ -85,7 +98,9 @@ import butterknife.ButterKnife;
 /**
  * Created by shoeb on 6/11/15.
  */
-public class DemoMapFrag extends Fragment {
+public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
     FrameLayout fram_map;
     ImageView btn_draw_State;
     Boolean Is_MAP_Moveable = false; // to detect map is movable
@@ -139,6 +154,34 @@ public class DemoMapFrag extends Fragment {
     /**
      * function to load map. If map is not created it will create it for you
      */
+
+    private void gpsCheck() {
+
+        /**
+         *
+         * GPS CHECK
+         */
+
+
+        // check if GPS enabled
+        gps = new GPSTracker(getActivity());
+
+        if (gps.canGetLocation()) {
+
+            double latitude = gps.getLatitude();
+
+
+            double longitude = gps.getLongitude();
+
+            // TODO: 10/2/16 GPS ON
+        } else {
+
+            showLocationAlertDialog(getActivity());
+
+
+        }
+
+    }
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = fragment.getMap();
@@ -159,7 +202,7 @@ public class DemoMapFrag extends Fragment {
                     gps.showSettingsAlert();
                 }
             } else {
-                gps.showSettingsAlert();
+                showLocationAlertDialog(getActivity());
             }
 
 
@@ -432,6 +475,8 @@ public class DemoMapFrag extends Fragment {
         } else {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
+
+        createLocationRequest();
         return view;
     }
 
@@ -675,6 +720,140 @@ public class DemoMapFrag extends Fragment {
 
     String finalimgUrl = "";
 
+    private GoogleApiClient mGoogleApiClient;
+
+    /**
+     * If connected get lat and long
+     */
+    private LocationRequest mLocationRequest;
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10 * 1000);      // 10 seconds, in milliseconds
+        mLocationRequest.setFastestInterval(1 * 1000); // 1 second, in milliseconds
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        } else {
+            //If everything went fine lets get latitude and longitude
+            double currentLatitude = location.getLatitude();
+            double currentLongitude = location.getLongitude();
+
+//            Toast.makeText(getActivity(), currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    private boolean isFirstTimeLocationChanged = false;
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+
+        if (!isFirstTimeLocationChanged) {
+            System.out.println("onLocationChanged Called");
+            isFirstTimeLocationChanged = true;
+            _latLong = new LatLng(latitude, longitude);
+            cameraPosition = new CameraPosition.Builder().target(_latLong)
+                    .zoom(13).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    /**
+     * Show dialog for location using Google API Client
+     *
+     * @param activity
+     */
+
+    @SuppressWarnings("unchecked")
+    public void showLocationAlertDialog(final Activity activity) {
+        if (android.os.Build.VERSION.SDK_INT >= 19) {
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API).build();
+                mGoogleApiClient.connect();
+                Object obj = LocationRequest.create();
+                ((LocationRequest) (obj)).setPriority(100);
+                ((LocationRequest) (obj)).setInterval(30000L);
+                ((LocationRequest) (obj)).setFastestInterval(5000L);
+                obj = new LocationSettingsRequest.Builder().addLocationRequest(
+                        ((LocationRequest) (obj))).setAlwaysShow(true);
+
+                LocationServices.SettingsApi.checkLocationSettings(
+                        mGoogleApiClient,
+                        ((LocationSettingsRequest.Builder) (obj)).build())
+                        .setResultCallback(
+                                new ResultCallback<LocationSettingsResult>() {
+
+                                    @Override
+                                    public void onResult(
+                                            LocationSettingsResult locationsettingsresult) {
+                                        // TODO Auto-generated method stub
+                                        Status status;
+                                        Log.e("result of yes no",
+                                                (new StringBuilder())
+                                                        .append("=")
+                                                        .append(locationsettingsresult
+                                                                .getStatus())
+                                                        .toString());
+                                        status = locationsettingsresult
+                                                .getStatus();
+                                        locationsettingsresult
+                                                .getLocationSettingsStates();
+                                        status.getStatusCode();
+
+                                        try {
+                                            status.startResolutionForResult(
+                                                    getActivity(), 1000);
+
+                                        } catch (IntentSender.SendIntentException e) {
+                                            // TODO Auto-generated catch block
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                });
+            }
+            return;
+        } else {
+            startActivityForResult(new Intent(
+                    "android.settings.LOCATION_SOURCE_SETTINGS"), 1);
+            return;
+
+        }
+    }
+
     private class PlaceDetails extends AsyncTask<String, Void, String> {
 
 
@@ -776,9 +955,9 @@ public class DemoMapFrag extends Fragment {
 
 
         TextView title = new TextView(getActivity());
-       // You Can Customise your Title here
+        // You Can Customise your Title here
         title.setText("Name of Location");
-        title.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.whiteShade));
+        title.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteShade));
         title.setPadding(10, 10, 10, 10);
         title.setGravity(Gravity.LEFT);
         title.setTextColor(Color.BLACK);
@@ -1050,7 +1229,7 @@ public class DemoMapFrag extends Fragment {
                         } else if (status == -1) {
                             //Redirect to Login
                             Constant.alertForLogin(getActivity());
-                        } else if (status==-4){
+                        } else if (status == -4) {
                             Constant.showToast("Location name already exists.", getActivity());
                         }
 
@@ -1262,6 +1441,18 @@ public class DemoMapFrag extends Fragment {
                             editor.putString("userLocationType", "AREA");
                             JSONObject dataJSON = jsonObject.getJSONObject("data");
                             editor.putString("LOCATIONID", dataJSON.getString("id"));
+
+                            JSONObject mObjectLotLng = new JSONObject(dataJSON.getString("loc"));
+                            if (mObjectLotLng.has("x")) {
+                                String userlong = String.valueOf(mObjectLotLng.getDouble("x"));
+                                editor.putString("LONGITUDE", userlong);
+                            }
+                            if (mObjectLotLng.has("y")) {
+                                String userlat = String.valueOf(mObjectLotLng.getDouble("y"));
+                                editor.putString("LATITUDE", userlat);
+                            }
+
+
                             editor.commit();
 
                             if (MapView.arrayPoints.size() > 0) {
@@ -1327,7 +1518,7 @@ public class DemoMapFrag extends Fragment {
                         } else if (status == -3) {
 
                             Constant.showToast("Invalid shape.", getActivity());
-                        } else if (status==-4){
+                        } else if (status == -4) {
                             Constant.showToast("Location name already exists.", getActivity());
                         }
 
@@ -1668,6 +1859,36 @@ public class DemoMapFrag extends Fragment {
             }
             return place;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 0) {
+            //NO
+//            Constant.showToast("NO:" , getActivity());
+
+
+            longitude = -77.1546507;
+            latitude  = 38.8992651;
+            _latLong = new LatLng(latitude, longitude);
+            cameraPosition = new CameraPosition.Builder().target(_latLong)
+                    .zoom(13).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        } else if (resultCode == -1) {
+            //Yes
+            if (requestCode == 1000) {
+//                Constant.showToast("YES:" , getActivity());
+                gps = new GPSTracker(getActivity());
+                initilizeMap();
+
+
+            }
+        }
+
     }
 
 

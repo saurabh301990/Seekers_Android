@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -75,6 +76,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
     private String username = "";
     private String device_token = "";
+    private String imeiNo = "";
     private String pswrd = "";
     private SharedPreferences sPref;
     private SharedPreferences.Editor editor;
@@ -106,8 +108,8 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         handler = new GCMPushNotifHandler(LoginActivity.this);
         device_token = handler.getRegistrationId();
         System.out.println("Device Token during login : " + device_token);
-
-
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        imeiNo = telephonyManager.getDeviceId();
 
     }
 
@@ -128,9 +130,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                 Constant.showLoader(LoginActivity.this);
 
                 try {
-                    mJsonObject.put("username",username);
-                    mJsonObject.put("password",pswrd);
-                }catch (Exception e){
+                    mJsonObject.put("username", username);
+                    mJsonObject.put("password", pswrd);
+                    mJsonObject.put("deviceType", "ANDROID");
+                    mJsonObject.put("deviceToken", device_token);
+                    mJsonObject.put("imeiNo", imeiNo);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -150,10 +155,10 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 
                         try {
 
-//                            String query = builder.build().getEncodedQuery();
+
                             String query = mJsonObject.toString();
                             System.out.println("query FOr Login : " + query);
-                            //			String temp=URLEncoder.encode(uri, "UTF-8");
+
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.LOGIN));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
                             urlConnection.setDoInput(true);
@@ -175,15 +180,15 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                             writer.close();
                             outputStream.close();
 
-                            if (urlConnection.getResponseCode()==200){
-                                String responseHeader  =  urlConnection.getHeaderField("Set-Cookie");
+                            if (urlConnection.getResponseCode() == 200) {
+                                String responseHeader = urlConnection.getHeaderField("Set-Cookie");
 
-                                if (responseHeader!=null&&!responseHeader.equalsIgnoreCase("")){
+                                if (responseHeader != null && !responseHeader.equalsIgnoreCase("")) {
                                     String response[] = responseHeader.split(";");
-                                    if (response.length>0){
+                                    if (response.length > 0) {
                                         responseHeader = response[0];
-                                        System.out.println("Response Header : " +responseHeader);
-                                        editor.putString(Constant.Cookie,responseHeader);
+                                        System.out.println("Response Header : " + responseHeader);
+                                        editor.putString(Constant.Cookie, responseHeader);
                                         editor.commit();
                                     }
 
@@ -259,11 +264,13 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                                     String firstname = _jSonSub.getString("firstName");
                                     String lastname = _jSonSub.getString("lastName");
                                     String profilePic = _jSonSub.getString("profilePic");
+                                    boolean notificationStatus = _jSonSub.getBoolean("notificationStatus");
+                                    editor.putBoolean(Constant.notificationStatus, notificationStatus);
 
                                     editor.putString("id", id);
                                     editor.putString("firstName", firstname);
                                     editor.putString("lastName", lastname);
-                                    if (_jJsonObject.has("profilePic")){
+                                    if (_jJsonObject.has("profilePic")) {
                                         JSONObject mJsonObjectPic = _jJsonObject.getJSONObject("profilePic");
                                         String mMedPic = mJsonObjectPic.getString("medium");
                                         editor.putString("profilePic", mMedPic);

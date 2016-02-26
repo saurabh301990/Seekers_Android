@@ -32,6 +32,7 @@ public class Constant {
 
     public static final String YOUTUBELINK = "https://www.youtube.com/watch?v=";
     public static final String Cookie = "Cookie";
+    public static final String notificationStatus = "notificationStatus";
     public static final String YOUTUBE_API_KEY = "AIzaSyBqq3WcNChgrNRMrN96oPpGQy3NFg94b60";
     public static Dialog dialog;
 
