@@ -9,11 +9,19 @@
 
 
     <ImageView
+        android:id="@+id/followed_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/grey" />
+
+
+    <ImageView
         android:id="@+id/badge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
-        android:adjustViewBounds="true"></ImageView>
+        android:adjustViewBounds="true"
+        android:src="@mipmap/user"></ImageView>
 
 
     <LinearLayout
@@ -29,6 +37,19 @@
             android:layout_gravity="center_horizontal"
             android:ellipsize="end"
             android:singleLine="true"
+
+            android:textColor="#ff000000"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/post_text_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
+            android:singleLine="true"
+
             android:textColor="#ff000000"
             android:textSize="14dp"
             android:textStyle="bold" />

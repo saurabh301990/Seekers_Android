@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,10 +25,14 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.gpsservice.GPSTracker;
 import com.tv.seekers.utils.NetworkAvailablity;
 
 import org.json.JSONArray;
@@ -74,7 +79,6 @@ public class ActivityReport extends Fragment {
         View view = inflater.inflate(R.layout.activity_report, container, false);
         ButterKnife.bind(this, view);
 
-        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
 
 //        ErrorReporter.getInstance().Init(getActivity());
 
@@ -118,11 +122,20 @@ public class ActivityReport extends Fragment {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(getActivity(), FilterActivity.class));
+                Intent intToFilter = new Intent(getActivity(), FilterActivity.class);
+                startActivityForResult(intToFilter, 444);
+
 
             }
         });
 
+        callActivityReport();
+
+        return view;
+    }
+
+    private void callActivityReport() {
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         isMeetUpFilter = sPref.getBoolean("MEETUP", false);
         isTwitterFilter = sPref.getBoolean("TWITTER", false);
         isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
@@ -131,6 +144,9 @@ public class ActivityReport extends Fragment {
         isVKFilter = sPref.getBoolean("VK", false);
 
 
+        if (listOfBooleans.size() > 0) {
+            listOfBooleans.clear();
+        }
         listOfBooleans.add(isMeetUpFilter);
         listOfBooleans.add(isTwitterFilter);
         listOfBooleans.add(isYoutubeFilter);
@@ -172,8 +188,25 @@ public class ActivityReport extends Fragment {
             }
         }
 
+    }
 
-        return view;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 444) {
+            if (resultCode == Activity.RESULT_OK) {
+                boolean result = data.getBooleanExtra("applied", false);
+                if (result) {
+                    callActivityReport();
+                }
+
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+
     }
 
     @Override
@@ -214,7 +247,7 @@ public class ActivityReport extends Fragment {
     private void callGetActivityReportLineChart() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
-            String sourceString= "";
+            String sourceString = "";
             JSONObject mJsonObject = new JSONObject();
 
 //            Uri.Builder builder;
@@ -250,22 +283,22 @@ public class ActivityReport extends Fragment {
 
                     if (isMeetUpFilter) {
                         mJsonObject.put("source", "MEETUP");
-                        sourceString= "MEETUP";
+                        sourceString = "MEETUP";
                     } else if (isTwitterFilter) {
                         mJsonObject.put("source", "TWITTER");
-                        sourceString= "TWITTER";
+                        sourceString = "TWITTER";
                     } else if (isYoutubeFilter) {
                         mJsonObject.put("source", "YOUTUBE");
-                        sourceString= "YOUTUBE";
+                        sourceString = "YOUTUBE";
                     } else if (isInstaFilter) {
                         mJsonObject.put("source", "INSTAGRAM");
-                        sourceString= "INSTAGRAM";
+                        sourceString = "INSTAGRAM";
                     } else if (isFlikerFilter) {
                         mJsonObject.put("source", "FLIKER");
-                        sourceString= "FLICKR";
+                        sourceString = "FLICKR";
                     } else if (isVKFilter) {
                         mJsonObject.put("source", "VK");
-                        sourceString= "VK";
+                        sourceString = "VK";
                     }
 
 
@@ -337,6 +370,7 @@ public class ActivityReport extends Fragment {
 
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
+                                Constant.hideLoader();
                                 Constant.showToast("Server Error ", getActivity());
                             }
                         });
@@ -574,6 +608,7 @@ public class ActivityReport extends Fragment {
 
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
+                                Constant.hideLoader();
                                 Constant.showToast("Server Error ", getActivity());
                             }
                         });
@@ -582,9 +617,11 @@ public class ActivityReport extends Fragment {
 
 
                 } else {
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Constant.hideLoader();
                             // TODO Auto-generated method stub
                             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
                         }

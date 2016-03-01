@@ -146,7 +146,8 @@ public class AddFollowedActivity extends Activity implements  XListView.IXListVi
 
 
                 if (NetworkAvailablity.checkNetworkStatus(AddFollowedActivity.this)){
-                    TrackBean bean = userlist.get(position);
+                    TrackBean bean = userlist.get(position-1);
+                    System.out.println("User Id : " + bean.getId());
                     callAddFollowed(bean.getId());
                 }else{
                     Constant.showToast(getResources().getString(R.string.internet), AddFollowedActivity.this);

@@ -182,6 +182,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
         }
 
     }
+
     private void initilizeMap() {
         if (googleMap == null) {
             googleMap = fragment.getMap();
@@ -487,9 +488,9 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
         PolygonOptions polygonOptions = new PolygonOptions();
         polygonOptions.addAll(val);
-        polygonOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+        polygonOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
         polygonOptions.strokeWidth(8);
-        polygonOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+        polygonOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
         Polygon polygon = googleMap.addPolygon(polygonOptions);
     }
 
@@ -726,6 +727,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
      * If connected get lat and long
      */
     private LocationRequest mLocationRequest;
+
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10 * 1000);      // 10 seconds, in milliseconds
@@ -942,7 +944,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
     private String locName = "";
 
     private void showAddLocationsDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity(), R.style.mydialogstyleSaveLocation);
 
 
         LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -950,6 +952,8 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
         final EditText etKeywordName = (EditText) view.findViewById(R.id.etKeywordName);
         etKeywordName.setHint("Enter location name.");
+        etKeywordName.setHintTextColor(Color.WHITE);
+        etKeywordName.setTextColor(Color.WHITE);
 
         alert.setView(view);
 
@@ -968,6 +972,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Constant.hideKeyBoard(getActivity());
                 if (etKeywordName.getText().toString().trim().isEmpty()) {
                     Constant.showToast("Please enter Location name.", getActivity());
                 } else {
@@ -988,6 +993,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Constant.hideKeyBoard(getActivity());
                 dialog.dismiss();
             }
         });
@@ -1034,7 +1040,14 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
                         _lat = Double.parseDouble(finalLatLng[1]);
                         _long = Double.parseDouble(finalLatLng[2]);
-                        int position = 0;
+
+                        _latLong = new LatLng(_lat, _long);
+                        cameraPosition = new CameraPosition.Builder().target(_latLong)
+                                .zoom(13).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        search_et.setText("");
+
+                     /*   int position = 0;
                         if (myAreasList.size() > 0) {
                             for (int j = 0; j < myAreasList.size(); j++) {
                                 MyAreasBean _bean = myAreasList.get(j);
@@ -1053,9 +1066,9 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
 
                             }
-                        }
+                        }*/
 
-
+/*
                         if (_isLocationAlreadyAdded) {
                             search_et.setText("");
                             // TODO: 10/12/15 Redirect to Home screen with current LatLong
@@ -1076,7 +1089,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
                             } else {
                                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
                             }
-                        }
+                        }*/
                     } else {
                         Constant.showToast("Server Error", getActivity());
                         search_et.setText("");
@@ -1573,7 +1586,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 //        specify latitude and longitude of both source and destination Polyline
 
         if (val.size() > 1) {
-            googleMap.addPolyline(new PolylineOptions().add(val.get(source), val.get(destination)).width(8).color(ContextCompat.getColor(getActivity(), R.color.map_circle_color)));
+            googleMap.addPolyline(new PolylineOptions().add(val.get(source), val.get(destination)).width(8).color(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea)));
             source++;
             destination++;
         }
@@ -1583,7 +1596,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
                 .geodesic(true));*/
        /* PolygonOptions rectOptions = new PolygonOptions();
         rectOptions.addAll(val);
-        rectOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+        rectOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
         rectOptions.fillColor(Color.YELLOW);
         //        rectOptions.fillColor(Color.BLUE);
 
@@ -1845,6 +1858,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
             String description = "";
 
             try {
+//                System.out.println("Place details from Google API : " + jPlace);
 
                 description = jPlace.getString("description");
                 id = jPlace.getString("id");
@@ -1872,7 +1886,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
 
             longitude = -77.1546507;
-            latitude  = 38.8992651;
+            latitude = 38.8992651;
             _latLong = new LatLng(latitude, longitude);
             cameraPosition = new CameraPosition.Builder().target(_latLong)
                     .zoom(13).build();

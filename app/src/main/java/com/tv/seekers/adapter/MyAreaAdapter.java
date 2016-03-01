@@ -26,15 +26,15 @@ import java.util.ArrayList;
 public class MyAreaAdapter extends BaseAdapter {
     private ArrayList<MyAreasBean> list = new ArrayList<MyAreasBean>();
     Activity context;
-    boolean isDrawOption = false;
+//    boolean isDrawOption = false;
     private SparseBooleanArray mSelectedItemsIds;
     private DisplayImageOptions options;
     com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
 
-    public MyAreaAdapter(ArrayList<MyAreasBean> list, Activity context, boolean _isDrawOption) {
+    public MyAreaAdapter(ArrayList<MyAreasBean> list, Activity context/*, boolean _isDrawOption*/) {
         this.list = list;
         this.context = context;
-        this.isDrawOption = _isDrawOption;
+//        this.isDrawOption = _isDrawOption;
         mSelectedItemsIds = new SparseBooleanArray();
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
@@ -104,7 +104,7 @@ public class MyAreaAdapter extends BaseAdapter {
 
         Constant.setFont(context, view_holder.loc_name_tv, 0);
         Constant.setFont(context, view_holder.loc_add_tv, 0);
-        if (isDrawOption) {
+      /*  if (isDrawOption) {
             if (position == 0) {
                 view_holder.loc_rl.setVisibility(View.GONE);
                 view_holder.add_area_img.setVisibility(View.VISIBLE);
@@ -112,7 +112,7 @@ public class MyAreaAdapter extends BaseAdapter {
                 view_holder.loc_rl.setVisibility(View.VISIBLE);
                 view_holder.add_area_img.setVisibility(View.GONE);
             }
-        }
+        }*/
 
 
         final MyAreasBean bean = list.get(position);

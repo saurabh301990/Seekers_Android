@@ -6,7 +6,7 @@ package com.tv.seekers.constant;
 public class WebServiceConstants {
 
     //    public static final String MAIN_URL = "http://198.12.150.220/Seeker/index.php/ws_seeker/";
-    public static final String MAIN_URL = "http://192.168.1.19:8080/seekerapp/rest/";
+    public static final String MAIN_URL = "http://52.87.233.241:8080/seekerapp/rest/";
 //    public static final String MAIN_URL = "http://54.172.107.206:8080/seekerapp/rest/";
 
     public static final String LOGIN = "user/login";
@@ -53,6 +53,7 @@ public class WebServiceConstants {
     public static final String GET_POST_DETAILS = "post/get";
     public static final String GET_ACTIVITY_REPORT = "post/get_activity_report";
     public static final String GET_ACTIVITY_REPORT_SINGLE = "post/get_single_activity_report";
+    public static final String GET_NOTIF_LIST = "user/get_notif_list";
 
 
     public static final String IMAGE_URL = "http://198.12.150.220/Seeker/uploads/profileImage/";

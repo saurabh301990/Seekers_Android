@@ -8,7 +8,15 @@ package com.tv.seekers.bean;
 public class Notificationbean {
 
     String notificationtxt;
+    String postId;
 
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
+    }
 
     public String getNotificationtxt() {
         return notificationtxt;

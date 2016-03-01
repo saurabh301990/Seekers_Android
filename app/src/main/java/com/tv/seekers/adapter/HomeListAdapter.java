@@ -217,9 +217,9 @@ public class HomeListAdapter extends BaseAdapter {
 
         if (view_holder.isFollow != null) {
             if (bean.isFollowed()) {
-                view_holder.isFollow.setImageResource(R.mipmap.unsave_btn);
+                view_holder.isFollow.setImageResource(R.mipmap.blue);
             } else {
-                view_holder.isFollow.setImageResource(R.mipmap.save_btn);
+                view_holder.isFollow.setImageResource(R.mipmap.grey);
             }
 
             view_holder.isFollow.setOnClickListener(new View.OnClickListener() {

@@ -1,8 +1,10 @@
 package com.tv.seekers.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -698,6 +700,7 @@ public class FilterActivity extends FragmentActivity
                         int status = jo.getInt("status");
                         if (status == 1) {
 
+
                             if (allClear) {
                                 rowItem.clear();
                                 if (custombaseadapter != null) {
@@ -707,6 +710,32 @@ public class FilterActivity extends FragmentActivity
                                 rowItem.remove(posi);
                                 custombaseadapter.notifyDataSetChanged();
                             }
+
+                             /*Key words*/
+
+                            ArrayList<String> tempListOfActiveKeywords = new ArrayList<String>();
+
+                            if (rowItem.size() > 0) {
+                                for (int i = 0; i < rowItem.size(); i++) {
+                                    MyKeywordsBean bean = rowItem.get(i);
+                                    if (bean.get_tglState()) {
+                                        tempListOfActiveKeywords.add(bean.get_title());
+                                    }
+
+
+                                }
+                            }
+
+                            if (tempListOfActiveKeywords.size() > 0) {
+                                editor.putInt("KEYWORDSIZE", tempListOfActiveKeywords.size());
+                                for (int j = 0; j < tempListOfActiveKeywords.size(); j++) {
+                                    editor.putString("KEYWORD_" + j, tempListOfActiveKeywords.get(j));
+                                }
+                            } else {
+                                editor.putInt("KEYWORDSIZE", 0);
+                            }
+
+                            editor.commit();
 
                         } else if (status == 0) {
                             Constant.showToast("Server Error", FilterActivity.this);
@@ -1204,12 +1233,19 @@ public class FilterActivity extends FragmentActivity
                     for (int j = 0; j < tempListOfActiveKeywords.size(); j++) {
                         editor.putString("KEYWORD_" + j, tempListOfActiveKeywords.get(j));
                     }
+                } else {
+                    editor.putInt("KEYWORDSIZE", 0);
                 }
 
 
                 editor.commit();
 
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("applied", true);
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
+
 /*
 
                 if (NetworkAvailablity.checkNetworkStatus(FilterActivity.this)) {
@@ -1223,14 +1259,22 @@ public class FilterActivity extends FragmentActivity
                 break;
 
             case R.id.txtSdatetime:
-                isDate = true;
-                isTime = false;
-                showDateTimePicker("Choose Start Date");
+
+                if (filterbydatetgl.isChecked()) {
+                    isDate = true;
+                    isTime = false;
+                    showDateTimePicker("Choose Start Date");
+                }
+
                 break;
             case R.id.txtEdatetime:
-                isDate = false;
-                isTime = true;
-                showDateTimePicker("Choose End Date");
+
+                if (filterbydatetgl.isChecked()) {
+                    isDate = false;
+                    isTime = true;
+                    showDateTimePicker("Choose End Date");
+                }
+
                 break;
             case R.id.add_keyword:
                 showAddKeywordDialog();
@@ -1283,8 +1327,6 @@ public class FilterActivity extends FragmentActivity
 
 
         }
-
-
 
 
     }

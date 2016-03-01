@@ -92,9 +92,9 @@ public class MyKeywordsAdaptor extends BaseAdapter {
             public void onClick(View v) {
                 System.out.println(position + " <<<" + isChked);
                 if (isChked) {
-                    tglSaveKeywordWS(false, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title());
+                    tglSaveKeywordWS(false, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title(), position);
                 } else {
-                    tglSaveKeywordWS(true, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title());
+                    tglSaveKeywordWS(true, rowItems.get_tglID(), rowItems.getCreatedOn(), rowItems.get_title(), position);
                 }
             }
         });
@@ -105,7 +105,7 @@ public class MyKeywordsAdaptor extends BaseAdapter {
         return convertView;
     }
 
-    private void tglSaveKeywordWS(final boolean isActive, final String id, final long mCreatedOn, final String title) {
+    private void tglSaveKeywordWS(final boolean isActive, final String id, final long mCreatedOn, final String title, final int position) {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             JSONObject mJsonObject;
@@ -170,16 +170,28 @@ public class MyKeywordsAdaptor extends BaseAdapter {
 
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } catch (Exception e) {
                         // TODO: handle exception
                         e.printStackTrace();
-                        Constant.showToast("Server Error ", context);
+                        context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Constant.showToast("Server Error ", context);
+                            }
+                        });
+
                     }
                 } else {
-                    Constant.showToast("Server Error ", context);
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Constant.showToast("Server Error ", context);
+                        }
+                    });
                 }
                 return null;
             }
@@ -194,9 +206,16 @@ public class MyKeywordsAdaptor extends BaseAdapter {
                         int status = mJsonObject.getInt("status");
                         if (status == 1) {
 
+                            MyKeywordsBean bean = rowItem.get(position);
+                            bean.set_tglState(isActive);
+                            notifyDataSetChanged();
+
+
                         } else if (status == -1) {
                             //Redirect to Login
                             Constant.alertForLogin(context);
+                        } else {
+                            Constant.showToast("Server Error ", context);
                         }
 
                     } catch (Exception e) {

@@ -24,42 +24,52 @@
                 android:layout_height="match_parent" />
 
             <!-- Layout that will hold the content of the Tabs -->
-            <FrameLayout
-                android:id="@android:id/tabcontent"
+
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- Layout for the DatePicker -->
-                <LinearLayout
-                    android:id="@+id/date_content"
-                    android:orientation="vertical"
+                <FrameLayout
+                    android:id="@android:id/tabcontent"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <DatePicker
-                        android:id="@+id/date_picker"
+                    <!-- Layout for the DatePicker -->
+                    <LinearLayout
+                        android:id="@+id/date_content"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:calendarViewShown="false" />
 
-                </LinearLayout>
+                        android:orientation="vertical">
 
-                <!-- Layout for the TimePicker -->
-                <LinearLayout
-                    android:id="@+id/time_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                        <DatePicker
+                            android:id="@+id/date_picker"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
 
-                    <TimePicker
-                        android:id="@+id/time_picker"
+                            android:datePickerMode="spinner"
+
+                            android:calendarViewShown="false" />
+
+                    </LinearLayout>
+
+                    <!-- Layout for the TimePicker -->
+                    <LinearLayout
+                        android:id="@+id/time_content"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                </LinearLayout>
+                        <TimePicker
+                            android:id="@+id/time_picker"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
-            </FrameLayout>
+                    </LinearLayout>
 
+                </FrameLayout>
+
+            </ScrollView>
         </LinearLayout>
 
     </TabHost>

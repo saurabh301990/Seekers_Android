@@ -20,6 +20,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
+import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
@@ -71,6 +72,9 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     @Bind(R.id.post_iv)
     ImageView post_iv;
 
+    @Bind(R.id.isFollow)
+    ImageView isFollow;
+
     @Bind(R.id.userpostDescription_tv)
     TextView userpostDescription_tv;
 
@@ -81,6 +85,8 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     YouTubePlayerView post_vid;
 
     private String mPostId = "";
+    private String  userIdForFollow = "";
+    private boolean isFollowed = false;
     SharedPreferences sPref;
     private MediaController mMediaController;
 
@@ -100,7 +106,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
         setFont();
         setData();
         setOnClick();
-        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        sPref = getSharedPreferences("LOGINPREF", PostDetailsTextImg.this.MODE_PRIVATE);
         mMediaController = new MediaController(PostDetailsTextImg.this);
 
         post_vid.setVisibility(View.GONE);
@@ -182,7 +188,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
 
                         try {
-                            System.out.println("Request of Post Details screen : "+ WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS) + "?id=" + mPostId);
+                            System.out.println("Request of Post Details screen : " + WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS) + "?id=" + mPostId);
                             url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_POST_DETAILS) + "?id=" + mPostId);
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
@@ -190,7 +196,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
                             if (responseCode == 200) {
                                 _responseMain = readStream(urlConnection.getInputStream());
-                                Log.v("_responseMain", _responseMain);
+                                System.out.println("RESPONSE of Post Details screen : " + _responseMain);
 
                             } else {
                                 Log.v("Post Details", "Response code:" + responseCode);
@@ -260,6 +266,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             if (_jSubObject.has("postType")) {
                                 String post_type = _jSubObject.getString("postType");
                             }
+
                             if (_jSubObject.has("postDescription")) {
                                 String post_description = _jSubObject.getString("postDescription");
                             }
@@ -369,6 +376,18 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     userType_tv.setText(user_name + " / " + source + " User");
                                 }*/
                             }
+                            if (mJsonObjectUser.has("isFollowed")) {
+                                isFollowed = mJsonObjectUser.getBoolean("isFollowed");
+                                if (isFollowed) {
+                                    isFollow.setImageResource(R.mipmap.blue);
+                                } else {
+                                    isFollow.setImageResource(R.mipmap.grey);
+                                }
+                            }
+                            if (mJsonObjectUser.has("id")) {
+                                userIdForFollow   = mJsonObjectUser.getString("id");
+
+                            }
                             if (mJsonObjectUser.has("profilePic")) {
 
                                 JSONObject mJsonObjectPic = mJsonObjectUser.getJSONObject("profilePic");
@@ -469,6 +488,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
     private void setOnClick() {
         tgl_menu.setOnClickListener(this);
+        isFollow.setOnClickListener(this);
     }
 
     private void setData() {
@@ -493,8 +513,157 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
             case R.id.tgl_menu:
                 finish();
                 break;
+            case R.id.isFollow:
+                if (NetworkAvailablity.checkNetworkStatus(PostDetailsTextImg.this)) {
+                    callFollowUnFollowWS();
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), PostDetailsTextImg.this);
+                }
+
+                break;
             default:
                 break;
+        }
+    }
+
+    private void callFollowUnFollowWS() {
+
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+
+
+            @Override
+            protected void onPreExecute() {
+
+
+                Constant.showLoader(PostDetailsTextImg.this);
+
+
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(PostDetailsTextImg.this)) {
+
+                    try {
+
+                        URL url;
+                        HttpURLConnection urlConnection = null;
+
+
+                        try {
+
+
+                            System.out.println("Request of Add Follow With Cookie: " + sPref.getString(Constant.Cookie, ""));
+                            String serviceUrl = "";
+                            if (!isFollowed) {
+                                serviceUrl = WebServiceConstants.getMethodUrl(WebServiceConstants.FOLLOW_USER) + "?id=" + userIdForFollow;
+                                System.out.println("Request of FOLLOW_USER: " + serviceUrl);
+                            } else {
+                                serviceUrl = WebServiceConstants.getMethodUrl(WebServiceConstants.UN_FOLLOW_USER) + "?id=" + userIdForFollow;
+                                System.out.println("Request of UN_FOLLOW_USER: " + serviceUrl);
+                            }
+
+                            url = new URL(serviceUrl);
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
+
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("Response of FOLLOW_USER : " + _responseMain);
+
+                            } else {
+                                Log.v("My area", "Response code:" + responseCode);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            PostDetailsTextImg.this.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                                }
+                            });
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
+                        }
+
+
+                        //						makeRequest(WebServiceConstants.getMethodUrl(WebServiceConstants.METHOD_UPDATEVENDER), jsonObj.toString());
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        PostDetailsTextImg.this.runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    PostDetailsTextImg.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast(PostDetailsTextImg.this.getResources().getString(R.string.internet), PostDetailsTextImg.this);
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject jsonObject = new JSONObject(_responseMain);
+                        int status = jsonObject.getInt("status");
+                        if (status == 1) {
+                            if (isFollowed) {
+                                isFollowed = false;
+                                isFollow.setImageResource(R.mipmap.grey);
+                            } else {
+                                isFollowed = true;
+                                isFollow.setImageResource(R.mipmap.blue);
+                            }
+//                            Constant.showToast("User added in followers list.", PostDetailsTextImg.this);
+
+
+                        } else if (status == 0) {
+                            Constant.showToast("Server Error    ", PostDetailsTextImg.this);
+                        } else if (status == -1) {
+                            //Redirect to Login
+                            Constant.alertForLogin(PostDetailsTextImg.this);
+                        }
+
+                    } catch (Exception e) {
+
+                        Constant.showToast("Server Error    ", PostDetailsTextImg.this);
+                        e.printStackTrace();
+
+                        Constant.hideLoader();
+                    }
+                } else {
+                    Constant.showToast("Server Error    ", PostDetailsTextImg.this);
+                    Constant.hideLoader();
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
         }
     }
 

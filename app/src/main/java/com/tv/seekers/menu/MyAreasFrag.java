@@ -165,12 +165,12 @@ public class MyAreasFrag extends Fragment implements
                     if (myAreasList.size() > 0) {
                         myAreasList.clear();
                     }
-                    if (isDrawOption) {
+                  /*  if (isDrawOption) {
                         MyAreasBean beanDemo = new MyAreasBean();
                         beanDemo.setLoc_name("");
                         beanDemo.setLoc_add("");
                         myAreasList.add(beanDemo);
-                    }
+                    }*/
 
 
                     for (int i = 0; i < data.length(); i++) {
@@ -197,7 +197,7 @@ public class MyAreasFrag extends Fragment implements
 
                     }
 
-                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity(), isDrawOption);
+                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
                     my_area_grid.setAdapter(areasAdapter);
 
                     /** Setting data for Auto Complete
@@ -333,7 +333,7 @@ public class MyAreasFrag extends Fragment implements
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
                                                   boolean checked) {
 
-                if (isDrawOption) {
+                /*if (isDrawOption) {
                     if (position == 0) {
 
                     } else {
@@ -355,7 +355,15 @@ public class MyAreasFrag extends Fragment implements
                     bean.setIsSelected(checked);
 
                     areasAdapter.toggleSelection(position);
-                }
+                }*/
+                int checkedCount = my_area_grid.getCheckedItemCount();
+                mode.setTitle(checkedCount + " selected");
+
+
+                MyAreasBean bean = myAreasList.get(position);
+                bean.setIsSelected(checked);
+
+                areasAdapter.toggleSelection(position);
 
 
             }
@@ -566,9 +574,10 @@ public class MyAreasFrag extends Fragment implements
 
                         if (_isLocationAlreadyAdded) {
                             search_et.setText("");
+                            Constant.showToast(getActivity().getResources().getString(R.string.locationAlreadySavedText), getActivity());
                             // TODO: 10/12/15 Redirect to Home screen with current LatLong
 
-                            if (!isDrawOption) {
+                          /*  if (!isDrawOption) {
                                 // TODO: 10/12/15 Redirect to Home Screen
                                 // TODO: 10/12/15  Replace Fragment here with Home Fragment
                                 saveCurrentLatLong(position);
@@ -577,7 +586,7 @@ public class MyAreasFrag extends Fragment implements
                             } else {
                                 // TODO: 18/12/15 Need to Show Pop Up message as Location
                                 Constant.showToast(getActivity().getResources().getString(R.string.locationAlreadySavedText), getActivity());
-                            }
+                            }*/
                         } else {
                             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                                 callSaveUserLocation();
@@ -901,13 +910,13 @@ public class MyAreasFrag extends Fragment implements
                                 saveCurrentLatLong(myAreasList.size() - 1);
                                 replaceFragment();
                             } else {
-                                if (myAreasList.size() == 0) {
+                               /* if (myAreasList.size() == 0) {
 
                                     MyAreasBean beanDemo = new MyAreasBean();
                                     beanDemo.setLoc_name("");
                                     beanDemo.setLoc_add("");
                                     myAreasList.add(beanDemo);
-                                }
+                                }*/
                                 MyAreasBean bean = new MyAreasBean();
                                 bean.setIsSelected(false);
                                 JSONObject mJsonObjectData = jsonObject.getJSONObject("data");
@@ -924,7 +933,7 @@ public class MyAreasFrag extends Fragment implements
                                 if (areasAdapter != null) {
                                     areasAdapter.notifyDataSetChanged();
                                 } else {
-                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity(), isDrawOption);
+                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
                                     my_area_grid.setAdapter(areasAdapter);
                                 }
 
@@ -1520,12 +1529,12 @@ public class MyAreasFrag extends Fragment implements
                                     if (myAreasList.size() > 0) {
                                         myAreasList.clear();
                                     }
-                                    if (isDrawOption) {
+                                   /* if (isDrawOption) {
                                         MyAreasBean beanDemo = new MyAreasBean();
                                         beanDemo.setLoc_name("");
                                         beanDemo.setLoc_add("");
                                         myAreasList.add(beanDemo);
-                                    }
+                                    }*/
 
 
                                     for (int i = 0; i < data.length(); i++) {
@@ -1588,7 +1597,7 @@ public class MyAreasFrag extends Fragment implements
 
                                     }
 
-                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity(), isDrawOption);
+                                    areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
                                     my_area_grid.setAdapter(areasAdapter);
 
                                     /** Setting data for Auto Complete
@@ -1678,8 +1687,10 @@ public class MyAreasFrag extends Fragment implements
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        saveCurrentLatLong(position);
+        replaceFragment();
 
-        if (isDrawOption) {
+       /* if (isDrawOption) {
             if (position == 0) {
                 // TODO: 9/12/15 Replace Fragment with Plot New Area Fragment
 //            Constant.showToast("New ACtivity", getActivity());
@@ -1691,7 +1702,7 @@ public class MyAreasFrag extends Fragment implements
         } else {
             saveCurrentLatLong(position);
             replaceFragment();
-        }
+        }*/
 
     }
 

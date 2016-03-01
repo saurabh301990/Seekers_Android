@@ -57,7 +57,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.FilterActivity;
 import com.tv.seekers.activities.PostDetailsTextImg;
@@ -66,7 +65,6 @@ import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
-import com.tv.seekers.date.DateTime;
 import com.tv.seekers.gpsservice.GPSTracker;
 import com.tv.seekers.utils.NetworkAvailablity;
 import com.tv.seekers.utils.XListView;
@@ -81,7 +79,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -90,7 +87,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import butterknife.Bind;
@@ -1145,6 +1141,7 @@ public class MapView extends Fragment
 
                         getActivity().runOnUiThread(new Runnable() {
                             public void run() {
+                                Constant.hideLoader();
                                 Constant.showToast("Server Error ", getActivity());
                             }
                         });
@@ -1153,6 +1150,7 @@ public class MapView extends Fragment
 
 
                 } else {
+                    Constant.hideLoader();
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -1178,10 +1176,16 @@ public class MapView extends Fragment
 
                             if (userLocationType.equalsIgnoreCase("AREA")) {
                                 // TODO: 23/2/16 HIDDEN Miles tabs
-                                miles_tabs.setVisibility(View.GONE);
+                                if (miles_tabs != null) {
+                                    miles_tabs.setVisibility(View.GONE);
+                                }
+
                                 drawPolygonOnMap();
                             } else {
-                                miles_tabs.setVisibility(View.VISIBLE);
+                                if (miles_tabs != null) {
+                                    miles_tabs.setVisibility(View.VISIBLE);
+                                }
+
                             }
 
 
@@ -1196,14 +1200,19 @@ public class MapView extends Fragment
                             if (_resultJSONArray.length() > 0) {
 
                                 if (_isList) {
-                                    no_post_layout.setVisibility(View.GONE);
+                                    if (no_post_layout != null) {
+                                        no_post_layout.setVisibility(View.GONE);
+                                    }
+
                                     map_view.setVisibility(View.GONE);
                                     list_layout.setVisibility(View.VISIBLE);
                                 } else {
                                     if (_mainList.size() > 0) {
                                         _mainList.clear();
                                     }
-                                    no_post_layout.setVisibility(View.GONE);
+                                    if (no_post_layout != null) {
+                                        no_post_layout.setVisibility(View.GONE);
+                                    }
                                     map_view.setVisibility(View.VISIBLE);
                                     list_layout.setVisibility(View.GONE);
                                 }
@@ -1267,7 +1276,7 @@ public class MapView extends Fragment
                                     if (mJsonObjectUser.has("address")) {
                                         bean.setUser_address(mJsonObjectUser.getString("address"));
                                     } else {
-                                        bean.setUser_image("");
+                                        bean.setUser_address("");
                                     }
 
 
@@ -1360,6 +1369,8 @@ public class MapView extends Fragment
                                         bean.setPost_video("");
                                     }
 
+//                                    System.out.println("User Img while adding : " + bean.getUser_image());
+
 
                                     _mainList.add(bean);
 
@@ -1434,8 +1445,9 @@ public class MapView extends Fragment
                     } catch (Exception e) {
 
                         e.printStackTrace();
-                        Constant.showToast("Server Error ", getActivity());
                         Constant.hideLoader();
+                        Constant.showToast("Server Error ", getActivity());
+
                     }
                 } else {
                     Constant.showToast("Server Error ", getActivity());
@@ -1618,23 +1630,11 @@ public class MapView extends Fragment
     }
 
     private void mapWithZooming(int zoom) {
-      /*  _latLong = new LatLng(latitude, longitude);
-        cameraPosition = new CameraPosition.Builder().target(_latLong)
-                .zoom(zoom).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        if (marker != null) {
-            marker.remove();
-        }
-        marker = googleMap.addMarker(new MarkerOptions()
-                .position(_latLong).icon(BitmapDescriptorFactory.
-                        defaultMarker(BitmapDescriptorFactory.HUE_RED)));*/
+
         int _length = _mainList.size();
         System.out.println("latitude : mapWithZooming " + latitude);
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
-       /*     if (googleMap != null) {
-                googleMap.clear();
-            }*/
 
             cameraPosition = new CameraPosition.Builder().target(_latLong)
                     .zoom(zoom).build();
@@ -1666,7 +1666,7 @@ public class MapView extends Fragment
                     bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                 }
 
-//                bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+
                 // Setting an info window adapter allows us to change the both the contents and look of the
 
                 String userName = "";
@@ -1678,13 +1678,21 @@ public class MapView extends Fragment
                 String postID = bean.getPost_id();
                 String snippet = "";
                 if (!postID.equalsIgnoreCase("")) {
-                    snippet = bean.getUser_image() + "&" + bean.getPost_id();
-                } else {
+                    String userImg = bean.getUser_image();
+                    if (userImg.equalsIgnoreCase("")) {
+                        userImg = "demoimg";
+                    } else {
+                        userImg = bean.getUser_image();
+                    }
+                    snippet = bean.isFollowed() + "&" + userImg + "&" + bean.getPost_id() + "&" + bean.getPost_text();
+                }/* else {
                     snippet = bean.getUser_image();
-                }
+                }*/
+//                System.out.println("FINAL SNIPPET ON MAP @#@#@#@ :" + snippet + " With Post Id : " + postID);
                 googleMap.addMarker(new MarkerOptions().position(ll)
                         .title(userName)
                         .snippet(snippet)
+
                         .icon(bitmapMarker));
 
             }
@@ -1878,10 +1886,15 @@ public class MapView extends Fragment
         System.out.println("snippet : " + snippet);
         String userImg = "";
         String postId = "";
+        String isFollowed = "";
+
+        String post_text = "";
         if (snippet.contains("&")) {
             String[] snippetWHole = snippet.split("&");
-            userImg = snippetWHole[0];
-            postId = snippetWHole[1];
+            isFollowed = snippetWHole[0];
+            userImg = snippetWHole[1];
+            postId = snippetWHole[2];
+            post_text = snippetWHole[3];
             System.out.println("postId " + postId);
 
             Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);

@@ -67,9 +67,20 @@
                 </RelativeLayout>
 
                 <ImageView
+                    android:id="@+id/isFollow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingRight="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_toLeftOf="@+id/user_imgType_iv"
+                    android:src="@mipmap/grey" />
+                <ImageView
                     android:id="@+id/user_imgType_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:layout_alignParentRight="true" />
             </RelativeLayout>
 

@@ -46,7 +46,7 @@
     <string name="drawer_close">Close</string>
 
     <string-array name="nav_drawer_labels">
-        <item>Near by Location</item>
+        <item>Nearby Posts</item>
         <item>Draw Area</item>
         <item>Saved Areas</item>
         <!--<item>My Keywords</item>-->

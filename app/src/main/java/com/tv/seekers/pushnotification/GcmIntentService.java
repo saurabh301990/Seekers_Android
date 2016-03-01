@@ -16,6 +16,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import com.tv.seekers.R;
+import com.tv.seekers.activities.PostDetailsTextImg;
 import com.tv.seekers.menu.MainActivity;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class GcmIntentService extends IntentService {
     private String _badgeCount = "";
     private String alert = "";
     private String message = "";
+    private String postId = "";
     private String lang = "";
     private boolean inForground= false;
     Bundle extras;
@@ -75,6 +77,7 @@ public class GcmIntentService extends IntentService {
                 message = extras.getString("message");
                 alert = extras.getString("alert");
                 type = extras.getString("type");
+                postId = extras.getString("postId");
 
 
                 ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
@@ -138,7 +141,8 @@ public class GcmIntentService extends IntentService {
         // Constant.notiID.add(notifId);
 
         Intent i = null;
-        i = new Intent(this, MainActivity.class);
+        i = new Intent(this, PostDetailsTextImg.class);
+        i.putExtra("POSTID",postId);
 
 //		////System.out.println("From Notification");
         PendingIntent contentIntent = PendingIntent.getActivity(this, notifId, i,
