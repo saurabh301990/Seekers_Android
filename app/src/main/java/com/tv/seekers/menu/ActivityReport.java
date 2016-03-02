@@ -96,8 +96,16 @@ public class ActivityReport extends Fragment {
         chart.getAxisLeft().setDrawGridLines(false);
         chart.getXAxis().setDrawGridLines(false);
         chart.setScaleEnabled(false);
-        chart.invalidate();
+        /*chart.setClickable(false);
+        chart.setHovered(false);*/
+        /*chart.setDrawBarShadow(false);
+        chart.setDrawHighlightArrow(false);
+        chart.setDrawingCacheEnabled(false);
+        chart.setFocusableInTouchMode(false);
+        chart.setFocusable(false);*/
 
+        chart.invalidate();
+/*
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, int i, Highlight highlight) {
@@ -109,7 +117,7 @@ public class ActivityReport extends Fragment {
             public void onNothingSelected() {
 
             }
-        });
+        });*/
 
         MainActivity.drawerFragment.setDrawerState(true);
         ImageView menu;
@@ -393,7 +401,7 @@ public class ActivityReport extends Fragment {
 
             @Override
             protected void onPostExecute(String result) {
-                Constant.hideLoader();
+
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
 
                     try {
@@ -426,11 +434,14 @@ public class ActivityReport extends Fragment {
 
                                 LineData data = new LineData(labelsDate, dataset);
                                 lineChart.setData(data);
+                                Constant.hideLoader();
                             }
 
                         } else if (status == 0) {
+                            Constant.hideLoader();
                             Constant.showToast("Server Error", getActivity());
                         } else if (status == -1) {
+                            Constant.hideLoader();
                             //Redirect to Login
                             Constant.alertForLogin(getActivity());
                         }
@@ -439,6 +450,7 @@ public class ActivityReport extends Fragment {
                     } catch (Exception e) {
 
                         e.printStackTrace();
+
                         Constant.showToast("Server Error ", getActivity());
                         Constant.hideLoader();
                     }
@@ -633,7 +645,7 @@ public class ActivityReport extends Fragment {
 
             @Override
             protected void onPostExecute(String result) {
-                Constant.hideLoader();
+
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
 
                     try {
@@ -690,10 +702,14 @@ public class ActivityReport extends Fragment {
                             System.out.println("XVAlues : " + getXAxisValues());
                             data = new BarData(getXAxisValues(), dataSets);
                             chart.setData(data);
+                            chart.getData().setHighlightEnabled(false);
+                            Constant.hideLoader();
                         } else if (status == 0) {
+                            Constant.hideLoader();
                             Constant.showToast("Server Error", getActivity());
                         } else if (status == -1) {
                             //Redirect to Login
+                            Constant.hideLoader();
                             Constant.alertForLogin(getActivity());
                         }
 

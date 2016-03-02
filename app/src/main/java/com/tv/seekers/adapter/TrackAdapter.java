@@ -64,8 +64,8 @@ public class TrackAdapter extends BaseAdapter {
     public static class ViewHolder {
 
         public TextView txtfolloweduser = null;
-        public TextView txtnofolloweduser = null;
-        public TextView txtnotrackuser = null;
+        /*public TextView txtnofolloweduser = null;
+        public TextView txtnotrackuser = null;*/
         public ImageView userimage = null;
 
     }
@@ -85,12 +85,12 @@ public class TrackAdapter extends BaseAdapter {
 
             view_holder.userimage = (ImageView) view.findViewById(R.id.trackprofileimage);
             view_holder.txtfolloweduser = (TextView) view.findViewById(R.id.txtfolloweduser);
-            view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
-            view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);
+          /*  view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
+            view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);*/
 
             Constant.setFont(context, view_holder.txtfolloweduser, 0);
-            Constant.setFont(context, view_holder.txtnofolloweduser, 0);
-            Constant.setFont(context, view_holder.txtnotrackuser, 0);
+           /* Constant.setFont(context, view_holder.txtnofolloweduser, 0);
+            Constant.setFont(context, view_holder.txtnotrackuser, 0);*/
 
             view.setTag(view_holder);
 
@@ -100,8 +100,8 @@ public class TrackAdapter extends BaseAdapter {
 
         final TrackBean trackBean = slist.get(position);
         view_holder.txtfolloweduser.setText(trackBean.getUsername());
-        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed() + " Followed");
-        view_holder.txtnotrackuser.setText(trackBean.getUsertack());
+     /*   view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed() + " Followed");
+        view_holder.txtnotrackuser.setText(trackBean.getUsertack());*/
 
        /* System.out.println("Name : " + trackBean.getUsername());
         System.out.println("Name  WITH Image: " + trackBean.getImageURL());*/

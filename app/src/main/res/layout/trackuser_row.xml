@@ -7,6 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:paddingBottom="2dp"
         android:paddingTop="2dp">
 
@@ -20,37 +21,16 @@
 
             />
 
-        <LinearLayout
-            android:id="@+id/detailll"
+        <TextView
+            android:id="@+id/txtfolloweduser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
             android:layout_toRightOf="@+id/trackprofileimage"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtfolloweduser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Followed User"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txtnooffollowed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 Followed"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/txttrackuser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1 Track"
-                android:textSize="18sp"
-                android:visibility="gone" />
-
-        </LinearLayout>
+            android:text="Followed User"
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/right_img"

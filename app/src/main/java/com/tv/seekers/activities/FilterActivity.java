@@ -348,12 +348,12 @@ public class FilterActivity extends FragmentActivity
             long ENDDATE = sPref.getLong("ENDDATE", 0);
             Edatetime.setText(getDate(ENDDATE, DateTime.DATE_FORMAT));
         }
-        isMeetUpFilter = sPref.getBoolean("MEETUP", false);
-        isTwitterFilter = sPref.getBoolean("TWITTER", false);
-        isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
-        isInstaFilter = sPref.getBoolean("INSTA", false);
-        isFlikerFilter = sPref.getBoolean("FLICKER", false);
-        isVKFilter = sPref.getBoolean("VK", false);
+        isMeetUpFilter = sPref.getBoolean("MEETUP", true);
+        isTwitterFilter = sPref.getBoolean("TWITTER", true);
+        isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+        isInstaFilter = sPref.getBoolean("INSTA", true);
+        isFlikerFilter = sPref.getBoolean("FLICKER", true);
+        isVKFilter = sPref.getBoolean("VK", true);
 
         meetUpTgl.setChecked(isMeetUpFilter);
         twittertoggle.setChecked(isTwitterFilter);

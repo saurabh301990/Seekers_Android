@@ -795,6 +795,13 @@ public class MyProfile extends Fragment {
 
                 cursor.close();
 
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+                    callSaveWS();
+                } else{
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet),getActivity());
+                }
+
+
 
             } else if (requestCode == TAKE_PHOTO_CODE && resultCode == Activity.RESULT_OK) {
                 // Get the Image from data
@@ -820,6 +827,11 @@ public class MyProfile extends Fragment {
                         options,
                         null);
 
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())){
+                    callSaveWS();
+                } else{
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet),getActivity());
+                }
 //                cursor.close();
             } else {
                 isImgChoosed = false;

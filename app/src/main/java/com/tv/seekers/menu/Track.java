@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,10 @@ import android.widget.TextView;
 
 import com.tv.seekers.R;
 import com.tv.seekers.activities.AddFollowedActivity;
+import com.tv.seekers.activities.PostDetailsTextImg;
+import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.adapter.TrackAdapter;
+import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.bean.TrackBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
@@ -56,6 +60,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
 
     @Nullable
     private ArrayList<TrackBean> userlist = new ArrayList<TrackBean>();
+    private ArrayList<TrackBean> arrayTemplist = new ArrayList<TrackBean>();
     TrackBean trackBean;
     TrackAdapter trackAdapter;
 
@@ -118,7 +123,8 @@ public class Track extends Fragment implements XListView.IXListViewListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                replaceFragment(position-1);
+
+                replaceFragment(position - 1);
             }
         });
 
@@ -139,6 +145,51 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                     search_et.setCompoundDrawablesWithIntrinsicBounds(R.mipmap.search_icon, 0, 0, 0);
                 } else {
                     search_et.setCompoundDrawables(null, null, null, null);
+                }
+
+                String searchString = search_et.getText().toString().toLowerCase();
+                Log.d("Search Text : ", "" + searchString);
+                int realtext = searchString.length();
+                if (arrayTemplist.size() > 0) {
+                    arrayTemplist.clear();
+                }
+
+                for (int i = 0; i < userlist.size(); i++) {
+                    TrackBean bean = userlist.get(i);
+                    String userName = bean.getUsername();
+
+
+                    if (realtext <= userName.length()) {
+
+
+                        if (searchString.equalsIgnoreCase(userName.substring(0, realtext))) {
+                            arrayTemplist.add(bean);
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    trackAdapter = new TrackAdapter(arrayTemplist, getActivity());
+                                    listuser.setAdapter(trackAdapter);
+                                    listuser.requestLayout();
+                                }
+                            });
+
+
+                        }
+
+                    } else {
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                trackAdapter.notifyDataSetChanged();
+                                listuser.requestLayout();
+
+                            }
+                        });
+
+                    }
+
                 }
             }
 
@@ -395,17 +446,41 @@ public class Track extends Fragment implements XListView.IXListViewListener {
         TrackMapFragment fragment = new TrackMapFragment();
         if (fragment != null) {
 
-            TrackBean bean = userlist.get(mPosition);
-            Bundle mBundle = new Bundle();
-            mBundle.putString("USERID", bean.getId());
-            fragment.setArguments(mBundle);
+            String editTextValue = search_et.getText().toString().trim();
+
+            if (editTextValue.length() > 0 && arrayTemplist.size() > 0) {
+                // TODO: 26/2/16 Search YES
+                    /*Fetch value from Temp array list*/
+                TrackBean bean = arrayTemplist.get(mPosition);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("USERID", bean.getId());
+                fragment.setArguments(mBundle);
 
 
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.replace(R.id.container_body, fragment);
-            fragmentTransaction.commit();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.container_body, fragment);
+                fragmentTransaction.commit();
+
+            } else {
+                // TODO: 26/2/16 Search NO
+                    /*Fetch value from Main array list*/
+
+                TrackBean bean = userlist.get(mPosition);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("USERID", bean.getId());
+                fragment.setArguments(mBundle);
+
+
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.container_body, fragment);
+                fragmentTransaction.commit();
+            }
+
+
 
 
         }

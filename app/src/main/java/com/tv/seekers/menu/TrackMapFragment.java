@@ -27,6 +27,8 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -268,12 +270,12 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
                             if (isFollow) {
                                 misFollow = false;
-                                unsave_iv.setImageResource(R.mipmap.save_btn);
+                                unsave_iv.setImageResource(R.mipmap.grey);
 
 
                             } else {
                                 misFollow = true;
-                                unsave_iv.setImageResource(R.mipmap.unsave_btn);
+                                unsave_iv.setImageResource(R.mipmap.blue);
                             }
 
                         } else if (status == 0) {
@@ -363,7 +365,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
         _ivRight = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         _ivRight.setVisibility(View.GONE);
         _header = (TextView) getActivity().findViewById(R.id.hdr_title);
-        _header.setText("Followed Profile");
+        _header.setText("Saved Profile");
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         view.setOnKeyListener(new View.OnKeyListener() {
@@ -762,6 +764,28 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                     // TODO: 19/2/16 Map
                                     markerPoints.add(i, mLatLong);
                                     options.position(mLatLong);
+                                    BitmapDescriptor bitmapMarker = null;
+                                    if (!bean.getSource().equalsIgnoreCase("")) {
+                                        if (bean.getSource().equalsIgnoreCase("TWITTER")) { //Tweet
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.twitter_pin);
+                                        } else if (bean.getSource().equalsIgnoreCase("INSTAGRAM")) {//Instagram
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.instagram_pin);
+                                        } else if (bean.getSource().equalsIgnoreCase("YOUTUBE")) {//Youtube
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.youtube_pin);
+                                        } else if (bean.getSource().equalsIgnoreCase("MEETUP")) {//MeetUp
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.meetup_pin);
+                                        } else if (bean.getSource().equalsIgnoreCase("VK")) {//Vk
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
+                                        } else if (bean.getSource().equalsIgnoreCase("FLIKER")) {//FLIKER
+                                            bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.flicker_pin);
+                                        } else {
+                                            bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                                        }
+
+                                    } else {
+                                        bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                                    }
+                                    options.icon(bitmapMarker);
                                     googleMap.addMarker(options);
 
 

@@ -63,8 +63,8 @@ public class AddFollowedAdapter extends BaseAdapter {
     public static class ViewHolder {
 
         public TextView txtfolloweduser = null;
-        public TextView txtnofolloweduser = null;
-        public TextView txtnotrackuser = null;
+        /*public TextView txtnofolloweduser = null;
+        public TextView txtnotrackuser = null;*/
         public ImageView userimage = null;
         public ImageView right_img = null;
 
@@ -86,8 +86,8 @@ public class AddFollowedAdapter extends BaseAdapter {
             view_holder.userimage = (ImageView) view.findViewById(R.id.trackprofileimage);
             view_holder.right_img = (ImageView) view.findViewById(R.id.right_img);
             view_holder.txtfolloweduser = (TextView) view.findViewById(R.id.txtfolloweduser);
-            view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
-            view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);
+           /* view_holder.txtnofolloweduser = (TextView) view.findViewById(R.id.txtnooffollowed);
+            view_holder.txtnotrackuser = (TextView) view.findViewById(R.id.txttrackuser);*/
 
 
             view.setTag(view_holder);
@@ -97,15 +97,15 @@ public class AddFollowedAdapter extends BaseAdapter {
         }
 
         Constant.setFont(context, view_holder.txtfolloweduser, 0);
-        Constant.setFont(context, view_holder.txtnofolloweduser, 0);
-        Constant.setFont(context, view_holder.txtnotrackuser, 0);
+       /* Constant.setFont(context, view_holder.txtnofolloweduser, 0);
+        Constant.setFont(context, view_holder.txtnotrackuser, 0);*/
 
         final TrackBean trackBean = slist.get(position);
         view_holder.userimage.setImageResource(R.mipmap.user);
         view_holder.right_img.setImageResource(R.mipmap.plus_icon_blue_bg);
         view_holder.txtfolloweduser.setText(trackBean.getUsername());
-        view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed()+ " Followed");
-        view_holder.txtnotrackuser.setText(trackBean.getUsertack());
+       /* view_holder.txtnofolloweduser.setText(trackBean.getUserfollowed()+ " Followed");
+        view_holder.txtnotrackuser.setText(trackBean.getUsertack());*/
         imageLoaderNew.displayImage(trackBean.getImageURL(), view_holder.userimage,
                 optionsUser,
                 null);
