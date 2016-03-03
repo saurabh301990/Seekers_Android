@@ -92,6 +92,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
 //        ErrorReporter.getInstance().Init(LoginActivity.this);
         ButterKnife.bind(this);
 
+
         main_rl.setOnTouchListener(this);
         login_btn.setOnClickListener(this);
         forgot_pswd_tv.setOnClickListener(this);

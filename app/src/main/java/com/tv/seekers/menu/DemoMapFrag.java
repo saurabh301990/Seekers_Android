@@ -2,6 +2,7 @@ package com.tv.seekers.menu;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,6 +36,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -944,40 +947,26 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
     private String locName = "";
 
     private void showAddLocationsDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity(), R.style.mydialogstyleSaveLocation);
+        final Dialog dialog = new Dialog(getActivity(), R.style.mydialogstyleSaveLocation);
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.custom_dialog_for_add_loc);
+        final EditText etKeywordName = (EditText) dialog.findViewById(R.id.locName_et);
+        ImageView save_btn = (ImageView) dialog.findViewById(R.id.save_btn);
+        ImageView cancel_btn = (ImageView) dialog.findViewById(R.id.cancel_btn);
 
 
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        View view = inflater.inflate(R.layout.dialog_add_keywords, null);
 
-        final EditText etKeywordName = (EditText) view.findViewById(R.id.etKeywordName);
-        etKeywordName.setHint("Enter location name.");
-        etKeywordName.setHintTextColor(Color.WHITE);
-        etKeywordName.setTextColor(Color.WHITE);
+        dialog.setCancelable(false);
+        dialog.show();
 
-        alert.setView(view);
-
-
-        TextView title = new TextView(getActivity());
-        // You Can Customise your Title here
-        title.setText("Name of Location");
-        title.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.whiteShade));
-        title.setPadding(10, 10, 10, 10);
-        title.setGravity(Gravity.LEFT);
-        title.setTextColor(Color.BLACK);
-        title.setTextSize(20);
-
-        alert.setCustomTitle(title);
-
-        alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+        save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Constant.hideKeyBoard(getActivity());
+            public void onClick(View v) {
+
                 if (etKeywordName.getText().toString().trim().isEmpty()) {
                     Constant.showToast("Please enter Location name.", getActivity());
                 } else {
-
-                    dialog.dismiss();
+                    dialog.cancel();
                     locName = etKeywordName.getText().toString();
                     if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                         callSaveLocationWS(locName, locName, "AREA", "");
@@ -990,16 +979,15 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Constant.hideKeyBoard(getActivity());
-                dialog.dismiss();
+            public void onClick(View v) {
+
+                dialog.cancel();
             }
         });
 
-        AlertDialog alertDialog = alert.create();
-        alertDialog.show();
+
     }
 
     private class GeocoderHandler extends Handler {

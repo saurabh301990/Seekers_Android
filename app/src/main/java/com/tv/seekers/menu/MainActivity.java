@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("onActivityResult Main Activity");
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
@@ -126,8 +127,21 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         editor.commit();
 
 
-        // display the first navigation drawer view on app launch
-        displayView(1, false);
+        boolean FROMMAPVIEW = false;
+        if (getIntent().hasExtra("FROMMAPVIEW")) {
+            FROMMAPVIEW = getIntent().getBooleanExtra("FROMMAPVIEW", false);
+            if (FROMMAPVIEW) {
+                // display the first navigation drawer view on app launch
+                displayView(0, false);
+            } else {
+                // display the first navigation drawer view on app launch
+                displayView(1, false);
+            }
+        } else {
+            // display the first navigation drawer view on app launch
+            displayView(1, false);
+        }
+
     }
 
 

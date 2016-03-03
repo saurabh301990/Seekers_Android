@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:background="@mipmap/session_exp_bg"
+        android:paddingBottom="14dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+
+        <ImageView
+            android:id="@+id/ok_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:src="@mipmap/session_exp_ok" />
+    </RelativeLayout>
+
+</LinearLayout>

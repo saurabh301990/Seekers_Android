@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -17,6 +18,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,42 +109,37 @@ public class Constant {
         }
 
     }
-    public  static SharedPreferences sPref;
-    public  static SharedPreferences.Editor editor;
+
+    public static SharedPreferences sPref;
+    public static SharedPreferences.Editor editor;
+
     public static void alertForLogin(final Activity context) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                context);
 
         sPref = context.getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
+        final Dialog dialog = new Dialog(context, R.style.mydialogstyleSaveLocation);
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.custom_dialog_session_exp);
 
-        // set title
-        alertDialogBuilder.setTitle("Session Expired!");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        // set dialog message
-        alertDialogBuilder
-                .setMessage("Please login again.")
-                .setCancelable(false)
-                .setNeutralButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, close
-                        // current activity
-                        dialog.cancel();
-                        editor.clear();
-                        editor.commit();
-                        Intent i = new Intent(context, LoginActivity.class);
-                        context.startActivity(i);
-                        context.finish();
-
-                    }
-                });
+        ImageView ok_btn = (ImageView) dialog.findViewById(R.id.ok_btn);
+        ok_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // if this button is clicked, close
+                // current activity
+                dialog.cancel();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(context, LoginActivity.class);
+                context.startActivity(i);
+                context.finish();
+            }
+        });
 
 
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.setCancelable(false);
-        // show it
-        alertDialog.show();
     }
 
 

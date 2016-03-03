@@ -23,9 +23,10 @@
         <item name="android:windowNoTitle">false</item>
     </style>
 
-    <style name="mydialogstyleSaveLocation" parent="android:style/Theme.Dialog">
+    <style name="mydialogstyleSaveLocation" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+
         <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
     </style>
 

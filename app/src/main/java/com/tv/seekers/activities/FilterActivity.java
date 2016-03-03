@@ -36,6 +36,7 @@ import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.date.DateTime;
 import com.tv.seekers.date.DateTimePicker;
 import com.tv.seekers.date.SimpleDateTimePicker;
+import com.tv.seekers.menu.MainActivity;
 import com.tv.seekers.swipemenulistview.SwipeMenu;
 import com.tv.seekers.swipemenulistview.SwipeMenuCreator;
 import com.tv.seekers.swipemenulistview.SwipeMenuItem;
@@ -196,6 +197,7 @@ public class FilterActivity extends FragmentActivity
     private SharedPreferences.Editor editor;
     private boolean isDate = false;
     private boolean isTime = false;
+    private boolean FROMMAPVIEW = false;
     private String start_date = "";
     private String end_date = "";
 
@@ -352,7 +354,7 @@ public class FilterActivity extends FragmentActivity
         isTwitterFilter = sPref.getBoolean("TWITTER", true);
         isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
         isInstaFilter = sPref.getBoolean("INSTA", true);
-        isFlikerFilter = sPref.getBoolean("FLICKER", true);
+        isFlikerFilter = sPref.getBoolean("FLICKR", true);
         isVKFilter = sPref.getBoolean("VK", true);
 
         meetUpTgl.setChecked(isMeetUpFilter);
@@ -362,6 +364,16 @@ public class FilterActivity extends FragmentActivity
         flickertgl.setChecked(isFlikerFilter);
         vktgl.setChecked(isVKFilter);
         filterbydatetgl.setChecked(isDateFilter);
+
+        try {
+
+                FROMMAPVIEW = getIntent().getBooleanExtra("FROMMAPVIEW", false);
+            System.out.println("FROMMAPVIEW : " +FROMMAPVIEW);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -1171,9 +1183,9 @@ public class FilterActivity extends FragmentActivity
                 }
 
                 if (flickertgl.isChecked()) {
-                    editor.putBoolean("FLICKER", true);
+                    editor.putBoolean("FLICKR", true);
                 } else {
-                    editor.putBoolean("FLICKER", false);
+                    editor.putBoolean("FLICKR", false);
                 }
 
 
@@ -1241,10 +1253,18 @@ public class FilterActivity extends FragmentActivity
                 editor.commit();
 
 
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("applied", true);
-                setResult(Activity.RESULT_OK, returnIntent);
-                finish();
+                if (FROMMAPVIEW) {
+                    Intent intToMainScreen = new Intent(FilterActivity.this, MainActivity.class);
+                    intToMainScreen.putExtra("FROMMAPVIEW", true);
+                    startActivity(intToMainScreen);
+                    finish();
+                } else {
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("applied", true);
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+                }
+
 
 /*
 
@@ -1301,7 +1321,7 @@ public class FilterActivity extends FragmentActivity
         editor.putBoolean("TWITTER", false);
         editor.putBoolean("YOUTUBE", false);
         editor.putBoolean("INSTA", false);
-        editor.putBoolean("FLICKER", false);
+        editor.putBoolean("FLICKR", false);
         editor.putBoolean("VK", false);
         editor.putLong("STARTDATE", 0);
         editor.putLong("ENDDATE", 0);

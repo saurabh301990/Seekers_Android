@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -58,9 +60,14 @@ import butterknife.ButterKnife;
  */
 public class ActivityReport extends Fragment {
 
+    @Bind(R.id.lineChart)
+    LineChart lineChart;
 
-    private BarChart chart;
-    private LineChart lineChart;
+
+    @Bind(R.id.chart)
+    BarChart chart;
+
+
     private BarData data;
     private SharedPreferences sPref;
     boolean isDateFilter = false;
@@ -82,7 +89,7 @@ public class ActivityReport extends Fragment {
 
 //        ErrorReporter.getInstance().Init(getActivity());
 
-        lineChart = (LineChart) view.findViewById(R.id.lineChart);
+
         lineChart.setDescription(" ");
         lineChart.animateXY(2000, 2000);
         lineChart.getAxisLeft().setDrawGridLines(false);
@@ -90,7 +97,7 @@ public class ActivityReport extends Fragment {
         lineChart.setScaleEnabled(false);
         lineChart.invalidate();
 
-        chart = (BarChart) view.findViewById(R.id.chart);
+
         chart.setDescription(" ");
         chart.animateXY(2000, 2000);
         chart.getAxisLeft().setDrawGridLines(false);
@@ -148,7 +155,7 @@ public class ActivityReport extends Fragment {
         isTwitterFilter = sPref.getBoolean("TWITTER", false);
         isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
         isInstaFilter = sPref.getBoolean("INSTA", false);
-        isFlikerFilter = sPref.getBoolean("FLICKER", false);
+        isFlikerFilter = sPref.getBoolean("FLICKR", false);
         isVKFilter = sPref.getBoolean("VK", false);
 
 
@@ -206,7 +213,9 @@ public class ActivityReport extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 boolean result = data.getBooleanExtra("applied", false);
                 if (result) {
-                    callActivityReport();
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(this).attach(this).commit();
+//                    callActivityReport();
                 }
 
             }
@@ -270,7 +279,7 @@ public class ActivityReport extends Fragment {
                     isTwitterFilter = sPref.getBoolean("TWITTER", false);
                     isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
                     isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFlikerFilter = sPref.getBoolean("FLICKER", false);
+                    isFlikerFilter = sPref.getBoolean("FLICKR", false);
                     isVKFilter = sPref.getBoolean("VK", false);
                     isDateFilter = sPref.getBoolean("DATE", false);
                     if (isDateFilter) {
@@ -432,8 +441,16 @@ public class ActivityReport extends Fragment {
 //                                dataset.setDrawFilled(true);
 
 
-                                LineData data = new LineData(labelsDate, dataset);
-                                lineChart.setData(data);
+                                final LineData data = new LineData(labelsDate, dataset);
+
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        lineChart.setData(data);
+                                        lineChart.requestFocus();
+                                    }
+                                });
+
                                 Constant.hideLoader();
                             }
 
@@ -503,7 +520,7 @@ public class ActivityReport extends Fragment {
                     isTwitterFilter = sPref.getBoolean("TWITTER", false);
                     isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
                     isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFlikerFilter = sPref.getBoolean("FLICKER", false);
+                    isFlikerFilter = sPref.getBoolean("FLICKR", false);
                     isVKFilter = sPref.getBoolean("VK", false);
                     isDateFilter = sPref.getBoolean("DATE", false);
                     if (isDateFilter) {
@@ -659,7 +676,7 @@ public class ActivityReport extends Fragment {
                             int instagramCount = mJsonObjectdata.getInt("instagramCount");
                             int twitterCount = mJsonObjectdata.getInt("twitterCount");
                             int youtubeCount = mJsonObjectdata.getInt("youtubeCount");
-                            int flickerCount = mJsonObjectdata.getInt("flickerCount");
+                            int FLICKRCount = mJsonObjectdata.getInt("flickerCount");
                             int vkCount = mJsonObjectdata.getInt("vkCount");
                             int meetupCount = mJsonObjectdata.getInt("meetupCount");
                             ArrayList<BarDataSet> dataSets = null;
@@ -671,7 +688,7 @@ public class ActivityReport extends Fragment {
                             valueSet2.add(v2e2);
                             BarEntry v2e3 = new BarEntry(youtubeCount, 2);
                             valueSet2.add(v2e3);
-                            BarEntry v2e4 = new BarEntry(flickerCount, 3);
+                            BarEntry v2e4 = new BarEntry(FLICKRCount, 3);
                             valueSet2.add(v2e4);
                             BarEntry v2e5 = new BarEntry(vkCount, 4);
                             valueSet2.add(v2e5);
@@ -701,8 +718,17 @@ public class ActivityReport extends Fragment {
 
                             System.out.println("XVAlues : " + getXAxisValues());
                             data = new BarData(getXAxisValues(), dataSets);
-                            chart.setData(data);
-                            chart.getData().setHighlightEnabled(false);
+
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    chart.setData(data);
+                                    chart.getData().setHighlightEnabled(false);
+                                    chart.requestFocus();
+                                }
+                            });
+
                             Constant.hideLoader();
                         } else if (status == 0) {
                             Constant.hideLoader();

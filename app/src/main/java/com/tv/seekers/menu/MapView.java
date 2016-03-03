@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -395,9 +396,9 @@ public class MapView extends Fragment
 
             PolygonOptions polygonOptions = new PolygonOptions();
             polygonOptions.addAll(arrayPoints);
-            polygonOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+            polygonOptions.strokeColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
             polygonOptions.strokeWidth(1);
-            polygonOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.map_circle_color));
+            polygonOptions.fillColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
             Polygon polygon = googleMap.addPolygon(polygonOptions);
         }
     }
@@ -421,7 +422,11 @@ public class MapView extends Fragment
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), FilterActivity.class));
+                System.out.println("FROMMAPVIEW : In fragment .");
+                Intent intToFilter = new Intent(getActivity(), FilterActivity.class);
+                intToFilter.putExtra("FROMMAPVIEW", true);
+
+                startActivity(intToFilter);
             }
         });
         setfont();
@@ -517,7 +522,7 @@ public class MapView extends Fragment
         menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
         menu.setVisibility(View.VISIBLE);
 
-        ImageView rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
+        /*ImageView rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
         rightIcon.setImageResource(R.drawable.filtr);
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -526,7 +531,7 @@ public class MapView extends Fragment
                 startActivity(new Intent(getActivity(), FilterActivity.class));
 
             }
-        });
+        });*/
 
 
         //Load More
@@ -771,7 +776,7 @@ public class MapView extends Fragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-
+        System.out.println("onActivityResult Called Of Map View");
         if (resultCode == 0) {
             //NO
 //            Constant.showToast("NO:" , getActivity());
@@ -806,8 +811,17 @@ public class MapView extends Fragment
                 gps = new GPSTracker(getActivity());
                 gpsCheck();
 
-            }
+            } /*else  if (requestCode == 555) {
+                boolean result = data.getBooleanExtra("applied", false);
+                if (result) {
+                    System.out.println("applied success");
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(this).attach(this).commit();
+//                    callActivityReport();
+                }
+            }*/
         }
+
 
     }
 
@@ -957,7 +971,7 @@ public class MapView extends Fragment
             boolean isTwitterFilter = false;
             boolean isYoutubeFilter = false;
             boolean isInstaFilter = false;
-            boolean isFlikerFilter = false;
+            boolean isFLICKRFilter = false;
             boolean isVKFilter = false;
 //            Uri.Builder builder;
 
@@ -1017,7 +1031,7 @@ public class MapView extends Fragment
                     isTwitterFilter = sPref.getBoolean("TWITTER", false);
                     isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
                     isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFlikerFilter = sPref.getBoolean("FLICKER", false);
+                    isFLICKRFilter = sPref.getBoolean("FLICKR", false);
                     isVKFilter = sPref.getBoolean("VK", false);
 
 
@@ -1038,8 +1052,8 @@ public class MapView extends Fragment
                         sourcesArray.put("INSTAGRAM");
                     }
 
-                    if (isFlikerFilter) {
-                        sourcesArray.put("FLIKER");
+                    if (isFLICKRFilter) {
+                        sourcesArray.put("FLICKR");
                     }
 
                     if (isVKFilter) {
@@ -1165,7 +1179,7 @@ public class MapView extends Fragment
 
             @Override
             protected void onPostExecute(String result) {
-                Constant.hideLoader();
+
                 if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
 
                     try {
@@ -1393,27 +1407,34 @@ public class MapView extends Fragment
                                 } else {
 
 
-                                    if (!userLocationType.equalsIgnoreCase("AREA")) {
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (!userLocationType.equalsIgnoreCase("AREA")) {
 
-                                        if (googleMap != null) {
-                                            googleMap.clear();
+                                                if (googleMap != null) {
+                                                    googleMap.clear();
+                                                }
+                                                // TODO: 4/12/15 setting Map here
+                                                if (radius.equalsIgnoreCase("2")) {
+                                                    mapWithZooming(12);
+                                                } else if (radius.equalsIgnoreCase("5")) {
+                                                    mapWithZooming(11);
+                                                } else if (radius.equalsIgnoreCase("10")) {
+                                                    mapWithZooming(10);
+                                                } else if (radius.equalsIgnoreCase("20")) {
+                                                    mapWithZooming(9);
+                                                }
+
+                                                addCircleToMap(Integer.parseInt(radius));
+                                            } else {
+
+                                                mapWithZooming(11);
+                                            }
                                         }
-                                        // TODO: 4/12/15 setting Map here
-                                        if (radius.equalsIgnoreCase("2")) {
-                                            mapWithZooming(12);
-                                        } else if (radius.equalsIgnoreCase("5")) {
-                                            mapWithZooming(11);
-                                        } else if (radius.equalsIgnoreCase("10")) {
-                                            mapWithZooming(10);
-                                        } else if (radius.equalsIgnoreCase("20")) {
-                                            mapWithZooming(9);
-                                        }
+                                    });
 
-                                        addCircleToMap(Integer.parseInt(radius));
-                                    } else {
 
-                                        mapWithZooming(13);
-                                    }
 
                                 }
 
@@ -1435,10 +1456,17 @@ public class MapView extends Fragment
                             } else {
                                 listView_home.setPullLoadEnable(false);
                             }
+
+                            Constant.hideLoader();
                         } else if (status == 0) {
-                            Constant.showToast("Server Error", getActivity());
+                            Constant.hideLoader();
+                            no_post_layout.setVisibility(View.VISIBLE);
+                            map_view.setVisibility(View.GONE);
+                            list_layout.setVisibility(View.GONE);
+//                            Constant.showToast("Server Error", getActivity());
                         } else if (status == -1) {
                             //Redirect to Login
+                            Constant.hideLoader();
                             Constant.alertForLogin(getActivity());
                         }
 
@@ -1656,7 +1684,7 @@ public class MapView extends Fragment
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.meetup_pin);
                     } else if (bean.getSource().equalsIgnoreCase("VK")) {//Vk
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
-                    } else if (bean.getSource().equalsIgnoreCase("FLIKER")) {//FLIKER
+                    } else if (bean.getSource().equalsIgnoreCase("FLICKR")) {//FLICKR
                         bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.flicker_pin);
                     } else {
                         bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);

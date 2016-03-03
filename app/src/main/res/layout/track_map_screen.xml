@@ -223,13 +223,13 @@
 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"></RelativeLayout>
+            android:layout_weight="0.7"></RelativeLayout>
 
         <com.tv.seekers.utils.XListView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="0.7"
             android:visibility="gone"></com.tv.seekers.utils.XListView>
     </LinearLayout>
 

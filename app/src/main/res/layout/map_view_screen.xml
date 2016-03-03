@@ -115,6 +115,7 @@
                     android:layout_centerHorizontal="true"
                     android:gravity="center_horizontal"
                     android:text="Sorry!"
+                    android:visibility="gone"
                     android:textColor="@android:color/white"
                     android:textSize="18sp" />
 
@@ -126,7 +127,7 @@
                     android:layout_below="@+id/sorry_tv"
                     android:layout_centerHorizontal="true"
                     android:gravity="center_horizontal"
-                    android:text="No post found!"
+                    android:text="No posts found!"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 
