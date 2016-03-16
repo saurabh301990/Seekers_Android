@@ -5,6 +5,14 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
+
+    <include
+        android:id="@+id/header_layout"
+        layout="@layout/header"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:id="@+id/filterheaderll"
         android:layout_width="match_parent"
@@ -65,7 +73,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2.30"
+            android:layout_weight="2.4"
             android:orientation="horizontal"
             android:paddingBottom="8dp"
             android:paddingLeft="3dp"
@@ -75,13 +83,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_weight="2.1">
+                android:layout_weight="2.1"
+                android:gravity="center">
 
                 <com.tv.seekers.utils.SquareImageView
                     android:id="@+id/img"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@mipmap/followed_profile_bg" />
             </LinearLayout>
 
@@ -90,20 +98,40 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.9"
                 android:orientation="vertical"
+                android:gravity="center_vertical"
                 android:paddingLeft="8dp"
-                android:paddingTop="15dp">
+                >
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:weightSum="2">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:orientation="vertical">
+                        android:layout_weight="1.3"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+
+                        <LinearLayout
+
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            >
+
+                            <ImageView
+                                android:id="@+id/unsave_iv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:paddingBottom="5dp"
+                                android:paddingRight="5dp"
+                                android:paddingTop="5dp"
+                                android:src="@mipmap/blue" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/name_info_tv"
@@ -113,21 +141,13 @@
                             android:textColor="@android:color/black"
                             android:textSize="15sp" />
 
-                        <TextView
-                            android:id="@+id/loc_info_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4dp"
-                            android:visibility="gone"
-                            android:text="@string/locationTextWithColon"
-                            android:textColor="@android:color/black"
-                            android:textSize="15sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.7"
+                        android:gravity="center_vertical"
                         android:orientation="vertical">
 
                         <TextView
@@ -143,28 +163,13 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text=""
-                            android:visibility="gone"
-                            android:textSize="15sp" />
+                            android:textSize="15sp"
+                            android:visibility="gone" />
 
                     </LinearLayout>
                 </LinearLayout>
 
 
-                <LinearLayout
-
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
-
-                    <ImageView
-                        android:id="@+id/unsave_iv"
-                        android:paddingRight="5dp"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@mipmap/blue" />
-                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
@@ -218,18 +223,24 @@
 
 
         <RelativeLayout
-
-            android:id="@+id/map_view"
-
+            android:id="@+id/map_view_rel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.7"></RelativeLayout>
+            android:layout_weight="0.6">
+
+            <fragment
+
+                android:id="@+id/map_view"
+                android:name="com.google.android.gms.maps.MapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
 
         <com.tv.seekers.utils.XListView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.7"
+            android:layout_weight="0.6"
             android:visibility="gone"></com.tv.seekers.utils.XListView>
     </LinearLayout>
 

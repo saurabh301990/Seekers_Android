@@ -39,6 +39,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.ChangePassword;
@@ -443,6 +444,7 @@ public class MyProfile extends Fragment {
 //        ErrorReporter.getInstance().Init(getActivity());
 
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
+
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
 
         options = new DisplayImageOptions.Builder()

@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 //        ErrorReporter.getInstance().Init(MainActivity.this);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbarNormal);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -181,12 +181,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     public void onDrawerItemSelected(View view, int position) {
+        System.out.println("Fragment position onDrawerItemSelected : " + position );
         displayView(position, true);
     }
 
-    private void displayView(int position, boolean isDrawOption) {
+    private void displayView(final int position, boolean isDrawOption) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
+        System.out.println("Fragment position : " + position );
         switch (position) {
             case 0:
                 fragment = new MapView();
@@ -239,32 +241,43 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 5:
 
-                fragment = new ActivityReport();
-                _header.setText("Activity Report");
-                _rightIcon.setVisibility(View.VISIBLE);
-                _rightIcon.setImageResource(R.drawable.filtr);
-                break;
-            case 6:
-
                 fragment = new LegalContent();
                 _header.setText("Legal Correspondence");
                 _rightIcon.setVisibility(View.GONE);
-
+             /*   fragment = new ActivityReport();
+                _header.setText("Activity Report");
+                _rightIcon.setVisibility(View.VISIBLE);
+                _rightIcon.setImageResource(R.drawable.filtr);*/
                 break;
-            case 7:
+            case 6:
 
                 fragment = new MyProfile();
                 _header.setText("Profile");
                 _rightIcon.setVisibility(View.GONE);
+/*
+                fragment = new LegalContent();
+                _header.setText("Legal Correspondence");
+                _rightIcon.setVisibility(View.GONE);*/
+
                 break;
-            case 8:
+            case 7:
                 fragment = new HelpAndSupport();
                 _header.setText("Help & Support");
                 _rightIcon.setVisibility(View.GONE);
+/*
+                fragment = new MyProfile();
+                _header.setText("Profile");
+                _rightIcon.setVisibility(View.GONE);*/
                 break;
-            case 9:
+            case 8:
                 logout();
+               /* fragment = new HelpAndSupport();
+                _header.setText("Help & Support");
+                _rightIcon.setVisibility(View.GONE);*/
                 break;
+           /* case 9:
+                *//*logout();*//*
+                break;*/
            /* case 10:
 
                 *//*fragment = new ;

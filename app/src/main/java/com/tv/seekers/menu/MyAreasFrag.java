@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.tv.seekers.R;
+import com.tv.seekers.adapter.AutoCompleteAdaperSavedAreas;
 import com.tv.seekers.adapter.MyAreaAdapter;
 import com.tv.seekers.bean.MyAreasBean;
 import com.tv.seekers.constant.Constant;
@@ -209,7 +210,7 @@ public class MyAreasFrag extends Fragment implements
                                     search_et.setAdapter(adapter);*/
 
                     // Each row in the list stores country name, currency and flag
-                    List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+                   /* List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                     for (int i = 0; i < myAreasList.size(); i++) {
                         HashMap<String, String> hm = new HashMap<String, String>();
                         MyAreasBean bean = myAreasList.get(i);
@@ -223,22 +224,12 @@ public class MyAreasFrag extends Fragment implements
                     // R.layout.listview_layout defines the layout of each item
                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),
                             aList, R.layout.landing_resource_row, from, to) {
-                    };
-                                   /*     @Override
-                                        public View getView(int position, View convertView, ViewGroup parent) {
-                                            View v = super.getView(position, convertView, parent);
+                    };*/
 
-                                            TextView _tvData = (TextView) v.findViewById(R.id.listtext);
-                                            Constant.setFont(getActivity(), _tvData, 0);
+                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasList);
 
-
-                                            return v;
-                                        }
-                                    };*//*
-
-
-                                    *//** Setting the adapter to the listView */
-                    search_et.setAdapter(adapter);
+                                    /** Setting the adapter to the listView */
+                    search_et.setAdapter(mAutoCompleteAdaperSavedAreas);
 
 
                 }
@@ -1421,7 +1412,7 @@ public class MyAreasFrag extends Fragment implements
                /*     mJsonObjectUserID.put("id", user_id);
                     mJsonObjectUser.put("user", mJsonObjectUserID);*/
                     mJsonObjectUser.put("pageNo", 1);
-                    mJsonObjectUser.put("limit", 100);
+                    mJsonObjectUser.put("limit", 10000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1608,7 +1599,7 @@ public class MyAreasFrag extends Fragment implements
                                             R.layout.landing_resource_row, R.id.listtext, myAreasList);
                                     search_et.setAdapter(adapter);*/
 
-                                    // Each row in the list stores country name, currency and flag
+                                  /*  // Each row in the list stores country name, currency and flag
                                     List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
                                     for (int i = 0; i < myAreasList.size(); i++) {
                                         HashMap<String, String> hm = new HashMap<String, String>();
@@ -1623,7 +1614,7 @@ public class MyAreasFrag extends Fragment implements
                                     // R.layout.listview_layout defines the layout of each item
                                     SimpleAdapter adapter = new SimpleAdapter(getActivity(),
                                             aList, R.layout.landing_resource_row, from, to) {
-                                    };
+                                    };*/
                                    /*     @Override
                                         public View getView(int position, View convertView, ViewGroup parent) {
                                             View v = super.getView(position, convertView, parent);
@@ -1636,9 +1627,14 @@ public class MyAreasFrag extends Fragment implements
                                         }
                                     };*//*
 
+/*
+                                    *//**//** Setting the adapter to the listView *//*
+                                    search_et.setAdapter(adapter);*/
 
-                                    *//** Setting the adapter to the listView */
-                                    search_et.setAdapter(adapter);
+                                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasList);
+
+                                    /** Setting the adapter to the listView */
+                                    search_et.setAdapter(mAutoCompleteAdaperSavedAreas);
 
 
                                 }

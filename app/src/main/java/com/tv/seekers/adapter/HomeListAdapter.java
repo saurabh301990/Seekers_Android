@@ -1,11 +1,15 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +17,20 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+
+
+import com.google.android.youtube.player.YouTubePlayerFragment;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
+import com.google.android.youtube.player.YouTubeThumbnailLoader;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -26,6 +41,7 @@ import com.nostra13.universalimageloader.core.decode.BaseImageDecoder;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.tv.seekers.R;
+import com.tv.seekers.activities.YoutubeVideoViewActivity;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
@@ -54,13 +70,17 @@ public class HomeListAdapter extends BaseAdapter {
     private com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
     private SharedPreferences sPref;
     private boolean isUserDetails = false;
-//    private MediaController mMediaController;
+    private Context mContextDemo;
+    //    private MediaController mMediaController;
+    private YouTubePlayerFragment mYoutubePlayerFragment;
 
 
-    public HomeListAdapter(List<HomeBean> dataList, Activity context, boolean isUserDetails ) {
+    public HomeListAdapter(List<HomeBean> dataList, Activity context, boolean isUserDetails) {
+
         this.list = dataList;
         this.context = context;
         this.isUserDetails = isUserDetails;
+        this.mContextDemo = context;
 
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
@@ -87,6 +107,8 @@ public class HomeListAdapter extends BaseAdapter {
                         //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                 .build();
 
+        mYoutubePlayerFragment = new YouTubePlayerFragment();
+
 //        mMediaController = new MediaController(context);
     }
 
@@ -106,6 +128,58 @@ public class HomeListAdapter extends BaseAdapter {
         return position;
     }
 
+
+    private YouTubePlayer.PlayerStateChangeListener playerStateChangeListener = new YouTubePlayer.PlayerStateChangeListener() {
+
+        @Override
+        public void onAdStarted() {
+        }
+
+        @Override
+        public void onError(YouTubePlayer.ErrorReason arg0) {
+        }
+
+        @Override
+        public void onLoaded(String arg0) {
+        }
+
+        @Override
+        public void onLoading() {
+        }
+
+        @Override
+        public void onVideoEnded() {
+        }
+
+        @Override
+        public void onVideoStarted() {
+        }
+    };
+
+    private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
+
+        @Override
+        public void onBuffering(boolean arg0) {
+        }
+
+        @Override
+        public void onPaused() {
+        }
+
+        @Override
+        public void onPlaying() {
+        }
+
+        @Override
+        public void onSeekTo(int arg0) {
+        }
+
+        @Override
+        public void onStopped() {
+        }
+
+    };
+
     public static class ViewHolder {
 
         TextView tvUserType = null;
@@ -116,7 +190,13 @@ public class HomeListAdapter extends BaseAdapter {
         ImageView userTypeImage = null;
         ImageView postImage = null;
         VideoView videoView = null;
+        //        YouTubePlayerView post_vid_yt = null;
         ImageView isFollow = null;
+
+        /*10 march by Shoeb*/
+        ImageView youTubeThumbnailView;
+        protected ImageView playButton;
+        protected RelativeLayout relativeLayoutOverYouTubeThumbnailView;
 
 
     }
@@ -189,11 +269,17 @@ public class HomeListAdapter extends BaseAdapter {
                 convertView = context.getLayoutInflater().inflate(R.layout.home_list_item_row_vid, null);
                 view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
                 view_holder.tvUserLocation = (TextView) convertView.findViewById(R.id.userLocation_tv);
+                view_holder.tvUserPost = (TextView) convertView.findViewById(R.id.userpostDescription_tv);
                 view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.videoView = (VideoView) convertView.findViewById(R.id.post_vid);
+//                view_holder.post_vid_yt = (YouTubePlayerView) convertView.findViewById(R.id.post_vid_yt);
                 view_holder.isFollow = (ImageView) convertView.findViewById(R.id.isFollow);
+                view_holder.playButton = (ImageView) convertView.findViewById(R.id.btnYoutube_player);
+
+                view_holder.youTubeThumbnailView = (ImageView) convertView.findViewById(R.id.youtube_thumbnail);
+                view_holder.relativeLayoutOverYouTubeThumbnailView = (RelativeLayout) convertView.findViewById(R.id.relativeLayout_over_youtube_thumbnail);
             }
 
 
@@ -205,13 +291,30 @@ public class HomeListAdapter extends BaseAdapter {
 
         view_holder.tvUserType.setText(bean.getUser_name());
 
+        if (view_holder.playButton != null) {
+            view_holder.playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+//                    Constant.showToast("playButton Called",context);
+
+                    Intent intToYoutubView = new Intent(context, YoutubeVideoViewActivity.class);
+                    intToYoutubView.putExtra("VIDEOID", bean.getPost_video());
+                    context.startActivity(intToYoutubView);
+
+               /*     Intent intent = YouTubeStandalonePlayer.createVideoIntent((Activity) mContextDemo, Constant.YOUTUBE_API_KEY, bean.getPost_video());
+                    mContextDemo.startActivity(intent);*/
+//                    context.finish();
+                }
+            });
+        }
 /*
         if (bean.getUser_name().equalsIgnoreCase("")) {
             view_holder.tvUserType.setText(bean.getSource() + " User");
         } else {
             view_holder.tvUserType.setText(bean.getUser_name() + " / " + bean.getSource() + " User");
         }*/
-        if (isUserDetails){
+        if (isUserDetails) {
             view_holder.isFollow.setVisibility(View.GONE);
         }
 
@@ -255,7 +358,7 @@ public class HomeListAdapter extends BaseAdapter {
             view_holder.userTypeImage.setImageResource(R.mipmap.vk_top_corner);
         } else if (bean.getSource().equalsIgnoreCase("MEETUP")) {
             view_holder.userTypeImage.setImageResource(R.mipmap.meetup_top_corner);
-        } else if (bean.getSource().equalsIgnoreCase("FLIKER")) {
+        } else if (bean.getSource().equalsIgnoreCase("FLICKR")) {
             view_holder.userTypeImage.setImageResource(R.mipmap.flickr_top_corner);
         }
 
@@ -274,6 +377,10 @@ public class HomeListAdapter extends BaseAdapter {
         try {
 
             if (listViewItemType == TYPE_TEXT_IMG) {
+                if (view_holder.playButton != null) {
+                    view_holder.playButton.setVisibility(View.GONE);
+                }
+
                 if (view_holder.postImage != null) {
                     Log.e("HOME ADAPTER ", "Img Loader for Post Image.");
                     System.out.println("Image With TExt : " + bean.getPost_image());
@@ -287,6 +394,9 @@ public class HomeListAdapter extends BaseAdapter {
                     Log.e("HOME ADAPTER ", "Img Loader for Post Image. NULL");
                 }
             } else if (listViewItemType == TYPE_IMG) {
+                if (view_holder.playButton != null) {
+                    view_holder.playButton.setVisibility(View.GONE);
+                }
                 if (view_holder.postImage != null) {
                     Log.e("HOME ADAPTER ", "Img Loader for Post Image.");
                     System.out.println("Image ONLY : " + bean.getPost_image());
@@ -303,7 +413,117 @@ public class HomeListAdapter extends BaseAdapter {
                     System.out.println("VID ONLY : " + Constant.YOUTUBELINK + bean.getPost_video());
                     Uri vidUri = Uri.parse(Constant.YOUTUBELINK + bean.getPost_video());
                     System.out.println("vidUri : " + vidUri);
-                    view_holder.videoView.setVideoURI(vidUri);
+
+                    if (bean.getSource().equalsIgnoreCase("YOUTUBE")) {
+                        if (view_holder.playButton != null) {
+                            view_holder.playButton.setVisibility(View.VISIBLE);
+                        }
+
+                        // TODO: 8/3/16 New Changes
+                      /*  mYoutubePlayerFragment = new YouTubePlayerFragment();
+                        mYoutubePlayerFragment.initialize(Constant.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+                            @Override
+                            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                                *//** add listeners to YouTubePlayer instance **//*
+                                youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+                                youTubePlayer.setPlaybackEventListener(playbackEventListener);
+
+                                *//** Start buffering **//*
+                                System.out.println("onInitializationSuccess");
+                                if (!b) {
+                                    System.out.println("onInitializationSuccess cueVideo");
+//                                    youTubePlayer.loadVideo(bean.getPost_video());
+                                    youTubePlayer.cueVideo(bean.getPost_video());
+                                }
+                            }
+
+                            @Override
+                            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+                                System.out.println("onInitializationFailure");
+                            }
+                        });
+                        FragmentManager fragmentManager = context.getFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.youtubesupportfragment, mYoutubePlayerFragment);
+                        fragmentTransaction.commit();
+*/
+
+                        /*10 March NEW YOUTUBE*/
+/*
+                        final YouTubeThumbnailLoader.OnThumbnailLoadedListener onThumbnailLoadedListener = new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
+                            @Override
+                            public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
+
+                            }
+
+                            @Override
+                            public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
+                                youTubeThumbnailView.setVisibility(View.VISIBLE);
+                                if (view_holder.relativeLayoutOverYouTubeThumbnailView != null) {
+                                    view_holder.relativeLayoutOverYouTubeThumbnailView.setVisibility(View.VISIBLE);
+                                }
+
+                            }
+                        };
+
+
+                        if (view_holder.youTubeThumbnailView != null) {
+
+                            try {
+                                if (!bean.isInitYT()) {
+                                    view_holder.youTubeThumbnailView.initialize(Constant.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
+                                        @Override
+                                        public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader
+                                                youTubeThumbnailLoader) {
+
+                                            youTubeThumbnailLoader.setVideo(bean.getPost_video());
+                                            youTubeThumbnailLoader.setOnThumbnailLoadedListener(onThumbnailLoadedListener);
+
+                                            bean.setIsInitYT(true);
+                                            notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
+                                            //write something for failure
+                                        }
+                                    });
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                System.out.println("ERROR Crash Youtube");
+                            }
+
+
+                        }*/
+
+/*15 March new code*/
+
+                        if (view_holder.youTubeThumbnailView != null) {
+                            view_holder.youTubeThumbnailView.setVisibility(View.VISIBLE);
+                            if (view_holder.relativeLayoutOverYouTubeThumbnailView != null) {
+                                view_holder.relativeLayoutOverYouTubeThumbnailView.setVisibility(View.VISIBLE);
+                            }
+
+                            imageLoaderNew.displayImage(bean.getPost_image(), view_holder.youTubeThumbnailView,
+                                    optionsPostImg,
+                                    null);
+                        }
+
+
+
+//                        view_holder.post_vid_yt.setVisibility(View.VISIBLE);
+                        view_holder.videoView.setVisibility(View.GONE);
+                    } else {
+//                        view_holder.post_vid_yt.setVisibility(View.GONE);
+                        view_holder.videoView.setVisibility(View.VISIBLE);
+                        view_holder.videoView.setVideoURI(vidUri);
+                        if (view_holder.playButton != null) {
+                            view_holder.playButton.setVisibility(View.GONE);
+                        }
+                    }
+
 //                    view_holder.videoView.setMediaController(mMediaController);
 //                    view_holder.videoView.start();
                 }
@@ -313,6 +533,9 @@ public class HomeListAdapter extends BaseAdapter {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Errorrrrrrr in Home adapter");
+            if (view_holder.playButton != null) {
+                view_holder.playButton.setVisibility(View.GONE);
+            }
         }
 
 

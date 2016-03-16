@@ -98,8 +98,8 @@ public class Track extends Fragment implements XListView.IXListViewListener {
         _header = (TextView) getActivity().findViewById(R.id.hdr_title);
         _header.setText("Saved Profiles");
         rightIcon = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
-        rightIcon.setVisibility(View.VISIBLE);
-        rightIcon.setImageResource(R.mipmap.plus);
+        rightIcon.setVisibility(View.GONE);
+        /*rightIcon.setImageResource(R.mipmap.plus);
         rightIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,9 +109,9 @@ public class Track extends Fragment implements XListView.IXListViewListener {
 
             }
         });
+*/
 
-
-        addData();
+//        addData();
 
 
         //Load More
@@ -147,7 +147,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                     search_et.setCompoundDrawables(null, null, null, null);
                 }
 
-                String searchString = search_et.getText().toString().toLowerCase();
+                String searchString = search_et.getText().toString();
                 Log.d("Search Text : ", "" + searchString);
                 int realtext = searchString.length();
                 if (arrayTemplist.size() > 0) {
@@ -162,7 +162,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                     if (realtext <= userName.length()) {
 
 
-                        if (searchString.equalsIgnoreCase(userName.substring(0, realtext))) {
+                        if (userName.contains(searchString)) {
                             arrayTemplist.add(bean);
 
                             getActivity().runOnUiThread(new Runnable() {
@@ -206,8 +206,16 @@ public class Track extends Fragment implements XListView.IXListViewListener {
         menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
         menu.setVisibility(View.VISIBLE);
         MainActivity.drawerFragment.setDrawerState(true);
+
+
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            callGetFollowedUsers();
+        } else {
+            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+        }
         return view;
     }
+/*
 
     @Override
     public void onResume() {
@@ -218,6 +226,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
     }
+*/
 
     private void callGetFollowedUsers() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
@@ -295,10 +304,12 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                             System.out.println("Response of GET_FOLLOWED_USERS : " + _responseMain);
 
 
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        } catch (Exception  e){
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.showToast("Server Error ", getActivity());
+                                }
+                            });
                         }
 
                     } catch (Exception e) {
@@ -452,35 +463,21 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                 // TODO: 26/2/16 Search YES
                     /*Fetch value from Temp array list*/
                 TrackBean bean = arrayTemplist.get(mPosition);
-                Bundle mBundle = new Bundle();
-                mBundle.putString("USERID", bean.getId());
-                fragment.setArguments(mBundle);
 
+                Intent intToTrackUserScreen = new Intent(getActivity(), TrackMapFragment.class);
+                intToTrackUserScreen.putExtra("USERID", bean.getId());
+                startActivity(intToTrackUserScreen);
 
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.container_body, fragment);
-                fragmentTransaction.commit();
 
             } else {
                 // TODO: 26/2/16 Search NO
                     /*Fetch value from Main array list*/
 
                 TrackBean bean = userlist.get(mPosition);
-                Bundle mBundle = new Bundle();
-                mBundle.putString("USERID", bean.getId());
-                fragment.setArguments(mBundle);
-
-
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.replace(R.id.container_body, fragment);
-                fragmentTransaction.commit();
+                Intent intToTrackUserScreen = new Intent(getActivity(), TrackMapFragment.class);
+                intToTrackUserScreen.putExtra("USERID", bean.getId());
+                startActivity(intToTrackUserScreen);
             }
-
-
 
 
         }

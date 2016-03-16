@@ -1,5 +1,6 @@
 package com.tv.seekers.menu;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,10 +27,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -37,6 +40,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.activities.PostDetailsTextImg;
+import com.tv.seekers.adapter.CustomWindAdapter;
 import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
@@ -75,7 +79,7 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 4/11/15.
  */
-public class TrackMapFragment extends Fragment implements XListView.IXListViewListener {
+public class TrackMapFragment extends Activity implements XListView.IXListViewListener,GoogleMap.OnInfoWindowClickListener {
 
 
     /* private static final LatLng LOWER_MANHATTAN = new LatLng(22.7176622,
@@ -95,9 +99,9 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
     @Bind(R.id.name_info_tv)
     TextView name_info_tv;
-
+/*
     @Bind(R.id.loc_info_tv)
-    TextView loc_info_tv;
+    TextView loc_info_tv;*/
 
     @Bind(R.id.name_tv)
     TextView name_tv;
@@ -111,6 +115,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
     private TextView _header;
     private ImageView _ivRight;
+    private ImageView _ivLeft;
 
 
     @OnClick(R.id.map_btn)
@@ -118,11 +123,11 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
         _isList = false;
         map_view.setVisibility(View.VISIBLE);
         list.setVisibility(View.GONE);
-        list_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+        list_btn.setBackgroundColor(ContextCompat.getColor(TrackMapFragment.this, R.color.miles_inactive_color));
         map_btn.setBackgroundColor(Color.WHITE);
 
         map_btn.setTextColor(Color.BLACK);
-        list_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+        list_btn.setTextColor(ContextCompat.getColor(TrackMapFragment.this, R.color.grey_color));
     }
 
     @Bind(R.id.list_btn)
@@ -133,18 +138,18 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
         _isList = true;
         map_view.setVisibility(View.GONE);
         list.setVisibility(View.VISIBLE);
-        map_btn.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.miles_inactive_color));
+        map_btn.setBackgroundColor(ContextCompat.getColor(TrackMapFragment.this, R.color.miles_inactive_color));
         list_btn.setBackgroundColor(Color.WHITE);
 
         list_btn.setTextColor(Color.BLACK);
-        map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
+        map_btn.setTextColor(ContextCompat.getColor(TrackMapFragment.this, R.color.grey_color));
 
 
 //        addData();
 
     }
 
-    @Bind(R.id.map_view)
+    @Bind(R.id.map_view_rel)
     RelativeLayout map_view;
 
     @Bind(R.id.unsave_iv)
@@ -154,7 +159,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
     @OnClick(R.id.unsave_iv)
     public void unsave_ivClick(View view) {
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
 
 
             callFollowUnFollowWS(misFollow);
@@ -175,7 +180,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             protected void onPreExecute() {
 
 
-                Constant.showLoader(getActivity());
+                Constant.showLoader(TrackMapFragment.this);
 
 
             }
@@ -183,7 +188,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             @Override
             protected String doInBackground(String... arg0) {
 
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
 
                     try {
 
@@ -219,9 +224,9 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            getActivity().runOnUiThread(new Runnable() {
+                            TrackMapFragment.this.runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Constant.showToast("Server Error ", getActivity());
+                                    Constant.showToast("Server Error ", TrackMapFragment.this);
                                 }
                             });
                         } finally {
@@ -235,9 +240,9 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                         // TODO: handle exception
                         e.printStackTrace();
 
-                        getActivity().runOnUiThread(new Runnable() {
+                        TrackMapFragment.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Constant.showToast("Server Error ", getActivity());
+                                Constant.showToast("Server Error ", TrackMapFragment.this);
                             }
                         });
 
@@ -245,11 +250,11 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
 
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
+                    TrackMapFragment.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // TODO Auto-generated method stub
-                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
                         }
                     });
                 }
@@ -279,21 +284,21 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                             }
 
                         } else if (status == 0) {
-                            Constant.showToast("Server Error    ", getActivity());
+                            Constant.showToast("Server Error    ", TrackMapFragment.this);
                         } else if (status == -1) {
                             //Redirect to Login
-                            Constant.alertForLogin(getActivity());
+                            Constant.alertForLogin(TrackMapFragment.this);
                         }
 
                     } catch (Exception e) {
 
-                        Constant.showToast("Server Error    ", getActivity());
+                        Constant.showToast("Server Error    ", TrackMapFragment.this);
                         e.printStackTrace();
 
                         Constant.hideLoader();
                     }
                 } else {
-                    Constant.showToast("Server Error    ", getActivity());
+                    Constant.showToast("Server Error    ", TrackMapFragment.this);
                     Constant.hideLoader();
                 }
             }
@@ -315,24 +320,23 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
     private String user_id = "";
 
     public void setfont() {
-        Constant.setFont(getActivity(), name_info_tv, 0);
-        Constant.setFont(getActivity(), name_tv, 0);
-        Constant.setFont(getActivity(), loc_info_tv, 0);
-        Constant.setFont(getActivity(), loc_tv, 0);
-        Constant.setFont(getActivity(), map_btn, 0);
-        Constant.setFont(getActivity(), list_btn, 0);
-        Constant.setFont(getActivity(), _header, 0);
+        Constant.setFont(TrackMapFragment.this, name_info_tv, 0);
+        Constant.setFont(TrackMapFragment.this, name_tv, 0);
+//        Constant.setFont(TrackMapFragment.this, loc_info_tv, 0);
+        Constant.setFont(TrackMapFragment.this, loc_tv, 0);
+        Constant.setFont(TrackMapFragment.this, map_btn, 0);
+        Constant.setFont(TrackMapFragment.this, list_btn, 0);
+        Constant.setFont(TrackMapFragment.this, _header, 0);
     }
 
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.track_map_screen, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.track_map_screen);
+        ButterKnife.bind(this);
 
-        ButterKnife.bind(this, view);
-//        ErrorReporter.getInstance().Init(getActivity());
-        setfont();
+
 
         //Load More
         list.setSelector(android.R.color.transparent);
@@ -343,13 +347,13 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final HomeBean bean = _mainList.get(position - 1);
-                Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                Intent intentToTxtImg = new Intent(TrackMapFragment.this, PostDetailsTextImg.class);
                 intentToTxtImg.putExtra("POSTID", bean.getPost_id());
                 startActivity(intentToTxtImg);
             }
         });
 
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(getActivity()));
+        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(TrackMapFragment.this));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
         optionsUserImg = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.mipmap.followed_profile_bg)
@@ -362,89 +366,49 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                         //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                 .build();
 
-        _ivRight = (ImageView) getActivity().findViewById(R.id.hdr_fltr);
-        _ivRight.setVisibility(View.GONE);
-        _header = (TextView) getActivity().findViewById(R.id.hdr_title);
-        _header.setText("Saved Profile");
-        view.setFocusableInTouchMode(true);
-        view.requestFocus();
-        view.setOnKeyListener(new View.OnKeyListener() {
+        _ivRight = (ImageView) findViewById(R.id.hdr_fltr);
+        _ivLeft = (ImageView) findViewById(R.id.tgl_menu);
+        _ivLeft.setImageResource(R.mipmap.back);
+        _ivLeft.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.i("Get Promo", "keyCode: " + keyCode);
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-
-                    Log.i("Get Promo", "onKey Back listener is working!!!");
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    return true;
-                } else {
-                    return false;
-                }
+            public void onClick(View v) {
+                finish();
             }
         });
-        return view;
+        _ivRight.setVisibility(View.GONE);
+        _header = (TextView) findViewById(R.id.hdr_title);
+        _header.setText("Saved Profile");
 
-    }
-
-    private void addData() {
-
-      /*  if (_mainList.size() > 0) {
-            _mainList.clear();
-        }*/
-        /*for (int i = 0; i < 3; i++) {
-
-            HomeBean bean = new HomeBean();
-            bean.setPost_lat("");
-            bean.setPost_long("");
-            bean.setPost_text("Feeling Awesome");
-            bean.setSource("FLIKER");
-            bean.setUser_address("North Lois Avenue, Tampa ");
-            bean.setUser_image("http://cs629312.vk.me/v629312246/180c9/8KDEIk0KsK4.jpg");
-            bean.setUser_name("John");
-            bean.setSource_id("");
-            bean.setPost_time("15-feb-2016");
-            bean.setType(1);
-            bean.setPost_location("US");
-            _mainList.add(bean);
-
-        }
-        adapterList = new HomeListAdapter(_mainList, getActivity());
-        list.setAdapter(adapterList);*/
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        sPref = TrackMapFragment.this.getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         try {
-            user_id = getArguments().getString("USERID", "");
+            user_id = getIntent().getStringExtra("USERID");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
             // Initializing
             markerPoints = new ArrayList<LatLng>();
 
-            FragmentManager fm = getChildFragmentManager();
+          /*  FragmentManager fm = getChildFragmentManager();
             fragment = (SupportMapFragment) fm.findFragmentById(R.id.map_view);
             if (fragment == null) {
                 fragment = SupportMapFragment.newInstance();
                 fm.beginTransaction().replace(R.id.map_view, fragment).commit();
-            }
+            }*/
         } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
         }
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
             callGetUserDetails();
         } else {
-            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            Constant.showToast(getResources().getString(R.string.internet), TrackMapFragment.this);
         }
 
-
+        setfont();
     }
+
 
     private void callGetUserDetails() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
@@ -456,7 +420,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             protected void onPreExecute() {
 
 
-                Constant.showLoader(getActivity());
+                Constant.showLoader(TrackMapFragment.this);
                 /*{
     "userId":"3204c72d-5418-4b9c-ae0f-ac06dd4cc718",
     "pageNo":2,
@@ -482,13 +446,11 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             @Override
             protected String doInBackground(String... arg0) {
 
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
 
                     try {
 
                         HttpURLConnection urlConnection;
-
-
                         try {
 
 //                            String query = builder.build().getEncodedQuery();
@@ -541,9 +503,9 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                         // TODO: handle exception
                         e.printStackTrace();
 
-                        getActivity().runOnUiThread(new Runnable() {
+                        TrackMapFragment.this.runOnUiThread(new Runnable() {
                             public void run() {
-                                Constant.showToast("Server Error ", getActivity());
+                                Constant.showToast("Server Error ", TrackMapFragment.this);
                             }
                         });
 
@@ -551,11 +513,11 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
 
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
+                    TrackMapFragment.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // TODO Auto-generated method stub
-                            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
                         }
                     });
                 }
@@ -611,6 +573,8 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                 username = _resultJSONArray.getString("username");
 
                             }
+
+
                             if (_resultJSONArray.has("firstName")) {
                                 firstName = _resultJSONArray.getString("firstName");
 
@@ -659,7 +623,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                             JSONArray mJsonArrayposts = _resultJSONArray.getJSONArray("posts");
                             int length = mJsonArrayposts.length();
                             if (length > 0) {
-                                MarkerOptions options = new MarkerOptions();
+//                                MarkerOptions options = new MarkerOptions();
                                 for (int i = 0; i < length; i++) {
                                     JSONObject _jSubObject = mJsonArrayposts.getJSONObject(i);
                                     HomeBean bean = new HomeBean();
@@ -763,7 +727,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                     LatLng mLatLong = new LatLng(latitude, longitude);
                                     // TODO: 19/2/16 Map
                                     markerPoints.add(i, mLatLong);
-                                    options.position(mLatLong);
+
                                     BitmapDescriptor bitmapMarker = null;
                                     if (!bean.getSource().equalsIgnoreCase("")) {
                                         if (bean.getSource().equalsIgnoreCase("TWITTER")) { //Tweet
@@ -776,7 +740,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                             bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.meetup_pin);
                                         } else if (bean.getSource().equalsIgnoreCase("VK")) {//Vk
                                             bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.vk_pin);
-                                        } else if (bean.getSource().equalsIgnoreCase("FLIKER")) {//FLIKER
+                                        } else if (bean.getSource().equalsIgnoreCase("FLICKR")) {//FLICKR
                                             bitmapMarker = BitmapDescriptorFactory.fromResource(R.mipmap.flicker_pin);
                                         } else {
                                             bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
@@ -785,13 +749,41 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                     } else {
                                         bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                                     }
-                                    options.icon(bitmapMarker);
-                                    googleMap.addMarker(options);
 
+
+                                    // Setting an info window adapter allows us to change the both the contents and look of the
+
+                                    String userName = "";
+                                    if (!bean.getUser_name().equalsIgnoreCase("")) {
+                                        userName = bean.getUser_name();
+                                    } else {
+                                        userName = bean.getSource() + " User";
+                                    }
+                                    String postID = bean.getPost_id();
+                                    String snippet = "";
+                                    if (!postID.equalsIgnoreCase("")) {
+                                        String userImg = bean.getUser_image();
+                                        if (userImg.equalsIgnoreCase("")) {
+                                            userImg = "demoimg";
+                                        } else {
+                                            userImg = bean.getUser_image();
+                                        }
+                                        snippet = "true" + "&" + userImg + "&" + bean.getPost_id() + "&" + bean.getPost_text();
+                                    }/* else {
+                    snippet = bean.getUser_image();
+                }*/
+//                System.out.println("FINAL SNIPPET ON MAP @#@#@#@ :" + snippet + " With Post Id : " + postID);
+                                    googleMap.addMarker(new MarkerOptions().position(mLatLong)
+                                            .title(userName)
+                                            .snippet(snippet)
+
+                                            .icon(bitmapMarker));
 
                                     _mainList.add(bean);
 
                                 }
+                                // info window.
+                                googleMap.setInfoWindowAdapter(new CustomWindAdapter(TrackMapFragment.this));
                             }
 
 
@@ -857,7 +849,7 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                             //todo setting Adapter here
 
                             if (_page_number == 1) {
-                                adapterList = new HomeListAdapter(_mainList, getActivity(), true);
+                                adapterList = new HomeListAdapter(_mainList, TrackMapFragment.this, true);
                                 list.setAdapter(adapterList);
 //                                        onLoad();
                                 list.stopRefresh();
@@ -879,20 +871,20 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
                                 list.setPullLoadEnable(false);
                             }
                         } else if (status == 0) {
-                            Constant.showToast("Server Error", getActivity());
+                            Constant.showToast("Server Error", TrackMapFragment.this);
                         } else if (status == -1) {
                             //Redirect to Login
-                            Constant.alertForLogin(getActivity());
+                            Constant.alertForLogin(TrackMapFragment.this);
                         }
 
                     } catch (Exception e) {
 
                         e.printStackTrace();
-                        Constant.showToast("Server Error ", getActivity());
+                        Constant.showToast("Server Error ", TrackMapFragment.this);
                         Constant.hideLoader();
                     }
                 } else {
-                    Constant.showToast("Server Error ", getActivity());
+                    Constant.showToast("Server Error ", TrackMapFragment.this);
 
                     Constant.hideLoader();
                 }
@@ -909,10 +901,10 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
     public void onResume() {
         super.onResume();
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
             initMap();
         } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
         }
 
 
@@ -920,8 +912,8 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
 
     private void initMap() {
         if (googleMap == null) {
-            googleMap = fragment.getMap();
-
+            googleMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map_view)).getMap();
+            googleMap.setOnInfoWindowClickListener(this);
            /* MarkerOptions options = new MarkerOptions();
             options.position(LOWER_MANHATTAN);
             options.position(BROOKLYN_BRIDGE);
@@ -1021,10 +1013,10 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
     public void onRefresh() {
 //For Pull To Refresh
         _page_number = 1;
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
             callGetUserDetails();
         } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
         }
 
     }
@@ -1033,10 +1025,10 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
     public void onLoadMore() {
 //For Load More from Bottom
         _page_number = _page_number + 1;
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+        if (NetworkAvailablity.checkNetworkStatus(TrackMapFragment.this)) {
             callGetUserDetails();
         } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            Constant.showToast(TrackMapFragment.this.getResources().getString(R.string.internet), TrackMapFragment.this);
         }
 
     }
@@ -1116,9 +1108,9 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Constant.hideKeyBoard(getActivity());
+    protected void onDestroy() {
+        super.onDestroy();
+        Constant.hideKeyBoard(TrackMapFragment.this);
     }
 
     private String getDateFromMilliseconds(long milliSeconds, String dateFormat) {
@@ -1152,5 +1144,33 @@ public class TrackMapFragment extends Fragment implements XListView.IXListViewLi
             }
         }
         return response.toString();
+    }
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+
+        String snippet = marker.getSnippet();
+        System.out.println("snippet : " + snippet);
+        String userImg = "";
+        String postId = "";
+        String isFollowed = "";
+
+        String post_text = "";
+        if (snippet.contains("&")) {
+            String[] snippetWHole = snippet.split("&");
+            isFollowed = snippetWHole[0];
+            userImg = snippetWHole[1];
+            postId = snippetWHole[2];
+            post_text = snippetWHole[3];
+            System.out.println("postId " + postId);
+
+            Intent intentToTxtImg = new Intent(TrackMapFragment.this, PostDetailsTextImg.class);
+            intentToTxtImg.putExtra("POSTID", postId);
+            startActivity(intentToTxtImg);
+        } else {
+            Constant.showToast("Post not found.", TrackMapFragment.this);
+        }
+
+
     }
 }

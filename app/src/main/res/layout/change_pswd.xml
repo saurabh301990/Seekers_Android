@@ -38,7 +38,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true" />
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_img_iv"
                     android:layout_width="130dp"
                     android:layout_height="130dp"

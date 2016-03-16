@@ -44,8 +44,7 @@ import butterknife.ButterKnife;
 /**
  * Created by shoeb on 28/12/15.
  */
-public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnClickListener,
-        YouTubePlayer.OnInitializedListener {
+public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnClickListener {
 
     /*Header*/
     @Bind(R.id.tgl_menu)
@@ -85,6 +84,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     YouTubePlayerView post_vid;
 
     private String mPostId = "";
+    private String post_video = "";
     private String  userIdForFollow = "";
     private boolean isFollowed = false;
     SharedPreferences sPref;
@@ -109,9 +109,11 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
         sPref = getSharedPreferences("LOGINPREF", PostDetailsTextImg.this.MODE_PRIVATE);
         mMediaController = new MediaController(PostDetailsTextImg.this);
 
-        post_vid.setVisibility(View.GONE);
-        post_vid.initialize(Constant.YOUTUBE_API_KEY, this);
+        post_vid.setVisibility(View.VISIBLE);
+
         gettingIntentData();
+
+//        Constant.showToast("POst Details Called", PostDetailsTextImg.this);
 
     }
 
@@ -299,7 +301,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             }
 
                             if (_jSubObject.has("postVideo")) {
-                                String post_video = _jSubObject.getString("postVideo");
+                                 post_video = _jSubObject.getString("postVideo");
                             }
                             if (_jSubObject.has("postId")) {
                                 String post_id = _jSubObject.getString("postId");
@@ -361,7 +363,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     user_imgType_iv.setImageResource(R.mipmap.vk_top_corner);
                                 } else if (source.equalsIgnoreCase("MEETUP")) {
                                     user_imgType_iv.setImageResource(R.mipmap.meetup_top_corner);
-                                } else if (source.equalsIgnoreCase("FLIKER")) {
+                                } else if (source.equalsIgnoreCase("FLICKR")) {
                                     user_imgType_iv.setImageResource(R.mipmap.flickr_top_corner);
                                 }
                             }
@@ -413,14 +415,44 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                 if (view_type.equalsIgnoreCase("TEXT_ONLY")) {
                                     post_iv.setVisibility(View.GONE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
+                                    post_vid.setVisibility(View.GONE);
 
                                 } else if (view_type.equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
+                                    post_vid.setVisibility(View.GONE);
 
                                 } else if (view_type.equalsIgnoreCase("IMAGE_ONLY")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.GONE);
+                                    post_vid.setVisibility(View.GONE);
+
+                                }else if (view_type.equalsIgnoreCase("VIDEO_ONLY")||view_type.equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+
+                                    if (source.equalsIgnoreCase("YOUTUBE")) {
+                                        post_iv.setVisibility(View.GONE);
+                                        post_vid.setVisibility(View.VISIBLE);
+                                        userpostDescription_tv.setVisibility(View.VISIBLE);
+                                        post_vid.initialize(Constant.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+                                            @Override
+                                            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                                                youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+                                                youTubePlayer.setPlaybackEventListener(playbackEventListener);
+
+                                                /** Start buffering **/
+                                                if (!b) {
+                                                    youTubePlayer.loadVideo(post_video);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+                                            }
+                                        });
+                                    } else{
+                                        post_vid.setVisibility(View.GONE);
+                                    }
 
                                 } else {
 
@@ -668,22 +700,6 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     }
 
 
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-/** add listeners to YouTubePlayer instance **/
-        youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
-        youTubePlayer.setPlaybackEventListener(playbackEventListener);
-
-        /** Start buffering **/
-        if (!b) {
-            youTubePlayer.loadVideo("5LiD09JMqH8");
-        }
-    }
-
-    @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        Constant.showToast("Failured to Initialize!", PostDetailsTextImg.this);
-    }
 
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {

@@ -473,12 +473,12 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
             }
         });
-
+/*
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callsavedLocationWS();
         } else {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-        }
+        }*/
 
         createLocationRequest();
         return view;

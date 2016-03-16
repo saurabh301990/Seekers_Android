@@ -38,16 +38,64 @@
 
             <RelativeLayout
                 android:id="@+id/post_rl"
-                android:layout_width="match_parent"
+                android:layout_width="220dp"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/userLocation_tv"
                 android:gravity="center">
+
 
                 <VideoView
                     android:id="@+id/post_vid"
                     android:layout_width="220dp"
                     android:layout_height="200dp"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:visibility="gone" />
+
+
+                <FrameLayout
+                    android:id="@+id/youtubesupportfragment"
+                    android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/youtube_thumbnail"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:scaleType="centerCrop"
+                    android:visibility="visible" />
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout_over_youtube_thumbnail"
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:gravity="center"
+
+                    android:background="@android:color/transparent"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/btnYoutube_player"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="center"
+                        android:visibility="gone"
+                        android:src="@mipmap/ic_youtube_play_button" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/userpostDescription_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/relativeLayout_over_youtube_thumbnail"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="" />
+
 
 
             </RelativeLayout>
@@ -82,12 +130,13 @@
             android:id="@+id/isFollow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingBottom="10dp"
-            android:paddingRight="5dp"
             android:layout_marginTop="2dp"
             android:layout_toLeftOf="@+id/user_imgType_iv"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="5dp"
             android:src="@mipmap/grey" />
+
         <ImageView
             android:id="@+id/user_imgType_iv"
             android:layout_width="wrap_content"

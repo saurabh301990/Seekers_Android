@@ -56,6 +56,16 @@ public class CustomWindAdapter
     public View getInfoContents(Marker marker) {
         // Getting view from the layout file info_window_layout
         render(marker, mWindow);
+
+    /*    ImageView followed_iv = (ImageView) mWindow.findViewById(R.id.followed_iv);
+        if (followed_iv != null) {
+            followed_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Constant.showToast("Star Clicked New", mContext);
+                }
+            });
+        }*/
         return mWindow;
     }
 
@@ -84,10 +94,17 @@ public class CustomWindAdapter
         String post_text = "";
         if (snippet.contains("&")) {
             String[] snippetWHole = snippet.split("&");
+
             isFollowed = snippetWHole[0];
             userImg = snippetWHole[1];
             postId = snippetWHole[2];
-            post_text = snippetWHole[3];
+            if (snippetWHole.length>3){
+                post_text = snippetWHole[3];
+            } else{
+                post_text = "";
+            }
+
+
 
         } else {
             userImg = snippet;

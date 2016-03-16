@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -290,6 +291,9 @@ public class MapView extends Fragment
     @Bind(R.id.miles_tabs)
     LinearLayout miles_tabs;
 
+    @Bind(R.id.refresh_iv)
+    ImageView refresh_iv;
+
     @Bind(R.id.mapView)
     RelativeLayout map_view;
 
@@ -305,6 +309,8 @@ public class MapView extends Fragment
     HomeListAdapter adapterList;
 
     private boolean _isList = false;
+    private int recordCount = 0;
+    private long lastPostTime = 0;
 
 
     @Override
@@ -369,6 +375,10 @@ public class MapView extends Fragment
         System.out.println("PolyGon List Size : " + arrayPoints.size());
         if (arrayPoints.size() >= 3) {
 
+            if (googleMap != null) {
+                googleMap.clear();
+            }
+
          /*   BitmapDescriptor bitmapMarker = null;
             for (int k = 0 ; k>arrayPoints.size();k++){
                 bitmapMarker = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
@@ -426,10 +436,25 @@ public class MapView extends Fragment
                 Intent intToFilter = new Intent(getActivity(), FilterActivity.class);
                 intToFilter.putExtra("FROMMAPVIEW", true);
 
-                startActivity(intToFilter);
+                startActivityForResult(intToFilter, 666);
             }
         });
         setfont();
+
+        if (refresh_iv != null) {
+            refresh_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        listView_home.smoothScrollToPosition(0);
+                        callGetAllPostsWS(_radiusForWS);
+                    } else {
+                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                    }
+
+                }
+            });
+        }
 
 
         search_et.addTextChangedListener(new TextWatcher() {
@@ -545,6 +570,7 @@ public class MapView extends Fragment
 
                 String editTextValue = search_et.getText().toString().trim();
 
+//                Constant.showToast("onItem Called",getActivity());
 
                 if (editTextValue.length() > 0 && arrayTemplist.size() > 0) {
                     // TODO: 26/2/16 Search YES
@@ -580,6 +606,7 @@ public class MapView extends Fragment
     }
 
     private void gpsCheck() {
+
 
         /**
          *
@@ -696,7 +723,7 @@ public class MapView extends Fragment
             double currentLatitude = location.getLatitude();
             double currentLongitude = location.getLongitude();
 
-            Toast.makeText(getActivity(), currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getActivity(), currentLatitude + " WORKS " + currentLongitude + "", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -777,6 +804,8 @@ public class MapView extends Fragment
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("onActivityResult Called Of Map View");
+
+
         if (resultCode == 0) {
             //NO
 //            Constant.showToast("NO:" , getActivity());
@@ -811,7 +840,26 @@ public class MapView extends Fragment
                 gps = new GPSTracker(getActivity());
                 gpsCheck();
 
-            } /*else  if (requestCode == 555) {
+            } else if (requestCode == 666) {
+                if (resultCode == Activity.RESULT_OK) {
+                    boolean result = data.getBooleanExtra("applied", false);
+                    if (result) {
+                        System.out.println("applied : " + result);
+                        System.out.println("_radiusForWS : " + _radiusForWS);
+                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                            Constant.showLoader(getActivity());
+                            callGetAllPostsWS(_radiusForWS);
+                        }
+
+                    }
+
+                }
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+            }
+
+             /*else  if (requestCode == 555) {
                 boolean result = data.getBooleanExtra("applied", false);
                 if (result) {
                     System.out.println("applied success");
@@ -981,9 +1029,17 @@ public class MapView extends Fragment
                 isFirstCall = true;
 //                Constant.showLoader(getActivity());
 
+                if (refresh_iv != null) {
+                    refresh_iv.setVisibility(View.GONE);
+                }
+
                 try {
+
+
                     mJsonObject.put("latitude", mlatitude);
                     mJsonObject.put("longitude", mlongitude);
+                    mJsonObject.put("recordCount", recordCount);
+                    mJsonObject.put("lastPostTime", lastPostTime);
                     mJsonObject.put("radius", radius);
 
                     if (userLocationType.equalsIgnoreCase("CIRCULAR")) {
@@ -1227,8 +1283,14 @@ public class MapView extends Fragment
                                     if (no_post_layout != null) {
                                         no_post_layout.setVisibility(View.GONE);
                                     }
-                                    map_view.setVisibility(View.VISIBLE);
-                                    list_layout.setVisibility(View.GONE);
+                                    if (map_view != null) {
+                                        map_view.setVisibility(View.VISIBLE);
+                                    }
+                                    if (list_layout != null) {
+                                        list_layout.setVisibility(View.GONE);
+                                    }
+
+
                                 }
                                 int length = _resultJSONArray.length();
 
@@ -1320,6 +1382,7 @@ public class MapView extends Fragment
                                         bean.setSource_id("");
                                     }
 
+
                                     if (_jSubObject.has("postType")) {
                                         System.out.println("POst Type : " + _jSubObject.getString("postType"));
                                         bean.setView_type(_jSubObject.getString("postType"));
@@ -1329,7 +1392,8 @@ public class MapView extends Fragment
                                             bean.setType(2);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("I")) {
                                             bean.setType(3);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("V")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY") ||
+                                                _jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
                                             bean.setType(4);
                                         } else {
                                             bean.setType(1);
@@ -1349,12 +1413,12 @@ public class MapView extends Fragment
                                         String mSmall = mpostImage.getString("small");
                                         String medium = mpostImage.getString("medium");
                                         String large = mpostImage.getString("large");
-                                        if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
-                                            postImgUrl = mSmall;
+                                        if (large != null && !large.equalsIgnoreCase("")) {
+                                            postImgUrl = large;
                                         } else if (medium != null && !medium.equalsIgnoreCase("")) {
                                             postImgUrl = medium;
-                                        } else if (large != null && !large.equalsIgnoreCase("")) {
-                                            postImgUrl = large;
+                                        } else if (mSmall != null && !mSmall.equalsIgnoreCase("")) {
+                                            postImgUrl = mSmall;
                                         }
 
 
@@ -1377,8 +1441,8 @@ public class MapView extends Fragment
                                         bean.setPost_time("");
                                     }
 
-                                    if (_jSubObject.has("post_video")) {
-                                        bean.setPost_video(_jSubObject.getString("post_video"));
+                                    if (_jSubObject.has("postVideo")) {
+                                        bean.setPost_video(_jSubObject.getString("postVideo"));
                                     } else {
                                         bean.setPost_video("");
                                     }
@@ -1435,7 +1499,6 @@ public class MapView extends Fragment
                                     });
 
 
-
                                 }
 
 
@@ -1447,20 +1510,56 @@ public class MapView extends Fragment
 
                             if (jsonObject.has("isMore")) {
                                 String _is_more = jsonObject.getString("isMore");
-                                if (_is_more.equalsIgnoreCase("Yes")) {
-                                    listView_home.setPullLoadEnable(true);
-                                } else {
+                                if (listView_home != null) {
+                                    if (_is_more.equalsIgnoreCase("Yes")) {
+                                        listView_home.setPullLoadEnable(true);
+                                    } else {
+                                        listView_home.setPullLoadEnable(false);
+                                    }
+                                }
+
+
+                            } else {
+                                if (listView_home != null) {
                                     listView_home.setPullLoadEnable(false);
                                 }
 
-                            } else {
-                                listView_home.setPullLoadEnable(false);
+                            }
+
+                            if (jsonObject.has("recordCount")) {
+                                recordCount = jsonObject.getInt("recordCount");
+
+                            }
+                            if (jsonObject.has("lastPostTime")) {
+                                lastPostTime = jsonObject.getLong("lastPostTime");
+
+                            }
+                            if (jsonObject.has("isNewPostArrived")) {
+                                boolean isNewPostArrived = jsonObject.getBoolean("isNewPostArrived");
+                                if (isNewPostArrived) {
+                                    /*New Post Refresh Enable*/
+                                    recordCount = 0;
+                                    lastPostTime = 0;
+
+                                    if (refresh_iv != null) {
+                                        refresh_iv.setVisibility(View.VISIBLE);
+                                    }
+
+                                } else {
+                                    /*New Post Refresh Disable*/
+                                    if (refresh_iv != null) {
+                                        refresh_iv.setVisibility(View.GONE);
+                                    }
+                                }
                             }
 
                             Constant.hideLoader();
                         } else if (status == 0) {
                             Constant.hideLoader();
-                            no_post_layout.setVisibility(View.VISIBLE);
+                            if (no_post_layout != null) {
+                                no_post_layout.setVisibility(View.VISIBLE);
+                            }
+
                             map_view.setVisibility(View.GONE);
                             list_layout.setVisibility(View.GONE);
 //                            Constant.showToast("Server Error", getActivity());
@@ -1664,6 +1763,7 @@ public class MapView extends Fragment
         _latLong = new LatLng(latitude, longitude);
         if (_length > 0) {
 
+
             cameraPosition = new CameraPosition.Builder().target(_latLong)
                     .zoom(zoom).build();
             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -1724,6 +1824,7 @@ public class MapView extends Fragment
                         .icon(bitmapMarker));
 
             }
+
 
             // info window.
             googleMap.setInfoWindowAdapter(new CustomWindAdapter(getActivity()));
@@ -1788,8 +1889,8 @@ public class MapView extends Fragment
         CircleOptions circleOptions = new CircleOptions().center(_latLong) // set center
                 .radius(radiusInt) // set radius in meters
                 .strokeColor(0x10000000).strokeWidth(5).
-                        fillColor(0x55fe9f9f);
-        // Fill color of the circle
+                        fillColor(ContextCompat.getColor(getActivity(), R.color.colorForDrawArea));
+        // Fill color of the circle 0x55fe9f9f PINK color
         // 0x represents, this is an hexadecimal code
         // 55 represents percentage of transparency. For 100% transparency, specify 00.
         // For 0% transparency ( ie, opaque ) , specify ff
@@ -1922,7 +2023,11 @@ public class MapView extends Fragment
             isFollowed = snippetWHole[0];
             userImg = snippetWHole[1];
             postId = snippetWHole[2];
-            post_text = snippetWHole[3];
+            if (snippetWHole.length > 3) {
+                post_text = snippetWHole[3];
+            } else {
+                post_text = "";
+            }
             System.out.println("postId " + postId);
 
             Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);

@@ -2,6 +2,7 @@ package com.tv.seekers.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.tv.seekers.R;
@@ -1252,8 +1254,12 @@ public class FilterActivity extends FragmentActivity
 
                 editor.commit();
 
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("applied", true);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+               /* if (FROMMAPVIEW) {
 
-                if (FROMMAPVIEW) {
                     Intent intToMainScreen = new Intent(FilterActivity.this, MainActivity.class);
                     intToMainScreen.putExtra("FROMMAPVIEW", true);
                     startActivity(intToMainScreen);
@@ -1263,7 +1269,7 @@ public class FilterActivity extends FragmentActivity
                     returnIntent.putExtra("applied", true);
                     setResult(Activity.RESULT_OK, returnIntent);
                     finish();
-                }
+                }*/
 
 
 /*
@@ -1352,23 +1358,29 @@ public class FilterActivity extends FragmentActivity
     }
 
     private void showAddKeywordDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(FilterActivity.this);
 
 
-        LayoutInflater inflater = LayoutInflater.from(FilterActivity.this);
-        View view = inflater.inflate(R.layout.dialog_add_keywords, null);
 
-        final EditText etKeywordName = (EditText) view.findViewById(R.id.etKeywordName);
+        /*Dialog for Add Keywords*/
+        final Dialog dialog = new Dialog(FilterActivity.this, R.style.mydialogstyleSaveLocation);
+        // Include dialog.xml file
+        dialog.setContentView(R.layout.dialog_add_keywords);
+        final EditText etKeywordName = (EditText) dialog.findViewById(R.id.keyWordname_et);
+        ImageView add_btn = (ImageView) dialog.findViewById(R.id.add_btn);
+        ImageView cancel_btn = (ImageView) dialog.findViewById(R.id.cancel_btn);
 
-        alert.setView(view);
 
 
-        alert.setTitle("Add Keywords");
-        alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        dialog.setCancelable(false);
+        dialog.show();
+
+        add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 if (etKeywordName.getText().toString().trim().isEmpty()) {
+//                    System.out.println("Please enter keywords");
                     Constant.showToast("Please enter keyword", FilterActivity.this);
+//                    Toast.makeText(FilterActivity.this,"Please enter keyword",Toast.LENGTH_SHORT).show();
                 } else {
 
                     dialog.dismiss();
@@ -1379,34 +1391,18 @@ public class FilterActivity extends FragmentActivity
                     }
 
 
-
-                  /*  MyKeywordsBean rowItemC = new MyKeywordsBean(etKeywordName.getText().toString().trim(), true, "1");
-                    rowItem.add(rowItemC);
-
-                    if (custombaseadapter == null) {
-                        custombaseadapter = new MyKeywordsAdaptor(FilterActivity.this, rowItem);
-                        keywords_listview.setAdapter(custombaseadapter);
-                    } else {
-                        custombaseadapter.notifyDataSetChanged();
-                    }*/
-
-
-                    // TODO: 11/1/16 calling keyword service here
-
-
                 }
             }
         });
 
-        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(View v) {
+
+                dialog.cancel();
             }
         });
 
-        AlertDialog alertDialog = alert.create();
-        alertDialog.show();
     }
 
     private void callSaveKeywordWS(final String keyword) {

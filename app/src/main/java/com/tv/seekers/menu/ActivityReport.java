@@ -69,13 +69,14 @@ public class ActivityReport extends Fragment {
 
 
     private BarData data;
+    private LineData dataLine;
     private SharedPreferences sPref;
     boolean isDateFilter = false;
     boolean isMeetUpFilter = false;
     boolean isTwitterFilter = false;
     boolean isYoutubeFilter = false;
     boolean isInstaFilter = false;
-    boolean isFlikerFilter = false;
+    boolean isFLICKRFilter = false;
     boolean isVKFilter = false;
 
     private ArrayList<Boolean> listOfBooleans = new ArrayList<Boolean>();
@@ -95,11 +96,11 @@ public class ActivityReport extends Fragment {
         lineChart.getAxisLeft().setDrawGridLines(false);
         lineChart.getXAxis().setDrawGridLines(false);
         lineChart.setScaleEnabled(false);
-        lineChart.invalidate();
+//        lineChart.invalidate();
 
 
         chart.setDescription(" ");
-        chart.animateXY(2000, 2000);
+//        chart.animateXY(2000, 2000);
         chart.getAxisLeft().setDrawGridLines(false);
         chart.getXAxis().setDrawGridLines(false);
         chart.setScaleEnabled(false);
@@ -111,7 +112,7 @@ public class ActivityReport extends Fragment {
         chart.setFocusableInTouchMode(false);
         chart.setFocusable(false);*/
 
-        chart.invalidate();
+//        chart.invalidate();
 /*
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -143,19 +144,12 @@ public class ActivityReport extends Fragment {
 
             }
         });
-
-        callActivityReport();
-
-        return view;
-    }
-
-    private void callActivityReport() {
         sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         isMeetUpFilter = sPref.getBoolean("MEETUP", false);
         isTwitterFilter = sPref.getBoolean("TWITTER", false);
         isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
         isInstaFilter = sPref.getBoolean("INSTA", false);
-        isFlikerFilter = sPref.getBoolean("FLICKR", false);
+        isFLICKRFilter = sPref.getBoolean("FLICKR", false);
         isVKFilter = sPref.getBoolean("VK", false);
 
 
@@ -166,7 +160,7 @@ public class ActivityReport extends Fragment {
         listOfBooleans.add(isTwitterFilter);
         listOfBooleans.add(isYoutubeFilter);
         listOfBooleans.add(isInstaFilter);
-        listOfBooleans.add(isFlikerFilter);
+        listOfBooleans.add(isFLICKRFilter);
         listOfBooleans.add(isVKFilter);
 
         int trueCount = 0;
@@ -186,8 +180,14 @@ public class ActivityReport extends Fragment {
 
         if (trueCount == 1) {
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                chart.setVisibility(View.GONE);
-                lineChart.setVisibility(View.VISIBLE);
+                if (lineChart.getVisibility() == View.GONE) {
+                    lineChart.setVisibility(View.VISIBLE);
+                }
+                if (chart.getVisibility() == View.VISIBLE) {
+                    chart.setVisibility(View.GONE);
+                }
+
+
                 callGetActivityReportLineChart();
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
@@ -195,15 +195,21 @@ public class ActivityReport extends Fragment {
 
         } else {
             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                chart.setVisibility(View.VISIBLE);
-                lineChart.setVisibility(View.GONE);
+                if (lineChart.getVisibility() == View.VISIBLE) {
+                    lineChart.setVisibility(View.GONE);
+                }
+                if (chart.getVisibility() == View.GONE) {
+                    chart.setVisibility(View.VISIBLE);
+                }
                 callGetActivityReportBar();
             } else {
                 Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
             }
         }
 
+        return view;
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -213,6 +219,7 @@ public class ActivityReport extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 boolean result = data.getBooleanExtra("applied", false);
                 if (result) {
+                    System.out.println("applied : " + result);
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.detach(this).attach(this).commit();
 //                    callActivityReport();
@@ -279,7 +286,7 @@ public class ActivityReport extends Fragment {
                     isTwitterFilter = sPref.getBoolean("TWITTER", false);
                     isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
                     isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFlikerFilter = sPref.getBoolean("FLICKR", false);
+                    isFLICKRFilter = sPref.getBoolean("FLICKR", false);
                     isVKFilter = sPref.getBoolean("VK", false);
                     isDateFilter = sPref.getBoolean("DATE", false);
                     if (isDateFilter) {
@@ -310,14 +317,16 @@ public class ActivityReport extends Fragment {
                     } else if (isInstaFilter) {
                         mJsonObject.put("source", "INSTAGRAM");
                         sourceString = "INSTAGRAM";
-                    } else if (isFlikerFilter) {
-                        mJsonObject.put("source", "FLIKER");
+                    } else if (isFLICKRFilter) {
+                        mJsonObject.put("source", "FLICKR");
                         sourceString = "FLICKR";
                     } else if (isVKFilter) {
                         mJsonObject.put("source", "VK");
                         sourceString = "VK";
                     }
 
+                    lineChart.setVisibility(View.VISIBLE);
+                    chart.setVisibility(View.GONE);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -440,16 +449,22 @@ public class ActivityReport extends Fragment {
                                 LineDataSet dataset = new LineDataSet(entriesCount, sourceString);
 //                                dataset.setDrawFilled(true);
 
+                                System.out.println("entriesCount : " + entriesCount.size());
+                                System.out.println("labelsDate : " + labelsDate.size());
+                                dataLine = new LineData(labelsDate, dataset);
 
-                                final LineData data = new LineData(labelsDate, dataset);
+                                chart.setVisibility(View.GONE);
+                                lineChart.setVisibility(View.VISIBLE);
 
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        lineChart.setData(data);
-                                        lineChart.requestFocus();
+                                        lineChart.invalidate();
+                                        lineChart.requestLayout();
+                                        lineChart.setData(dataLine);
                                     }
                                 });
+
 
                                 Constant.hideLoader();
                             }
@@ -506,7 +521,7 @@ public class ActivityReport extends Fragment {
             boolean isTwitterFilter = false;
             boolean isYoutubeFilter = false;
             boolean isInstaFilter = false;
-            boolean isFlikerFilter = false;
+            boolean isFLICKRFilter = false;
             boolean isVKFilter = false;
 //            Uri.Builder builder;
 
@@ -520,7 +535,7 @@ public class ActivityReport extends Fragment {
                     isTwitterFilter = sPref.getBoolean("TWITTER", false);
                     isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
                     isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFlikerFilter = sPref.getBoolean("FLICKR", false);
+                    isFLICKRFilter = sPref.getBoolean("FLICKR", false);
                     isVKFilter = sPref.getBoolean("VK", false);
                     isDateFilter = sPref.getBoolean("DATE", false);
                     if (isDateFilter) {
@@ -556,8 +571,8 @@ public class ActivityReport extends Fragment {
                         sourcesArray.put("INSTAGRAM");
                     }
 
-                    if (isFlikerFilter) {
-                        sourcesArray.put("FLIKER");
+                    if (isFLICKRFilter) {
+                        sourcesArray.put("FLICKR");
                     }
 
                     if (isVKFilter) {
@@ -594,8 +609,8 @@ public class ActivityReport extends Fragment {
 
                             URL url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.GET_ACTIVITY_REPORT));
                             urlConnection = (HttpURLConnection) ((url.openConnection()));
-                            urlConnection.setConnectTimeout(80 * 1000);
-                            urlConnection.setReadTimeout(80 * 1000);
+                            urlConnection.setConnectTimeout(90 * 1000);
+                            urlConnection.setReadTimeout(90 * 1000);
                             urlConnection.setRequestProperty("Content-Type", "application/json");
                             urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             urlConnection.setRequestMethod("POST");
@@ -629,6 +644,12 @@ public class ActivityReport extends Fragment {
                             e.printStackTrace();
                         } catch (IOException e) {
                             e.printStackTrace();
+                            getActivity().runOnUiThread(new Runnable() {
+                                public void run() {
+                                    Constant.hideLoader();
+                                    Constant.showToast("Server Error ", getActivity());
+                                }
+                            });
                         }
 
                     } catch (Exception e) {
@@ -717,18 +738,14 @@ public class ActivityReport extends Fragment {
                             dataSets.add(barDataSet2);
 
                             System.out.println("XVAlues : " + getXAxisValues());
+                            System.out.println("dataSets : " + dataSets.size());
                             data = new BarData(getXAxisValues(), dataSets);
 
+                            chart.invalidate();
+                            chart.requestLayout();
+                            chart.setData(data);
 
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    chart.setData(data);
-                                    chart.getData().setHighlightEnabled(false);
-                                    chart.requestFocus();
-                                }
-                            });
-
+                            chart.getData().setHighlightEnabled(false);
                             Constant.hideLoader();
                         } else if (status == 0) {
                             Constant.hideLoader();

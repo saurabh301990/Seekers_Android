@@ -39,6 +39,16 @@ public class HomeBean {
     String lastname = "";
     String view_type = "";
 
+    public boolean isInitYT() {
+        return isInitYT;
+    }
+
+    public void setIsInitYT(boolean isInitYT) {
+        this.isInitYT = isInitYT;
+    }
+
+    boolean isInitYT = false;
+
     public boolean isFollowed() {
         return isFollowed;
     }

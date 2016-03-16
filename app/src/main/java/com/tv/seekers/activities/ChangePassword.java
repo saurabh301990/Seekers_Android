@@ -121,7 +121,7 @@ public class ChangePassword extends Activity implements View.OnClickListener {
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .considerExifParams(true)
-                    .displayer(new CircleBitmapDisplayer())
+//                    .displayer(new CircleBitmapDisplayer())
                             //				.displayer(new CircleBitmapDisplayer(Color.WHITE, 5))
                     .build();
 

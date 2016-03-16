@@ -52,7 +52,7 @@
         <!--<item>My Keywords</item>-->
         <item>Saved Profiles</item>
         <item>Notifications</item>
-        <item>Activity Report</item>
+        <!--<item>Activity Report</item>-->
         <item>Legal Correspondence</item>
         <item>Profile</item>
         <item>Help &amp; Support</item>
@@ -89,7 +89,7 @@
 
 
     <!--Notification Screen-->
-    <string name="notificationtxt">Notifications</string>
+    <string name="notificationtxt">Receive Notifications</string>
     <string name="notificationlisttxt">New Message was posted by the user on FaceBook that includes word Gun in it</string>
 
 
