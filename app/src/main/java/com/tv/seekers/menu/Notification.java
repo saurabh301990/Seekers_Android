@@ -252,10 +252,12 @@ public class Notification extends Fragment implements XListView.IXListViewListen
 
                                     JSONArray mData = mJsonObject.getJSONArray("data");
                                     if (mData.length() > 0) {
-
-                                        if (notifDataList.size() > 0) {
-                                            notifDataList.clear();
+                                        if (_page_number == 1) {
+                                            if (notifDataList.size() > 0) {
+                                                notifDataList.clear();
+                                            }
                                         }
+
                                         for (int i = 0; i < mData.length(); i++) {
                                             JSONObject mSubJsonObject = mData.getJSONObject(i);
                                             Notificationbean bean = new Notificationbean();
@@ -271,8 +273,16 @@ public class Notification extends Fragment implements XListView.IXListViewListen
                                         if (notifDataList.size() > 0) {
                                             lvnotify.stopRefresh();
                                             //Set Adapter
-                                            notificationAdapter = new NotificationAdapter(notifDataList, getActivity());
-                                            lvnotify.setAdapter(notificationAdapter);
+
+                                            if (_page_number == 1) {
+                                                notificationAdapter = new NotificationAdapter(notifDataList, getActivity());
+                                                lvnotify.setAdapter(notificationAdapter);
+                                            } else {
+                                                if (notificationAdapter != null) {
+                                                    notificationAdapter.notifyDataSetChanged();
+                                                }
+                                            }
+
                                         } else {
 
                                         }
@@ -285,8 +295,9 @@ public class Notification extends Fragment implements XListView.IXListViewListen
                                     Constant.showToast("Server Error    ", getActivity());
                                 }
 
+                                lvnotify.setPullLoadEnable(false);
 
-                                if (mJsonObject.has("isMore")) {
+                              /*  if (mJsonObject.has("isMore")) {
                                     String _is_more = mJsonObject.getString("isMore");
                                     if (_is_more.equalsIgnoreCase("Yes")) {
                                         lvnotify.setPullLoadEnable(true);
@@ -296,7 +307,7 @@ public class Notification extends Fragment implements XListView.IXListViewListen
 
                                 } else {
                                     lvnotify.setPullLoadEnable(false);
-                                }
+                                }*/
 
                             } else if (mStatus == 0) {
                                 Constant.showToast("Server Error    ", getActivity());
@@ -495,9 +506,9 @@ public class Notification extends Fragment implements XListView.IXListViewListen
 
     @Override
     public void onLoadMore() {
-//For Load More from Bottom
+/*//For Load More from Bottom
         _page_number = _page_number + 1;
-        callGetNotifListWS();
+        callGetNotifListWS();*/
 
     }
 }

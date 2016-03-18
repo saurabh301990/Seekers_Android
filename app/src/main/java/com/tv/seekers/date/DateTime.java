@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class DateTime {
 
-    public static final String DATE_FORMAT = "dd MMMM yyyy hh:mm a";
+    public static final String DATE_FORMAT = "MMMM dd yyyy hh:mm a";
 //    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private Date mDate;
     private Calendar mCalendar;

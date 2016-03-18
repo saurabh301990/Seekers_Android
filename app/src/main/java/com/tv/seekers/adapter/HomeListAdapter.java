@@ -512,7 +512,6 @@ public class HomeListAdapter extends BaseAdapter {
                         }
 
 
-
 //                        view_holder.post_vid_yt.setVisibility(View.VISIBLE);
                         view_holder.videoView.setVisibility(View.GONE);
                     } else {

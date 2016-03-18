@@ -369,8 +369,8 @@ public class FilterActivity extends FragmentActivity
 
         try {
 
-                FROMMAPVIEW = getIntent().getBooleanExtra("FROMMAPVIEW", false);
-            System.out.println("FROMMAPVIEW : " +FROMMAPVIEW);
+            FROMMAPVIEW = getIntent().getBooleanExtra("FROMMAPVIEW", false);
+            System.out.println("FROMMAPVIEW : " + FROMMAPVIEW);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1370,7 +1370,6 @@ public class FilterActivity extends FragmentActivity
         ImageView cancel_btn = (ImageView) dialog.findViewById(R.id.cancel_btn);
 
 
-
         dialog.setCancelable(false);
         dialog.show();
 
@@ -1784,7 +1783,7 @@ public class FilterActivity extends FragmentActivity
 
             Sdatetime.setText(mDateTime.getDateString());
 
-            String inputPattern = "dd MMMM yyyy hh:mm a";
+            String inputPattern = DateTime.DATE_FORMAT;
             String outputPattern = "yyyy-MM-dd hh:mm:ss";
             SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
             SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
@@ -1804,7 +1803,7 @@ public class FilterActivity extends FragmentActivity
         } else if (isTime) {
 
             Edatetime.setText(mDateTime.getDateString());
-            String inputPattern = "dd MMMM yyyy hh:mm a";
+            String inputPattern = DateTime.DATE_FORMAT;
             String outputPattern = "yyyy-MM-dd hh:mm:ss";
             SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
             SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);

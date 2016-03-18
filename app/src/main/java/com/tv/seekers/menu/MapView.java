@@ -1493,7 +1493,7 @@ public class MapView extends Fragment
                                                 addCircleToMap(Integer.parseInt(radius));
                                             } else {
 
-                                                mapWithZooming(11);
+                                                mapWithZooming(13);
                                             }
                                         }
                                     });

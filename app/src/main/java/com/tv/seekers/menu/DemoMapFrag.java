@@ -868,6 +868,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
             System.out.println("PlaceDetails Called");
             Constant.showLoader(getActivity());
 
+
         }
 
 
@@ -903,6 +904,7 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
 
             System.out.println("result From place ID : " + result);
             Constant.hideLoader();
+            Constant.hideKeyBoard(getActivity());
             String _photo_reference = "";
             try {
 
@@ -920,6 +922,23 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
                                 }
                             }
                         }
+
+                        if (jsonObject1.has("geometry")) {
+                            JSONObject mJsonObjectgeometry = jsonObject1.getJSONObject("geometry");
+                            if (mJsonObjectgeometry.has("location")) {
+                                JSONObject mJsonObjectLocation = mJsonObjectgeometry.getJSONObject("location");
+                                latitude = mJsonObjectLocation.getDouble("lat");
+                                longitude = mJsonObjectLocation.getDouble("lng");
+
+
+                                _latLong = new LatLng(latitude, longitude);
+                                cameraPosition = new CameraPosition.Builder().target(_latLong)
+                                        .zoom(13).build();
+                                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                                search_et.setText("");
+
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -933,13 +952,13 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
                         "&key=AIzaSyDEkwu2c89RobN7jfQ1nvoyIAC6Gt4FWpI";
 
                 System.out.println("Final  Image URL : " + finalimgUrl);
-                GeocodingLocation locationAddress = new GeocodingLocation();
+              /*  GeocodingLocation locationAddress = new GeocodingLocation();
                 locationAddress.getAddressFromLocation(_address,
-                        getActivity(), new GeocoderHandler());
+                        getActivity(), new GeocoderHandler());*/
             } else {
-                GeocodingLocation locationAddress = new GeocodingLocation();
+                /*GeocodingLocation locationAddress = new GeocodingLocation();
                 locationAddress.getAddressFromLocation(_address,
-                        getActivity(), new GeocoderHandler());
+                        getActivity(), new GeocoderHandler());*/
             }
         }
     }
@@ -953,7 +972,6 @@ public class DemoMapFrag extends Fragment implements GoogleApiClient.ConnectionC
         final EditText etKeywordName = (EditText) dialog.findViewById(R.id.locName_et);
         ImageView save_btn = (ImageView) dialog.findViewById(R.id.save_btn);
         ImageView cancel_btn = (ImageView) dialog.findViewById(R.id.cancel_btn);
-
 
 
         dialog.setCancelable(false);

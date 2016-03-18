@@ -147,7 +147,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                     search_et.setCompoundDrawables(null, null, null, null);
                 }
 
-                String searchString = search_et.getText().toString();
+                String searchString = search_et.getText().toString().toLowerCase();
                 Log.d("Search Text : ", "" + searchString);
                 int realtext = searchString.length();
                 if (arrayTemplist.size() > 0) {
@@ -156,7 +156,7 @@ public class Track extends Fragment implements XListView.IXListViewListener {
 
                 for (int i = 0; i < userlist.size(); i++) {
                     TrackBean bean = userlist.get(i);
-                    String userName = bean.getUsername();
+                    String userName = bean.getUsername().toLowerCase();
 
 
                     if (realtext <= userName.length()) {
@@ -208,14 +208,9 @@ public class Track extends Fragment implements XListView.IXListViewListener {
         MainActivity.drawerFragment.setDrawerState(true);
 
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callGetFollowedUsers();
-        } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-        }
+
         return view;
     }
-/*
 
     @Override
     public void onResume() {
@@ -226,7 +221,6 @@ public class Track extends Fragment implements XListView.IXListViewListener {
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
     }
-*/
 
     private void callGetFollowedUsers() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
