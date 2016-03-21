@@ -79,7 +79,7 @@ import butterknife.OnClick;
 /**
  * Created by shoeb on 4/11/15.
  */
-public class TrackMapFragment extends Activity implements XListView.IXListViewListener,GoogleMap.OnInfoWindowClickListener {
+public class TrackMapFragment extends Activity implements XListView.IXListViewListener, GoogleMap.OnInfoWindowClickListener {
 
 
     /* private static final LatLng LOWER_MANHATTAN = new LatLng(22.7176622,
@@ -318,6 +318,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
     SharedPreferences sPref;
     private int _page_number = 1;
     private String user_id = "";
+    private String userImgUrl = "";
 
     public void setfont() {
         Constant.setFont(TrackMapFragment.this, name_info_tv, 0);
@@ -335,7 +336,6 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.track_map_screen);
         ButterKnife.bind(this);
-
 
 
         //Load More
@@ -537,7 +537,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                         if (status == 1) {
                             String userId = "";
                             String username = "";
-                            String userImgUrl = "";
+
                             String address = "";
                             String lastName = "";
                             String firstName = "";
@@ -699,7 +699,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                     if (_jSubObject.has("postTime")) {
                                         long postTime = _jSubObject.getLong("postTime");
                                         postTime = postTime * 1000;
-                                        bean.setPost_time(getDateFromMilliseconds(postTime, "dd MMMM yyyy hh:mm a"));
+                                        bean.setPost_time(getDateFromMilliseconds(postTime, "MMMM dd yyyy hh:mm a"));
                                     } else {
                                         bean.setPost_time("");
                                     }
@@ -762,13 +762,11 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                     String postID = bean.getPost_id();
                                     String snippet = "";
                                     if (!postID.equalsIgnoreCase("")) {
-                                        String userImg = bean.getUser_image();
-                                        if (userImg.equalsIgnoreCase("")) {
-                                            userImg = "demoimg";
-                                        } else {
-                                            userImg = bean.getUser_image();
+//                                        String userImg = bean.getUser_image();
+                                        if (userImgUrl.equalsIgnoreCase("")) {
+                                            userImgUrl = "demoimg";
                                         }
-                                        snippet = "true" + "&" + userImg + "&" + bean.getPost_id() + "&" + bean.getPost_text();
+                                        snippet = "true" + "&" + userImgUrl + "&" + bean.getPost_id() + "&" + bean.getPost_text();
                                     }/* else {
                     snippet = bean.getUser_image();
                 }*/
@@ -1145,6 +1143,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
         }
         return response.toString();
     }
+
     @Override
     public void onInfoWindowClick(Marker marker) {
 

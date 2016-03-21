@@ -1,7 +1,11 @@
 package com.tv.seekers.menu;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -17,10 +21,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -47,9 +53,14 @@ import com.tv.seekers.R;
 import com.tv.seekers.adapter.AutoCompleteAdaperSavedAreas;
 import com.tv.seekers.adapter.MyAreaAdapter;
 import com.tv.seekers.bean.MyAreasBean;
+import com.tv.seekers.bean.MyKeywordsBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
+import com.tv.seekers.swipemenulistview.SwipeMenu;
+import com.tv.seekers.swipemenulistview.SwipeMenuCreator;
+import com.tv.seekers.swipemenulistview.SwipeMenuItem;
+import com.tv.seekers.swipemenulistview.SwipeMenuListView;
 import com.tv.seekers.utils.CustomAutoCompletetextview;
 import com.tv.seekers.utils.GeocodingLocation;
 import com.tv.seekers.utils.NetworkAvailablity;
@@ -83,8 +94,8 @@ public class MyAreasFrag extends Fragment implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    @Bind(R.id.my_area_grid)
-    GridView my_area_grid;
+    @Bind(R.id.my_areas_list)
+    SwipeMenuListView my_areas_list;
 
     @Bind(R.id.search_et)
     AutoCompleteTextView search_et;
@@ -154,6 +165,8 @@ public class MyAreasFrag extends Fragment implements
         creatingDB();
         activity = getActivity();
 
+        
+        
 
         if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
             callsavedLocationWS();
@@ -199,7 +212,7 @@ public class MyAreasFrag extends Fragment implements
                     }
 
                     areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
-                    my_area_grid.setAdapter(areasAdapter);
+                    my_areas_list.setAdapter(areasAdapter);
 
                     /** Setting data for Auto Complete
                      *
@@ -241,8 +254,8 @@ public class MyAreasFrag extends Fragment implements
             Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
         }
 
-        my_area_grid.setOnItemClickListener(this);
-        my_area_grid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        my_areas_list.setOnItemClickListener(this);
+      /*  my_area_grid.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         my_area_grid.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             @Override
@@ -258,13 +271,13 @@ public class MyAreasFrag extends Fragment implements
 
                 System.out.println("onDestroyActionMode");
                 // TODO Auto-generated method stub
-               /* if (myAreasList.size()>0){
+               *//* if (myAreasList.size()>0){
                     for (int i = 0 ; i< myAreasList.size();i++){
                         MyAreasBean selectedItem = myAreasList.get(i);
                         selectedItem.setIsSelected(false);
                         myAreasList.add(i,selectedItem);
                     }
-                }*/
+                }*//*
                 areasAdapter.removeSelection();
             }
 
@@ -324,7 +337,7 @@ public class MyAreasFrag extends Fragment implements
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id,
                                                   boolean checked) {
 
-                /*if (isDrawOption) {
+                *//*if (isDrawOption) {
                     if (position == 0) {
 
                     } else {
@@ -346,7 +359,7 @@ public class MyAreasFrag extends Fragment implements
                     bean.setIsSelected(checked);
 
                     areasAdapter.toggleSelection(position);
-                }*/
+                }*//*
                 int checkedCount = my_area_grid.getCheckedItemCount();
                 mode.setTitle(checkedCount + " selected");
 
@@ -358,7 +371,7 @@ public class MyAreasFrag extends Fragment implements
 
 
             }
-        });
+        });*/
         search_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -454,6 +467,91 @@ public class MyAreasFrag extends Fragment implements
 
             }
         });
+        
+        
+        /*Swipe To Delete*/
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getActivity());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(232,
+                        232, 232)));
+                // set item width
+                deleteItem.setWidth(dp2px(90));
+                // set a icon
+                deleteItem.setIcon(R.mipmap.delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+     /*   my_areas_list.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });*/
+
+//        setListViewHeightBasedOnChildren(my_areas_list);
+//        setListViewHeightBasedOnChildrenNew(my_areas_list);
+//        setListViewHeightBasedOnChildrenNew1(my_areas_list);
+//        setListViewHeightBasedOnItems(my_areas_list);
+
+        // set creator
+
+        my_areas_list.setMenuCreator(creator);
+
+        // step 2. listener item click event
+        my_areas_list.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(final int position, SwipeMenu menu, int index) {
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        getActivity());
+
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage("Are you sure ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                                MyAreasBean selectedItem = myAreasList.get(position);
+                                loc_ids = selectedItem.getId();
+                                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                                    calldeleteSaveLocationWS(position);
+                                } else {
+                                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+                return false;
+            }
+        });
+
 
 // TODO: 9/12/15 Checking first time or not.
         try {
@@ -473,6 +571,13 @@ public class MyAreasFrag extends Fragment implements
 
         return view;
     }
+
+
+    private int dp2px(int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics());
+    }
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -601,12 +706,12 @@ public class MyAreasFrag extends Fragment implements
         }
     }
 
-    private void calldeleteSaveLocationWS() {
+    private void calldeleteSaveLocationWS(final  int selectedItem) {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
 
         {
             String _responseMain = "";
-//            Uri.Builder builder;
+
 
             @Override
             protected void onPreExecute() {
@@ -614,8 +719,6 @@ public class MyAreasFrag extends Fragment implements
 
                 Constant.showLoader(getActivity());
 
-             /*   builder = new Uri.Builder()
-                        .appendQueryParameter("location_id", loc_ids);*/
 
 
             }
@@ -632,7 +735,9 @@ public class MyAreasFrag extends Fragment implements
 
 
                         try {
-                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION) + "?" + loc_ids);
+
+                            System.out.println("Request of Delete Location : " + WebServiceConstants.getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION) + "?id=" + loc_ids);
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.DELETE_SAVE_LOCATION) + "?id=" + loc_ids);
                             urlConnection = (HttpURLConnection) url.openConnection();
                             urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             int responseCode = urlConnection.getResponseCode();
@@ -690,6 +795,13 @@ public class MyAreasFrag extends Fragment implements
                         JSONObject jsonObject = new JSONObject(_responseMain);
                         int status = jsonObject.getInt("status");
                         if (status == 1) {
+                            if (myAreasList.size()>0){
+                                myAreasList.remove(selectedItem);
+                            }
+                            if (areasAdapter!=null){
+                                areasAdapter.notifyDataSetChanged();
+                            }
+
 
                             Constant.showToast("Location deleted", getActivity());
 
@@ -925,7 +1037,7 @@ public class MyAreasFrag extends Fragment implements
                                     areasAdapter.notifyDataSetChanged();
                                 } else {
                                     areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
-                                    my_area_grid.setAdapter(areasAdapter);
+                                    my_areas_list.setAdapter(areasAdapter);
                                 }
 
                                 // TODO: 15/12/15 Add to List
@@ -1589,7 +1701,7 @@ public class MyAreasFrag extends Fragment implements
                                     }
 
                                     areasAdapter = new MyAreaAdapter(myAreasList, getActivity()/*, isDrawOption*/);
-                                    my_area_grid.setAdapter(areasAdapter);
+                                    my_areas_list.setAdapter(areasAdapter);
 
                                     /** Setting data for Auto Complete
                                      *

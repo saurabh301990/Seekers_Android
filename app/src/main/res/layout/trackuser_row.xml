@@ -28,6 +28,8 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:layout_toRightOf="@+id/trackprofileimage"
             android:text="Followed User"
             android:textSize="18sp" />

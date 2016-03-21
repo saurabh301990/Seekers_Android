@@ -67,11 +67,12 @@ public class MyAreaAdapter extends BaseAdapter {
     public class ViewHolder {
 
         public TextView loc_name_tv = null;
-        public TextView loc_add_tv = null;
+        public ImageView userimage = null;
+       /* public TextView loc_add_tv = null;
         public ImageView area_img = null;
         public ImageView add_area_img = null;
         public RelativeLayout loc_rl = null;
-        public RelativeLayout selectedlayout = null;
+        public RelativeLayout selectedlayout = null;*/
 
     }
 
@@ -85,16 +86,18 @@ public class MyAreaAdapter extends BaseAdapter {
             view_holder = new ViewHolder();
 
 
-            view = inflater.inflate(R.layout.my_areas_row_item, null);
+            view = inflater.inflate(R.layout.trackuser_row, null);
 
-            view_holder.loc_name_tv = (TextView) view.findViewById(R.id.loc_name_tv);
+         /*   view_holder.loc_name_tv = (TextView) view.findViewById(R.id.loc_name_tv);
             view_holder.loc_add_tv = (TextView) view.findViewById(R.id.loc_add_tv);
             view_holder.area_img = (ImageView) view.findViewById(R.id.area_img);
             view_holder.add_area_img = (ImageView) view.findViewById(R.id.add_area_img);
             view_holder.loc_rl = (RelativeLayout) view.findViewById(R.id.loc_rl);
             view_holder.selectedlayout = (RelativeLayout) view.findViewById(R.id.selectedlayout);
 
-
+*/
+            view_holder.userimage = (ImageView) view.findViewById(R.id.trackprofileimage);
+            view_holder.loc_name_tv = (TextView) view.findViewById(R.id.txtfolloweduser);
             view.setTag(view_holder);
 
         } else {
@@ -103,7 +106,7 @@ public class MyAreaAdapter extends BaseAdapter {
 
 
         Constant.setFont(context, view_holder.loc_name_tv, 0);
-        Constant.setFont(context, view_holder.loc_add_tv, 0);
+//        Constant.setFont(context, view_holder.loc_add_tv, 0);
       /*  if (isDrawOption) {
             if (position == 0) {
                 view_holder.loc_rl.setVisibility(View.GONE);
@@ -114,12 +117,14 @@ public class MyAreaAdapter extends BaseAdapter {
             }
         }*/
 
-
+if (view_holder.userimage!=null){
+    view_holder.userimage.setVisibility(View.GONE);
+}
         final MyAreasBean bean = list.get(position);
         view_holder.loc_name_tv.setText(bean.getLoc_name());
-        view_holder.loc_add_tv.setText(bean.getLoc_add());
+//        view_holder.loc_add_tv.setText(bean.getLoc_add());
 
-        if (bean.isSelected()) {
+        /*if (bean.isSelected()) {
             view_holder.selectedlayout.setVisibility(View.VISIBLE);
         } else {
             view_holder.selectedlayout.setVisibility(View.GONE);
@@ -128,12 +133,12 @@ public class MyAreaAdapter extends BaseAdapter {
 
         imageLoaderNew.displayImage(bean.getImg_url(), view_holder.area_img,
                 options,
-                null);
+                null);*/
 
         return view;
     }
 
-    public void toggleSelection(int position) {
+   /* public void toggleSelection(int position) {
         selectView(position, !mSelectedItemsIds.get(position));
     }
 
@@ -154,5 +159,5 @@ public class MyAreaAdapter extends BaseAdapter {
     public SparseBooleanArray getSelectedIds() {
         return mSelectedItemsIds;
 
-    }
+    }*/
 }

@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.support.v4.content.IntentCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,6 +135,8 @@ public class Constant {
                 editor.clear();
                 editor.commit();
                 Intent i = new Intent(context, LoginActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
+                        IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
                 context.startActivity(i);
                 context.finish();
             }

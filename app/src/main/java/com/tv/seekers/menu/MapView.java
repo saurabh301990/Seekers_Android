@@ -483,14 +483,14 @@ public class MapView extends Fragment
 
                 for (int i = 0; i < _mainList.size(); i++) {
                     HomeBean bean = _mainList.get(i);
-                    String userName = bean.getUser_name();
-                    String postText = bean.getPost_text();
+                    String userName = bean.getUser_name().toLowerCase();
+                    String postText = bean.getPost_text().toLowerCase();
 
                     if (realtext <= userName.length() && realtext <= postText.length()) {
 
 
-                        if (searchString.equalsIgnoreCase(userName.substring(0, realtext)) ||
-                                searchString.equalsIgnoreCase(postText.substring(0, realtext))) {
+                        if (userName.contains(searchString) ||
+                                postText.contains(searchString)) {
                             arrayTemplist.add(bean);
 
                             getActivity().runOnUiThread(new Runnable() {
@@ -1436,7 +1436,7 @@ public class MapView extends Fragment
                                     if (_jSubObject.has("postTime")) {
                                         long postTime = _jSubObject.getLong("postTime");
                                         postTime = postTime * 1000;
-                                        bean.setPost_time(getDateFromMilliseconds(postTime, "dd MMMM yyyy hh:mm a"));
+                                        bean.setPost_time(getDateFromMilliseconds(postTime, "MMMM dd yyyy hh:mm a"));
                                     } else {
                                         bean.setPost_time("");
                                     }

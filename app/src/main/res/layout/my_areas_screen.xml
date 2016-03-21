@@ -58,17 +58,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/divider"
-        android:padding="12dp">
+        android:background="@color/divider">
 
-
-        <GridView
-            android:id="@+id/my_area_grid"
+        <com.tv.seekers.swipemenulistview.SwipeMenuListView
+            android:id="@+id/my_areas_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:numColumns="2">
-
-        </GridView>
+            android:layout_height="match_parent" />
     </RelativeLayout>
 </LinearLayout>

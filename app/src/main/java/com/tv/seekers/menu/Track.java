@@ -343,7 +343,9 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                             int mStatus = mJsonObject.getInt("status");
                             if (mStatus == 1) {
                                 if (mJsonObject.has("data")) {
-
+                                    if (userlist.size() > 0) {
+                                        userlist.clear();
+                                    }
 
                                     JSONArray mData = mJsonObject.getJSONArray("data");
                                     if (mData.length() > 0) {
@@ -386,10 +388,16 @@ public class Track extends Fragment implements XListView.IXListViewListener {
                                             trackAdapter = new TrackAdapter(userlist, getActivity());
                                             listuser.setAdapter(trackAdapter);
                                         } else {
+                                            if (trackAdapter!=null){
+                                                trackAdapter.notifyDataSetChanged();
+                                            }
                                             Constant.showToast("No users found!", getActivity());
                                         }
 
                                     } else {
+                                        if (trackAdapter!=null){
+                                            trackAdapter.notifyDataSetChanged();
+                                        }
                                         Constant.showToast("No users found!", getActivity());
                                     }
 

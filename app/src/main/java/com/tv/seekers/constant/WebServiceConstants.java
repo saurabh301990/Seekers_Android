@@ -7,7 +7,7 @@ public class WebServiceConstants {
 
     //    public static final String MAIN_URL = "http://198.12.150.220/Seeker/index.php/ws_seeker/";
 //    public static final String MAIN_URL = "http://52.87.233.241:8080/seekerapp/rest/";
-    public static final String MAIN_URL = "http://52.87.183.184:8080/seekerapp/rest/";
+    public static final String MAIN_URL = "http://104.238.118.76:8080/seekerapp/rest/";
 
     public static final String LOGIN = "user/login";
     public static final String FORGOT_PASSWORD = "user/forgot_password";

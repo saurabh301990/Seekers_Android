@@ -326,7 +326,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             if (_jSubObject.has("postTime")) {
                                 long post_time = _jSubObject.getLong("postTime");
                                 post_time = post_time * 1000;
-                                date_time_tv.setText(getDateFromMilliseconds(post_time, "dd MMMM yyyy hh:mm a"));
+                                date_time_tv.setText(getDateFromMilliseconds(post_time, "MMMM dd yyyy hh:mm a"));
                             }
                             if (_jSubObject.has("post_fetch_time")) {
                                 String post_fetch_time = _jSubObject.getString("post_fetch_time");

@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -1153,6 +1155,9 @@ public class FilterActivity extends FragmentActivity
 
                 break;
             case R.id.txtcancel:
+                Intent returnIntent1 = new Intent();
+                returnIntent1.putExtra("applied", false);
+                setResult(Activity.RESULT_OK, returnIntent1);
                 finish();
 
                 break;
@@ -1364,11 +1369,20 @@ public class FilterActivity extends FragmentActivity
         /*Dialog for Add Keywords*/
         final Dialog dialog = new Dialog(FilterActivity.this, R.style.mydialogstyleSaveLocation);
         // Include dialog.xml file
+
         dialog.setContentView(R.layout.dialog_add_keywords);
         final EditText etKeywordName = (EditText) dialog.findViewById(R.id.keyWordname_et);
         ImageView add_btn = (ImageView) dialog.findViewById(R.id.add_btn);
         ImageView cancel_btn = (ImageView) dialog.findViewById(R.id.cancel_btn);
 
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+     /*   if (etKeywordName!=null){
+//            etKeywordName.requestFocus();
+
+          *//*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etKeywordName, InputMethodManager.SHOW_IMPLICIT);*//*
+        }*/
 
         dialog.setCancelable(false);
         dialog.show();
