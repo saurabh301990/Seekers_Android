@@ -43,6 +43,7 @@
                 android:layout_below="@+id/userLocation_tv"
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
+                android:autoLink="web"
                 android:singleLine="true"
                 android:text="Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum, Lorem ipsum," />
 

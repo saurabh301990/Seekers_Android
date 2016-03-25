@@ -11,18 +11,18 @@
     <ImageView
         android:id="@+id/followed_iv"
         android:layout_width="wrap_content"
-        android:visibility="gone"
         android:layout_height="wrap_content"
-        android:src="@mipmap/grey" />
+        android:src="@mipmap/grey"
+        android:visibility="gone" />
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/badge"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_marginRight="5dp"
-        android:adjustViewBounds="true"
-        android:src="@mipmap/user"></ImageView>
+
+        android:src="@mipmap/user"></de.hdodenhof.circleimageview.CircleImageView>
 
 
     <LinearLayout

@@ -638,7 +638,19 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                         bean.setPost_id("");
                                     }
                                     if (_jSubObject.has("postText")) {
-                                        bean.setPost_text(_jSubObject.getString("postText"));
+
+                                        String originalString = _jSubObject.getString("postText");
+//                                        System.out.println("Post Text originalString : " + originalString);
+                                        if (originalString.contains("http")) {
+                                            String newString = originalString.replaceAll("(?:https?|ftps?)://[\\w/%.-]+", "<a href='$0'>$0</a>");
+//                                            System.out.println("Post Text newString : " + newString);
+                                            bean.setPost_text(newString);
+                                        } else {
+//                                            System.out.println("Post Text originalString SET : " + originalString);
+                                            bean.setPost_text(originalString);
+                                        }
+
+
                                     } else {
                                         bean.setPost_text("");
                                     }
@@ -660,11 +672,16 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                             bean.setType(2);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("I")) {
                                             bean.setType(3);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("V")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY") ||
+                                                _jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
                                             bean.setType(4);
                                         } else {
                                             bean.setType(1);
                                         }
+                                        /*else if (_jSubObject.getString("view_type").equalsIgnoreCase("V")){
+                                            bean.setType(3);
+                                        }*/
+
                                     } else {
                                         bean.setView_type("");
                                     }

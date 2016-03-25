@@ -488,7 +488,6 @@ public class MapView extends Fragment
 
                     if (realtext <= userName.length() && realtext <= postText.length()) {
 
-
                         if (userName.contains(searchString) ||
                                 postText.contains(searchString)) {
                             arrayTemplist.add(bean);
@@ -1357,7 +1356,19 @@ public class MapView extends Fragment
 
 
                                     if (_jSubObject.has("postText")) {
-                                        bean.setPost_text(_jSubObject.getString("postText"));
+
+                                        String originalString = _jSubObject.getString("postText");
+//                                        System.out.println("Post Text originalString : " + originalString);
+                                        if (originalString.contains("http")) {
+                                            String newString = originalString.replaceAll("(?:https?|ftps?)://[\\w/%.-]+", "<a href='$0'>$0</a>");
+//                                            System.out.println("Post Text newString : " + newString);
+                                            bean.setPost_text(newString);
+                                        } else {
+//                                            System.out.println("Post Text originalString SET : " + originalString);
+                                            bean.setPost_text(originalString);
+                                        }
+
+
                                     } else {
                                         bean.setPost_text("");
                                     }

@@ -114,6 +114,7 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
 
 
                         try {
+                            System.out.println("Request opf Forgot Pass : " + WebServiceConstants.getMethodUrl(WebServiceConstants.FORGOT_PASSWORD) + "?email=" + email);
                             url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.FORGOT_PASSWORD) + "?email=" + email);
                             urlConnection = (HttpURLConnection) url.openConnection();
 

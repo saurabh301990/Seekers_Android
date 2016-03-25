@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -85,7 +86,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
     private String mPostId = "";
     private String post_video = "";
-    private String  userIdForFollow = "";
+    private String userIdForFollow = "";
     private boolean isFollowed = false;
     SharedPreferences sPref;
     private MediaController mMediaController;
@@ -262,8 +263,20 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                 String cop_id = _jSubObject.getString("cop_id");
                             }
                             if (_jSubObject.has("postText")) {
-                                String post_text = _jSubObject.getString("postText");
-                                userpostDescription_tv.setText(post_text);
+
+                                String originalString = _jSubObject.getString("postText");
+                                System.out.println("Post Text originalString : " + originalString);
+                                if (originalString.contains("http")) {
+                                    String newString = originalString.replaceAll("(?:https?|ftps?)://[\\w/%.-]+", "<a href='$0'>$0</a>");
+                                    System.out.println("Post Text newString : " + newString);
+
+                                    userpostDescription_tv.setText(Html.fromHtml(newString));
+                                } else {
+                                    System.out.println("Post Text originalString SET : " + originalString);
+                                    userpostDescription_tv.setText(Html.fromHtml(originalString));
+                                }
+
+
                             }
                             if (_jSubObject.has("postType")) {
                                 String post_type = _jSubObject.getString("postType");
@@ -301,7 +314,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             }
 
                             if (_jSubObject.has("postVideo")) {
-                                 post_video = _jSubObject.getString("postVideo");
+                                post_video = _jSubObject.getString("postVideo");
                             }
                             if (_jSubObject.has("postId")) {
                                 String post_id = _jSubObject.getString("postId");
@@ -387,7 +400,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                 }
                             }
                             if (mJsonObjectUser.has("id")) {
-                                userIdForFollow   = mJsonObjectUser.getString("id");
+                                userIdForFollow = mJsonObjectUser.getString("id");
 
                             }
                             if (mJsonObjectUser.has("profilePic")) {
@@ -427,7 +440,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     userpostDescription_tv.setVisibility(View.GONE);
                                     post_vid.setVisibility(View.GONE);
 
-                                }else if (view_type.equalsIgnoreCase("VIDEO_ONLY")||view_type.equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+                                } else if (view_type.equalsIgnoreCase("VIDEO_ONLY") || view_type.equalsIgnoreCase("TEXT_WITH_VIDEO")) {
 
                                     if (source.equalsIgnoreCase("YOUTUBE")) {
                                         post_iv.setVisibility(View.GONE);
@@ -450,7 +463,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
                                             }
                                         });
-                                    } else{
+                                    } else {
                                         post_vid.setVisibility(View.GONE);
                                     }
 
@@ -698,8 +711,6 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
             _Task.execute((String[]) null);
         }
     }
-
-
 
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {

@@ -1,6 +1,7 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -15,6 +16,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
 
@@ -28,32 +34,28 @@ public class CustomWindAdapter
     private Activity mContext;
     private DisplayImageOptions options;
     com.nostra13.universalimageloader.core.ImageLoader imageLoaderNew;
+    private boolean isImageLoaded = false;
 
     public CustomWindAdapter(Activity context) {
         this.mContext = context;
         mWindow = mContext.getLayoutInflater().inflate(R.layout.custom_info_window, null);
-        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(mContext));
+//        ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(mContext));
         imageLoaderNew = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
 
-        options = new DisplayImageOptions.Builder()
-                .showImageOnLoading(R.mipmap.user)
-                .showImageForEmptyUri(R.mipmap.user)
-                .showImageOnFail(R.mipmap.user)
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .considerExifParams(true).build();
 
     }
 
 
     @Override
     public View getInfoWindow(Marker marker) {
+        System.out.println("getInfoWindow");
         render(marker, mWindow);
         return mWindow;
     }
 
     @Override
     public View getInfoContents(Marker marker) {
+        System.out.println("getInfoContents");
         // Getting view from the layout file info_window_layout
         render(marker, mWindow);
 
@@ -69,10 +71,20 @@ public class CustomWindAdapter
         return mWindow;
     }
 
+    String userImg = "";
+    ImageView imgView;
+
+
     private void render(Marker marker, View view) {
         System.out.println("render Called");
-
-        ImageView imgView = (ImageView) view.findViewById(R.id.badge);
+        /*options = new DisplayImageOptions.Builder()
+                .showImageOnLoading(R.mipmap.user)
+                .showImageForEmptyUri(R.mipmap.user)
+                .showImageOnFail(R.mipmap.user)
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+                .considerExifParams(true).build();*/
+        imgView = (ImageView) view.findViewById(R.id.badge);
         ImageView followed_iv = (ImageView) view.findViewById(R.id.followed_iv);
         if (followed_iv != null) {
             followed_iv.setOnClickListener(new View.OnClickListener() {
@@ -87,7 +99,7 @@ public class CustomWindAdapter
 
         String snippet = marker.getSnippet();
         System.out.println("snippet : " + snippet);
-        String userImg = "";
+
         String postId = "";
         String isFollowed = "";
 
@@ -98,12 +110,11 @@ public class CustomWindAdapter
             isFollowed = snippetWHole[0];
             userImg = snippetWHole[1];
             postId = snippetWHole[2];
-            if (snippetWHole.length>3){
+            if (snippetWHole.length > 3) {
                 post_text = snippetWHole[3];
-            } else{
+            } else {
                 post_text = "";
             }
-
 
 
         } else {
@@ -114,10 +125,42 @@ public class CustomWindAdapter
         System.out.println("postId @#@#@" + postId);
         System.out.println("post_text @#@#@" + post_text);
         System.out.println("isFollowed @#@#@" + isFollowed);
+        if (userImg != null) {
 
-        imageLoaderNew.displayImage(userImg, imgView,
-                options,
-                null);
+            /*mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    imageLoaderNew.displayImage(userImg, imgView,
+                            options,
+                            new SimpleImageLoadingListener() {
+                                @Override
+                                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                    // Do whatever you want with Bitmap
+                                    System.out.println("IMAGELOADER : onLoadingComplete");
+                                }
+                            });
+                }
+            });*/
+
+
+            if (isImageLoaded) {
+                isImageLoaded = false;
+                Picasso.with(mContext)
+                        .load(userImg)
+                        .placeholder(R.mipmap.user)
+                        .error(R.mipmap.user)
+                        .into(imgView);
+            } else {
+                isImageLoaded = true;
+                Picasso.with(mContext)
+                        .load(userImg)
+                        .placeholder(R.mipmap.user)
+                        .error(R.mipmap.user)
+                        .into(imgView, new InfoWindowRefresher(marker));
+            }
+
+
+        }
 
 
         String title = marker.getTitle();
@@ -161,6 +204,23 @@ public class CustomWindAdapter
         } else {
             snippetUi.setText("");
         }*/
+    }
+
+    public class InfoWindowRefresher implements Callback {
+        private Marker markerToRefresh;
+
+        public InfoWindowRefresher(Marker markerToRefresh) {
+            this.markerToRefresh = markerToRefresh;
+        }
+
+        @Override
+        public void onSuccess() {
+            markerToRefresh.showInfoWindow();
+        }
+
+        @Override
+        public void onError() {
+        }
     }
 
 }
