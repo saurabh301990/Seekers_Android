@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -344,7 +345,7 @@ public class HomeListAdapter extends BaseAdapter {
         view_holder.tvUserLocation.setText(bean.getPost_location());
         if (view_holder.tvUserPost != null) {
 
-
+            view_holder.tvUserPost.setMovementMethod(LinkMovementMethod.getInstance());
             view_holder.tvUserPost.setText(Html.fromHtml(bean.getPost_text()));
         }
         if (view_holder.date_time_tv != null) {

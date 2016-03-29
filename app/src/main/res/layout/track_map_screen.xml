@@ -97,10 +97,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.9"
-                android:orientation="vertical"
                 android:gravity="center_vertical"
-                android:paddingLeft="8dp"
-                >
+                android:orientation="vertical"
+                android:paddingLeft="8dp">
 
 
                 <LinearLayout
@@ -120,8 +119,7 @@
                         <LinearLayout
 
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            >
+                            android:layout_height="wrap_content">
 
                             <ImageView
                                 android:id="@+id/unsave_iv"
@@ -168,7 +166,6 @@
 
                     </LinearLayout>
                 </LinearLayout>
-
 
 
             </LinearLayout>
@@ -226,7 +223,8 @@
             android:id="@+id/map_view_rel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.6">
+            android:layout_weight="0.6"
+            android:visibility="visible">
 
             <fragment
 
@@ -236,12 +234,34 @@
                 android:layout_height="match_parent" />
         </RelativeLayout>
 
-        <com.tv.seekers.utils.XListView
-            android:id="@+id/list"
+        <RelativeLayout
+            android:id="@+id/list_rel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
-            android:visibility="gone"></com.tv.seekers.utils.XListView>
+
+            android:visibility="gone">
+
+            <com.tv.seekers.utils.XListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:visibility="gone"></com.tv.seekers.utils.XListView>
+
+            <TextView
+                android:id="@+id/no_post_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:text="No Post Found"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+
     </LinearLayout>
 
 

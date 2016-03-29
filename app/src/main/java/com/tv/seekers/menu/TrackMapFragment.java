@@ -105,6 +105,8 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
 
     @Bind(R.id.name_tv)
     TextView name_tv;
+    @Bind(R.id.no_post_tv)
+    TextView no_post_tv;
 
     @Bind(R.id.loc_tv)
     TextView loc_tv;
@@ -112,22 +114,28 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
     @Bind(R.id.map_btn)
     Button map_btn;
 
+    @Bind(R.id.list_rel)
+    RelativeLayout list_rel;
+
 
     private TextView _header;
     private ImageView _ivRight;
     private ImageView _ivLeft;
+    private  int length = 0;
 
 
     @OnClick(R.id.map_btn)
     public void map_btnClick(View view) {
         _isList = false;
         map_view.setVisibility(View.VISIBLE);
+        list_rel.setVisibility(View.GONE);
         list.setVisibility(View.GONE);
         list_btn.setBackgroundColor(ContextCompat.getColor(TrackMapFragment.this, R.color.miles_inactive_color));
         map_btn.setBackgroundColor(Color.WHITE);
 
         map_btn.setTextColor(Color.BLACK);
         list_btn.setTextColor(ContextCompat.getColor(TrackMapFragment.this, R.color.grey_color));
+        no_post_tv.setVisibility(View.GONE);
     }
 
     @Bind(R.id.list_btn)
@@ -137,12 +145,19 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
     public void list_btnClick(View view) {
         _isList = true;
         map_view.setVisibility(View.GONE);
+        list_rel.setVisibility(View.VISIBLE);
         list.setVisibility(View.VISIBLE);
         map_btn.setBackgroundColor(ContextCompat.getColor(TrackMapFragment.this, R.color.miles_inactive_color));
         list_btn.setBackgroundColor(Color.WHITE);
 
         list_btn.setTextColor(Color.BLACK);
         map_btn.setTextColor(ContextCompat.getColor(TrackMapFragment.this, R.color.grey_color));
+
+        if (length==0) {
+            no_post_tv.setVisibility(View.VISIBLE);
+        } else {
+            no_post_tv.setVisibility(View.GONE);
+        }
 
 
 //        addData();
@@ -328,6 +343,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
         Constant.setFont(TrackMapFragment.this, map_btn, 0);
         Constant.setFont(TrackMapFragment.this, list_btn, 0);
         Constant.setFont(TrackMapFragment.this, _header, 0);
+        Constant.setFont(TrackMapFragment.this, no_post_tv, 0);
     }
 
 
@@ -621,7 +637,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                 loc_tv.setText(" " + address);
                             }
                             JSONArray mJsonArrayposts = _resultJSONArray.getJSONArray("posts");
-                            int length = mJsonArrayposts.length();
+                             length = mJsonArrayposts.length();
                             if (length > 0) {
 //                                MarkerOptions options = new MarkerOptions();
                                 for (int i = 0; i < length; i++) {

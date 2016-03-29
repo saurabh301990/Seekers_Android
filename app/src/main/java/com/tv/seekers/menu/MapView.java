@@ -567,6 +567,7 @@ public class MapView extends Fragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
+                System.out.println("onItemClick Called");
                 String editTextValue = search_et.getText().toString().trim();
 
 //                Constant.showToast("onItem Called",getActivity());
@@ -2000,7 +2001,17 @@ public class MapView extends Fragment
     public void onRefresh() {
 //For Pull To Refresh
         _page_number = 1;
-        callGetAllPostsWS(_radiusForWS);
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            callStartThread(20);
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+        }
+        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+            callGetAllPostsWS(_radiusForWS);
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+        }
+
     }
 
     @Override

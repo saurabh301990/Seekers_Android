@@ -52,6 +52,7 @@
                         android:id="@+id/userType_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingRight="50dp"
                         android:text=""
                         android:textSize="16sp" />
 

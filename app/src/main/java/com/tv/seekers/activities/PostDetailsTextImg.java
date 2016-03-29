@@ -449,12 +449,12 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                         post_vid.initialize(Constant.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
                                             @Override
                                             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                                                youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
-                                                youTubePlayer.setPlaybackEventListener(playbackEventListener);
+                                                /*youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+                                                youTubePlayer.setPlaybackEventListener(playbackEventListener);*/
 
                                                 /** Start buffering **/
                                                 if (!b) {
-                                                    youTubePlayer.loadVideo(post_video);
+                                                    youTubePlayer.cueVideo(post_video);
                                                 }
                                             }
 
