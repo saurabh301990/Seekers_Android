@@ -45,6 +45,7 @@ import com.tv.seekers.adapter.HomeListAdapter;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.date.DateTime;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.HttpConnection;
 import com.tv.seekers.utils.NetworkAvailablity;
@@ -732,7 +733,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                     if (_jSubObject.has("postTime")) {
                                         long postTime = _jSubObject.getLong("postTime");
                                         postTime = postTime * 1000;
-                                        bean.setPost_time(getDateFromMilliseconds(postTime, "MMMM dd yyyy hh:mm a"));
+                                        bean.setPost_time(getDateFromMilliseconds(postTime, DateTime.DATE_FORMAT));
                                     } else {
                                         bean.setPost_time("");
                                     }

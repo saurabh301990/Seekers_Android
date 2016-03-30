@@ -174,7 +174,7 @@ public class ForgotPass extends Activity implements View.OnClickListener, View.O
                         if (_jJsonObject.has("status")) {
                             int status = _jJsonObject.getInt("status");
                             if (status == 1) {
-                                Constant.showToast("Please check your mail box. ", ForgotPass.this);
+                                Constant.showToast("Message sent to email.", ForgotPass.this);
                                 finish();
                             } else if (status == -2) {
                                 Constant.showToast("Invalid email!", ForgotPass.this);

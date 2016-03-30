@@ -24,6 +24,7 @@ import com.tv.seekers.R;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
+import com.tv.seekers.date.DateTime;
 import com.tv.seekers.utils.CircleBitmapDisplayer;
 import com.tv.seekers.utils.NetworkAvailablity;
 
@@ -339,7 +340,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                             if (_jSubObject.has("postTime")) {
                                 long post_time = _jSubObject.getLong("postTime");
                                 post_time = post_time * 1000;
-                                date_time_tv.setText(getDateFromMilliseconds(post_time, "MMMM dd yyyy hh:mm a"));
+                                date_time_tv.setText(getDateFromMilliseconds(post_time, DateTime.DATE_FORMAT));
                             }
                             if (_jSubObject.has("post_fetch_time")) {
                                 String post_fetch_time = _jSubObject.getString("post_fetch_time");

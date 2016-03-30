@@ -286,7 +286,7 @@ public class FilterActivity extends FragmentActivity
 
                 // set dialog message
                 alertDialogBuilder
-                        .setMessage("Are you sure ?")
+                        .setMessage("Are you sure you want to delete this keyword?")
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
