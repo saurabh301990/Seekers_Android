@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
 
-        alertDialog.setMessage("Are you sure want to Logout ?");
+        alertDialog.setMessage("Are you sure you want to Logout ?");
 
 
         // Setting Positive "Yes" Button

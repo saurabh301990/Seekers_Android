@@ -114,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:src="@mipmap/no_loc_icon" />
+                    android:src="@mipmap/tower_icon_white" />
 
                 <TextView
                     android:id="@+id/sorry_tv"
@@ -136,7 +136,7 @@
                     android:layout_below="@+id/sorry_tv"
                     android:layout_centerHorizontal="true"
                     android:gravity="center_horizontal"
-                    android:text="No posts found!"
+                    android:text="NO RESULTS FOUND"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 

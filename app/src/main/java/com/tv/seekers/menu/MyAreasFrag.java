@@ -105,6 +105,7 @@ public class MyAreasFrag extends Fragment implements
 
     private MyAreaAdapter areasAdapter;
     private ArrayList<MyAreasBean> myAreasList = new ArrayList<MyAreasBean>();
+    private ArrayList<MyAreasBean> myAreasAutoComplete = new ArrayList<MyAreasBean>();
 
     private SharedPreferences sPref;
     private SharedPreferences.Editor editor;
@@ -178,6 +179,8 @@ public class MyAreasFrag extends Fragment implements
                 if (data.length() > 0) {
                     if (myAreasList.size() > 0) {
                         myAreasList.clear();
+                    }      if (myAreasAutoComplete.size() > 0) {
+                        myAreasAutoComplete.clear();
                     }
                   /*  if (isDrawOption) {
                         MyAreasBean beanDemo = new MyAreasBean();
@@ -207,6 +210,7 @@ public class MyAreasFrag extends Fragment implements
 
 
                         myAreasList.add(bean);
+                        myAreasAutoComplete.add(bean);
 
 
                     }
@@ -239,7 +243,7 @@ public class MyAreasFrag extends Fragment implements
                             aList, R.layout.landing_resource_row, from, to) {
                     };*/
 
-                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasList);
+                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasAutoComplete);
 
                                     /** Setting the adapter to the listView */
                     search_et.setAdapter(mAutoCompleteAdaperSavedAreas);
@@ -390,6 +394,9 @@ public class MyAreasFrag extends Fragment implements
                     search_iv.setVisibility(View.GONE);
                 }
                 input = s.toString();
+
+                System.out.println("List Size : "  + myAreasList.size());
+                System.out.println("myAreasAutoComplete Size : "  + myAreasAutoComplete.size());
                 /*if (input.contains(" ")) {
                     input = input.replaceAll(" ", "+");
                 }*/
@@ -418,19 +425,19 @@ public class MyAreasFrag extends Fragment implements
 
                 try {
 
-//                    MyAreasBean _bean = myAreasList.get(position);
-
-                    String _currentLoc = search_et.getText().toString();
-                    _currentLoc = _currentLoc.replaceAll("\\{", "");
+                    MyAreasBean _bean = myAreasAutoComplete.get(position);
+                    System.out.println("Current Location Name from bean : "  + _bean.getLoc_name());
+                    String _currentLoc = _bean.getLoc_name();
+                  /*  _currentLoc = _currentLoc.replaceAll("\\{", "");
                     _currentLoc = _currentLoc.replaceAll("\\}", "");
                     System.out.println("Current Location from Autocomplete : " + _currentLoc);
                     String[] currentLocArray = _currentLoc.split("=");
-                    System.out.println("Current Location from Autocomplete FINAL: " + currentLocArray[1]);
-                    search_et.setText(currentLocArray[1] + "");
+                    System.out.println("Current Location from Autocomplete FINAL: " + currentLocArray[1]);*/
+                    search_et.setText(_currentLoc);
                     for (int i = 0; i < myAreasList.size(); i++) {
                         MyAreasBean bean = myAreasList.get(i);
                         String savedLoc = bean.getLoc_name();
-                        if (savedLoc.equalsIgnoreCase(currentLocArray[1])) {
+                        if (savedLoc.equalsIgnoreCase(_currentLoc)) {
                             position = i;
                             break;
                         }
@@ -594,7 +601,7 @@ public class MyAreasFrag extends Fragment implements
 
     }
 
-    private class GeocoderHandler extends Handler {
+  /*  private class GeocoderHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
             String locationAddress = "";
@@ -649,7 +656,7 @@ public class MyAreasFrag extends Fragment implements
                                     _isLocationAlreadyAdded = false;
                                 }
 
-                               /* if (_lat != 0.0 && _long != 0.0) {
+                               *//* if (_lat != 0.0 && _long != 0.0) {
                                     if (String.valueOf(_lat).equalsIgnoreCase(_latUser)
                                             && String.valueOf(_long).equalsIgnoreCase(_longUser)) {
                                         //LatLng Matched
@@ -661,7 +668,7 @@ public class MyAreasFrag extends Fragment implements
                                     }
                                 } else {
                                     _isLocationAlreadyAdded = false;
-                                }*/
+                                }*//*
 
 
                             }
@@ -673,7 +680,7 @@ public class MyAreasFrag extends Fragment implements
                             Constant.showToast(getActivity().getResources().getString(R.string.locationAlreadySavedText), getActivity());
                             // TODO: 10/12/15 Redirect to Home screen with current LatLong
 
-                          /*  if (!isDrawOption) {
+                          *//*  if (!isDrawOption) {
                                 // TODO: 10/12/15 Redirect to Home Screen
                                 // TODO: 10/12/15  Replace Fragment here with Home Fragment
                                 saveCurrentLatLong(position);
@@ -682,7 +689,7 @@ public class MyAreasFrag extends Fragment implements
                             } else {
                                 // TODO: 18/12/15 Need to Show Pop Up message as Location
                                 Constant.showToast(getActivity().getResources().getString(R.string.locationAlreadySavedText), getActivity());
-                            }*/
+                            }*//*
                         } else {
                             if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
                                 callSaveUserLocation();
@@ -704,7 +711,7 @@ public class MyAreasFrag extends Fragment implements
 
 
         }
-    }
+    }*/
 
     private void calldeleteSaveLocationWS(final  int selectedItem) {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
@@ -1010,6 +1017,7 @@ public class MyAreasFrag extends Fragment implements
                                 bean.set_lat(_lat + "");
                                 bean.setImg_url(finalimgUrl);
                                 myAreasList.add(bean);
+                                myAreasAutoComplete.add(bean);
                                 saveCurrentLatLong(myAreasList.size() - 1);
                                 replaceFragment();
                             } else {
@@ -1033,6 +1041,7 @@ public class MyAreasFrag extends Fragment implements
                                 bean.set_lat(_lat + "");
                                 bean.setImg_url(finalimgUrl);
                                 myAreasList.add(bean);
+                                myAreasAutoComplete.add(bean);
                                 if (areasAdapter != null) {
                                     areasAdapter.notifyDataSetChanged();
                                 } else {
@@ -1248,12 +1257,12 @@ public class MyAreasFrag extends Fragment implements
 
                 System.out.println("Final  Image URL : " + finalimgUrl);
                 GeocodingLocation locationAddress = new GeocodingLocation();
-                locationAddress.getAddressFromLocation(_address,
-                        getActivity(), new GeocoderHandler());
+               /* locationAddress.getAddressFromLocation(_address,
+                        getActivity(), new GeocoderHandler());*/
             } else {
                 GeocodingLocation locationAddress = new GeocodingLocation();
-                locationAddress.getAddressFromLocation(_address,
-                        getActivity(), new GeocoderHandler());
+               /* locationAddress.getAddressFromLocation(_address,
+                        getActivity(), new GeocoderHandler());*/
             }
         }
     }
@@ -1631,6 +1640,8 @@ public class MyAreasFrag extends Fragment implements
                                 if (data.length() > 0) {
                                     if (myAreasList.size() > 0) {
                                         myAreasList.clear();
+                                    } if (myAreasAutoComplete.size() > 0) {
+                                        myAreasAutoComplete.clear();
                                     }
                                    /* if (isDrawOption) {
                                         MyAreasBean beanDemo = new MyAreasBean();
@@ -1696,6 +1707,7 @@ public class MyAreasFrag extends Fragment implements
 
 
                                         myAreasList.add(bean);
+                                        myAreasAutoComplete.add(bean);
 
 
                                     }
@@ -1743,7 +1755,7 @@ public class MyAreasFrag extends Fragment implements
                                     *//**//** Setting the adapter to the listView *//*
                                     search_et.setAdapter(adapter);*/
 
-                                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasList);
+                                    AutoCompleteAdaperSavedAreas mAutoCompleteAdaperSavedAreas = new AutoCompleteAdaperSavedAreas(getActivity(),myAreasAutoComplete);
 
                                     /** Setting the adapter to the listView */
                                     search_et.setAdapter(mAutoCompleteAdaperSavedAreas);

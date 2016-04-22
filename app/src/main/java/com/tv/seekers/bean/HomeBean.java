@@ -39,6 +39,16 @@ public class HomeBean {
     String lastname = "";
     String view_type = "";
 
+     int mPageNumber = 0;
+
+    public int getmPageNumber() {
+        return mPageNumber;
+    }
+
+    public void setmPageNumber(int mPageNumber) {
+        this.mPageNumber = mPageNumber;
+    }
+
     public boolean isInitYT() {
         return isInitYT;
     }

@@ -94,7 +94,7 @@ public class AutoCompleteAdaperSavedAreas<T> extends ArrayAdapter<T> implements 
             convertView.setTag(holder);
         }
 
-        System.out.println("FILTER RESULTs text" + ((MyAreasBean)listObject).getLoc_name());
+        System.out.println("FILTER RESULTs text " + ((MyAreasBean)listObject).getLoc_name());
         System.out.println("getView Called");
         holder.name.setText( ((MyAreasBean)listObject).getLoc_name());
 

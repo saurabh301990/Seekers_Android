@@ -118,6 +118,15 @@ public class MapView extends Fragment
     private ArrayList<HomeBean> arrayTemplist = new ArrayList<HomeBean>();
 
 
+    boolean isDateFilter = false;
+    boolean isMeetUpFilter = false;
+    boolean isTwitterFilter = false;
+    boolean isYoutubeFilter = false;
+    boolean isInstaFilter = false;
+    boolean isFLICKRFilter = false;
+    boolean isVKFilter = false;
+    private ArrayList<Boolean> listOfBooleans = new ArrayList<Boolean>();
+
     LatLng _latLong;
     GPSTracker gps;
     Circle mapCircle;
@@ -131,15 +140,55 @@ public class MapView extends Fragment
             arrayTemplist.clear();
         }
 
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            _page_number = 1;
-            activeMilesBtn(2);
-            _radiusForWS = "2";
-            Constant.showLoader(getActivity());
-            callGetAllPostsWS(_radiusForWS);
-        } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+        //onActivityResult Called Of Map View
+        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+        isTwitterFilter = sPref.getBoolean("TWITTER", true);
+        isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+        isInstaFilter = sPref.getBoolean("INSTA", true);
+        isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+        isVKFilter = sPref.getBoolean("VK", true);
+
+
+        if (listOfBooleans.size() > 0) {
+            listOfBooleans.clear();
         }
+        listOfBooleans.add(isMeetUpFilter);
+        listOfBooleans.add(isTwitterFilter);
+        listOfBooleans.add(isYoutubeFilter);
+        listOfBooleans.add(isInstaFilter);
+        listOfBooleans.add(isFLICKRFilter);
+        listOfBooleans.add(isVKFilter);
+
+        boolean isOneFilterOn = false;
+
+        for (int i = 0; i < listOfBooleans.size(); i++) {
+
+            if (listOfBooleans.get(i)) {
+                isOneFilterOn = true;
+            }
+        }
+        _page_number = 1;
+        activeMilesBtn(2);
+        if (isOneFilterOn) {
+
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                _page_number = 1;
+                activeMilesBtn(2);
+                _radiusForWS = "2";
+                Constant.showLoader(getActivity());
+                callGetAllPostsWS(_radiusForWS);
+            } else {
+                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            }
+
+        } else {
+            /*No Post Found Layout should be visible*/
+            no_post_layout.setVisibility(View.VISIBLE);
+            map_view.setVisibility(View.GONE);
+            list_layout.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Bind(R.id.five_miles_btn)
@@ -152,15 +201,55 @@ public class MapView extends Fragment
             if (arrayTemplist.size() > 0) {
                 arrayTemplist.clear();
             }
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                _page_number = 1;
-                activeMilesBtn(5);
-                _radiusForWS = "5";
-                Constant.showLoader(getActivity());
-                callGetAllPostsWS(_radiusForWS);
-            } else {
-                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+
+
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
+
+            boolean isOneFilterOn = false;
+
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
+                }
+            }
+            _page_number = 1;
+            activeMilesBtn(5);
+            if (isOneFilterOn) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    _page_number = 1;
+                    activeMilesBtn(5);
+                    _radiusForWS = "5";
+                    Constant.showLoader(getActivity());
+                    callGetAllPostsWS(_radiusForWS);
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
 
         }
     }
@@ -176,15 +265,55 @@ public class MapView extends Fragment
                 arrayTemplist.clear();
             }
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                _page_number = 1;
-                activeMilesBtn(10);
-                _radiusForWS = "10";
-                Constant.showLoader(getActivity());
-                callGetAllPostsWS(_radiusForWS);
-            } else {
-                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
+
+            boolean isOneFilterOn = false;
+
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
+                }
+            }
+            _page_number = 1;
+            activeMilesBtn(10);
+            if (isOneFilterOn) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    _page_number = 1;
+                    activeMilesBtn(10);
+                    _radiusForWS = "10";
+                    Constant.showLoader(getActivity());
+                    callGetAllPostsWS(_radiusForWS);
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
         }
     }
 
@@ -197,14 +326,54 @@ public class MapView extends Fragment
             if (arrayTemplist.size() > 0) {
                 arrayTemplist.clear();
             }
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                _page_number = 1;
-                activeMilesBtn(20);
-                _radiusForWS = "20";
-                Constant.showLoader(getActivity());
-                callGetAllPostsWS(_radiusForWS);
+
+
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
+            }
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
+
+            boolean isOneFilterOn = false;
+
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
+                }
+            }
+            _page_number = 1;
+            activeMilesBtn(20);
+            if (isOneFilterOn) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    _page_number = 1;
+                    activeMilesBtn(20);
+                    _radiusForWS = "20";
+                    Constant.showLoader(getActivity());
+                    callGetAllPostsWS(_radiusForWS);
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+
             } else {
-                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
             }
 
 
@@ -245,13 +414,52 @@ public class MapView extends Fragment
             headerRL.setVisibility(View.GONE);
 
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                _isList = false;
-                Constant.showLoader(getActivity());
-                callGetAllPostsWS(_radiusForWS);
-            } else {
-                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
+
+            boolean isOneFilterOn = false;
+
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
+                }
+            }
+
+            if (isOneFilterOn) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    _isList = false;
+                    Constant.showLoader(getActivity());
+                    callGetAllPostsWS(_radiusForWS);
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
+
         }
     }
 
@@ -273,13 +481,51 @@ public class MapView extends Fragment
             map_btn.setTextColor(ContextCompat.getColor(getActivity(), R.color.grey_color));
             list_btn.setTextColor(Color.BLACK);
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                _isList = true;
-                Constant.showLoader(getActivity());
-                callGetAllPostsWS(_radiusForWS);
-            } else {
-                Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
+
+            boolean isOneFilterOn = false;
+
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
+                }
+            }
+
+            if (isOneFilterOn) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    _isList = true;
+                    Constant.showLoader(getActivity());
+                    callGetAllPostsWS(_radiusForWS);
+                } else {
+                    Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
+                }
+
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
 
         }
     }
@@ -346,6 +592,7 @@ public class MapView extends Fragment
     private String userLocationType = "";
     private String locationId = "";
     private int _page_number = 1;
+    private int _lastpage_number = 1;
     public static ArrayList<LatLng> arrayPoints = new ArrayList<LatLng>();
     private static final LatLng DAVV = new LatLng(22.7188222, 75.8708128);
     private static final LatLng TI = new LatLng(22.7188222, 75.8708128);
@@ -578,8 +825,10 @@ public class MapView extends Fragment
                     /*Fetch value from Temp array list*/
                     final HomeBean bean = arrayTemplist.get(position - 1);
                     Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
+                    System.out.println("pageNumber : " + bean.getmPageNumber());
+                    _lastpage_number = bean.getmPageNumber();
                     intentToTxtImg.putExtra("POSTID", bean.getPost_id());
-                    startActivity(intentToTxtImg);
+                    startActivityForResult(intentToTxtImg, 666);
 
                 } else {
                     // TODO: 26/2/16 Search NO
@@ -587,7 +836,10 @@ public class MapView extends Fragment
                     final HomeBean bean = _mainList.get(position - 1);
                     Intent intentToTxtImg = new Intent(getActivity(), PostDetailsTextImg.class);
                     intentToTxtImg.putExtra("POSTID", bean.getPost_id());
-                    startActivity(intentToTxtImg);
+                    System.out.println("pageNumber : " + bean.getmPageNumber());
+                    _lastpage_number = bean.getmPageNumber();
+                    startActivityForResult(intentToTxtImg, 666);
+
                 }
 
 
@@ -602,6 +854,7 @@ public class MapView extends Fragment
         });
 
 //        listView_home.getFirstVisiblePosition();
+
 
         return view;
     }
@@ -627,32 +880,64 @@ public class MapView extends Fragment
 //            editor.putString("LATITUDE",String.valueOf(latitude));
             double longitude = gps.getLongitude();
             mlongitude = String.valueOf(longitude);
-//            editor.putString("LONGITUDE",String.valueOf(longitude));
-/*
-            editor.commit();
 
 
-            mlongitude = sPref.getString("LONGITUDE", "");
-            mlatitude = sPref.getString("LATITUDE", "");*/
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                callStartThread(20);
-            } else {
-                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
-            Constant.showLoader(getActivity());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
 
-                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                        callGetAllPostsWS(_radiusForWS);
-                    } else {
-                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
-                    }
+            boolean isOneFilterOn = false;
 
+            for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
                 }
-            }, 2000);
+            }
+
+            if (isOneFilterOn) {
+
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    callStartThread(20);
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                }
+                Constant.showLoader(getActivity());
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                            callGetAllPostsWS(_radiusForWS);
+                        } else {
+                            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                        }
+
+                    }
+                }, 2000);
+
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
 
             // TODO: 10/2/16 GPS ON
         } else {
@@ -815,25 +1100,62 @@ public class MapView extends Fragment
             mlongitude = "-77.1546507";
             mlatitude = "38.8992651";
 
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                callStartThread(20);
-            } else {
-                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            //onActivityResult Called Of Map View
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
-            Constant.showLoader(getActivity());
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+            boolean isOneFilterOn = false;
 
-                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                        callGetAllPostsWS(_radiusForWS);
-                    } else {
-                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
-                    }
+            for (int i = 0; i < listOfBooleans.size(); i++) {
 
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
                 }
-            }, 2000);
+            }
+
+            if (isOneFilterOn) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    callStartThread(20);
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                }
+                Constant.showLoader(getActivity());
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                            callGetAllPostsWS(_radiusForWS);
+                        } else {
+                            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                        }
+
+                    }
+                }, 2000);
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
+
         } else if (resultCode == -1) {
             //Yes
             if (requestCode == 1000) {
@@ -845,12 +1167,48 @@ public class MapView extends Fragment
                 if (resultCode == Activity.RESULT_OK) {
                     boolean result = data.getBooleanExtra("applied", false);
                     if (result) {
-                        System.out.println("applied : " + result);
-                        System.out.println("_radiusForWS : " + _radiusForWS);
-                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                            Constant.showLoader(getActivity());
-                            callGetAllPostsWS(_radiusForWS);
+                        sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+                        isTwitterFilter = sPref.getBoolean("TWITTER", true);
+                        isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+                        isInstaFilter = sPref.getBoolean("INSTA", true);
+                        isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+                        isVKFilter = sPref.getBoolean("VK", true);
+
+
+                        if (listOfBooleans.size() > 0) {
+                            listOfBooleans.clear();
                         }
+                        listOfBooleans.add(isMeetUpFilter);
+                        listOfBooleans.add(isTwitterFilter);
+                        listOfBooleans.add(isYoutubeFilter);
+                        listOfBooleans.add(isInstaFilter);
+                        listOfBooleans.add(isFLICKRFilter);
+                        listOfBooleans.add(isVKFilter);
+
+                        boolean isOneFilterOn = false;
+
+                        for (int i = 0; i < listOfBooleans.size(); i++) {
+
+                            if (listOfBooleans.get(i)) {
+                                isOneFilterOn = true;
+                            }
+                        }
+
+                        if (isOneFilterOn) {
+                            System.out.println("applied : " + result);
+                            System.out.println("_radiusForWS : " + _radiusForWS);
+                            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                                Constant.showLoader(getActivity());
+                                _page_number = _lastpage_number;
+                                callGetAllPostsWS(_radiusForWS);
+                            }
+                        } else {
+            /*No Post Found Layout should be visible*/
+                            no_post_layout.setVisibility(View.VISIBLE);
+                            map_view.setVisibility(View.GONE);
+                            list_layout.setVisibility(View.GONE);
+                        }
+
 
                     }
 
@@ -1015,13 +1373,7 @@ public class MapView extends Fragment
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>() {
             String _responseMain = "";
             JSONObject mJsonObject = new JSONObject();
-            boolean isDateFilter = false;
-            boolean isMeetUpFilter = false;
-            boolean isTwitterFilter = false;
-            boolean isYoutubeFilter = false;
-            boolean isInstaFilter = false;
-            boolean isFLICKRFilter = false;
-            boolean isVKFilter = false;
+
 //            Uri.Builder builder;
 
             @Override
@@ -1083,19 +1435,17 @@ public class MapView extends Fragment
                     Set<String> stringArrayList = new HashSet<>();
                     editor.putStringSet("", stringArrayList);
 
-
-                    isMeetUpFilter = sPref.getBoolean("MEETUP", false);
-                    isTwitterFilter = sPref.getBoolean("TWITTER", false);
-                    isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
-                    isInstaFilter = sPref.getBoolean("INSTA", false);
-                    isFLICKRFilter = sPref.getBoolean("FLICKR", false);
-                    isVKFilter = sPref.getBoolean("VK", false);
-
+                    sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+                    isTwitterFilter = sPref.getBoolean("TWITTER", true);
+                    isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+                    isInstaFilter = sPref.getBoolean("INSTA", true);
+                    isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+                    isVKFilter = sPref.getBoolean("VK", true);
 
                     JSONArray sourcesArray = new JSONArray();
-                    if (isMeetUpFilter) {
+                   /* if (isMeetUpFilter) {
                         sourcesArray.put("MEETUP");
-                    }
+                    }*/
 
                     if (isTwitterFilter) {
                         sourcesArray.put("TWITTER");
@@ -1298,6 +1648,7 @@ public class MapView extends Fragment
                                 for (int i = 0; i < length; i++) {
                                     JSONObject _jSubObject = _resultJSONArray.getJSONObject(i);
                                     HomeBean bean = new HomeBean();
+                                    bean.setmPageNumber(_page_number);
                                     JSONObject mObjectLotLng = new JSONObject(_jSubObject.getString("loc"));
                                     if (mObjectLotLng.has("x")) {
                                         String userlong = String.valueOf(mObjectLotLng.getDouble("x"));
@@ -1471,10 +1822,16 @@ public class MapView extends Fragment
                                     //todo setting Adapter here
 
                                     if (_page_number == 1) {
-                                        adapterList = new HomeListAdapter(_mainList, getActivity(), false);
-                                        listView_home.setAdapter(adapterList);
+                                        if (adapterList == null) {
+                                            adapterList = new HomeListAdapter(_mainList, getActivity(), false);
+                                            listView_home.setAdapter(adapterList);
 //                                        onLoad();
-                                        listView_home.stopRefresh();
+                                            listView_home.stopRefresh();
+                                        } else {
+                                            adapterList.notifyDataSetChanged();
+                                            listView_home.stopRefresh();
+                                        }
+
                                     } else {
 
                                         adapterList.notifyDataSetChanged();
@@ -1722,25 +2079,63 @@ public class MapView extends Fragment
         if (mlatitude == null || mlatitude.equalsIgnoreCase("") || mlatitude.equalsIgnoreCase("0.0")) {
             gpsCheck();
         } else {
-            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                callStartThread(20);
-            } else {
-                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+
+            //onActivityResult Called Of Map View
+
+            sPref = getActivity().getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+            isTwitterFilter = sPref.getBoolean("TWITTER", true);
+            isYoutubeFilter = sPref.getBoolean("YOUTUBE", true);
+            isInstaFilter = sPref.getBoolean("INSTA", true);
+            isFLICKRFilter = sPref.getBoolean("FLICKR", true);
+            isVKFilter = sPref.getBoolean("VK", true);
+
+
+            if (listOfBooleans.size() > 0) {
+                listOfBooleans.clear();
             }
-            Constant.showLoader(getActivity());
+            listOfBooleans.add(isMeetUpFilter);
+            listOfBooleans.add(isTwitterFilter);
+            listOfBooleans.add(isYoutubeFilter);
+            listOfBooleans.add(isInstaFilter);
+            listOfBooleans.add(isFLICKRFilter);
+            listOfBooleans.add(isVKFilter);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+            boolean isOneFilterOn = false;
 
-                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                        callGetAllPostsWS(_radiusForWS);
-                    } else {
-                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
-                    }
+            for (int i = 0; i < listOfBooleans.size(); i++) {
 
+                if (listOfBooleans.get(i)) {
+                    isOneFilterOn = true;
                 }
-            }, 2000);
+            }
+
+            if (isOneFilterOn) {
+                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                    callStartThread(20);
+                } else {
+                    Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                }
+                Constant.showLoader(getActivity());
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                            callGetAllPostsWS(_radiusForWS);
+                        } else {
+                            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                        }
+
+                    }
+                }, 2000);
+            } else {
+            /*No Post Found Layout should be visible*/
+                no_post_layout.setVisibility(View.VISIBLE);
+                map_view.setVisibility(View.GONE);
+                list_layout.setVisibility(View.GONE);
+            }
+
         }
 
 
@@ -1862,25 +2257,61 @@ public class MapView extends Fragment
         init();
         if (!isFirstCall) {
             try {
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                    callStartThread(20);
-                } else {
-                    Constant.showToast(getResources().getString(R.string.internet), getActivity());
+
+                isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+                isTwitterFilter = sPref.getBoolean("TWITTER", false);
+                isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+                isInstaFilter = sPref.getBoolean("INSTA", false);
+                isFLICKRFilter = sPref.getBoolean("FLICKR", false);
+                isVKFilter = sPref.getBoolean("VK", false);
+
+
+                if (listOfBooleans.size() > 0) {
+                    listOfBooleans.clear();
                 }
-                Constant.showLoader(getActivity());
+                listOfBooleans.add(isMeetUpFilter);
+                listOfBooleans.add(isTwitterFilter);
+                listOfBooleans.add(isYoutubeFilter);
+                listOfBooleans.add(isInstaFilter);
+                listOfBooleans.add(isFLICKRFilter);
+                listOfBooleans.add(isVKFilter);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                boolean isOneFilterOn = false;
 
-                        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-                            callGetAllPostsWS(_radiusForWS);
-                        } else {
-                            Constant.showToast(getResources().getString(R.string.internet), getActivity());
-                        }
+                for (int i = 0; i < listOfBooleans.size(); i++) {
 
+                    if (listOfBooleans.get(i)) {
+                        isOneFilterOn = true;
                     }
-                }, 2000);
+                }
+
+                if (isOneFilterOn) {
+                    if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                        callStartThread(20);
+                    } else {
+                        Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                    }
+                    Constant.showLoader(getActivity());
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                                callGetAllPostsWS(_radiusForWS);
+                            } else {
+                                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+                            }
+
+                        }
+                    }, 2000);
+                } else {
+            /*No Post Found Layout should be visible*/
+                    no_post_layout.setVisibility(View.VISIBLE);
+                    map_view.setVisibility(View.GONE);
+                    list_layout.setVisibility(View.GONE);
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -2000,18 +2431,58 @@ public class MapView extends Fragment
 
     @Override
     public void onRefresh() {
+
+        isMeetUpFilter = sPref.getBoolean("MEETUP", false);
+        isTwitterFilter = sPref.getBoolean("TWITTER", false);
+        isYoutubeFilter = sPref.getBoolean("YOUTUBE", false);
+        isInstaFilter = sPref.getBoolean("INSTA", false);
+        isFLICKRFilter = sPref.getBoolean("FLICKR", false);
+        isVKFilter = sPref.getBoolean("VK", false);
+
+
+        if (listOfBooleans.size() > 0) {
+            listOfBooleans.clear();
+        }
+        listOfBooleans.add(isMeetUpFilter);
+        listOfBooleans.add(isTwitterFilter);
+        listOfBooleans.add(isYoutubeFilter);
+        listOfBooleans.add(isInstaFilter);
+        listOfBooleans.add(isFLICKRFilter);
+        listOfBooleans.add(isVKFilter);
+
+        boolean isOneFilterOn = false;
+
+        for (int i = 0; i < listOfBooleans.size(); i++) {
+
+            if (listOfBooleans.get(i)) {
+                isOneFilterOn = true;
+            }
+        }
+
+        if (isOneFilterOn) {
+
 //For Pull To Refresh
-        _page_number = 1;
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callStartThread(20);
+            _page_number = 1;
+            recordCount = 0;
+            lastPostTime = 0;
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+
+                callStartThread(20);
+            } else {
+                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            }
+            if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                callGetAllPostsWS(_radiusForWS);
+            } else {
+                Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            }
         } else {
-            Constant.showToast(getResources().getString(R.string.internet), getActivity());
+            /*No Post Found Layout should be visible*/
+            no_post_layout.setVisibility(View.VISIBLE);
+            map_view.setVisibility(View.GONE);
+            list_layout.setVisibility(View.GONE);
         }
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callGetAllPostsWS(_radiusForWS);
-        } else {
-            Constant.showToast(getResources().getString(R.string.internet), getActivity());
-        }
+
 
     }
 

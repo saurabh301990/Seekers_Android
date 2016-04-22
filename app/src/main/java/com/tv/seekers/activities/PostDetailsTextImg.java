@@ -1,6 +1,8 @@
 package com.tv.seekers.activities;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -554,10 +556,23 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("applied", true);
+        setResult(Activity.RESULT_OK, returnIntent);
+        finish();
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tgl_menu:
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("applied", true);
+                setResult(Activity.RESULT_OK, returnIntent);
                 finish();
+
                 break;
             case R.id.isFollow:
                 if (NetworkAvailablity.checkNetworkStatus(PostDetailsTextImg.this)) {
