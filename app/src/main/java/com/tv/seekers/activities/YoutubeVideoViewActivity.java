@@ -29,10 +29,7 @@ public class YoutubeVideoViewActivity extends YouTubeBaseActivity implements You
         if (getIntent().hasExtra("VIDEOID")) {
             VIDEOID = getIntent().getStringExtra("VIDEOID");
 
-        }
-
-
-        post_vid.initialize(Constant.YOUTUBE_API_KEY, this);
+        }   post_vid.initialize(Constant.YOUTUBE_API_KEY, this);
     }
 
 

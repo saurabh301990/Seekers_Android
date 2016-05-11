@@ -687,11 +687,12 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                             bean.setType(1);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                             bean.setType(2);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("I")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("IMAGE_ONLY")) {
                                             bean.setType(3);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY") ||
-                                                _jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+                                        }  else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY")) {
                                             bean.setType(4);
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+                                            bean.setType(2);
                                         } else {
                                             bean.setType(1);
                                         }

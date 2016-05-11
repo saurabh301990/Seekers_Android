@@ -1748,17 +1748,19 @@ public class MapView extends Fragment
 
 
                                     if (_jSubObject.has("postType")) {
-                                        System.out.println("POst Type : " + _jSubObject.getString("postType"));
+//                                        System.out.println("#####################POst Type : " + _jSubObject.getString("postType"));
+//                                        System.out.println("#####################UserName : " + mJsonObjectUser.getString("username"));
                                         bean.setView_type(_jSubObject.getString("postType"));
                                         if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_ONLY")) {
                                             bean.setType(1);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                             bean.setType(2);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("I")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("IMAGE_ONLY")) {
                                             bean.setType(3);
-                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY") ||
-                                                _jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY")) {
                                             bean.setType(4);
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
+                                            bean.setType(2);
                                         } else {
                                             bean.setType(1);
                                         }
