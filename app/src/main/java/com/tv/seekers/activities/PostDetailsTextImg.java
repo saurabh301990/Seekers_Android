@@ -78,6 +78,9 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     @Bind(R.id.isFollow)
     ImageView isFollow;
 
+    @Bind(R.id.btnYoutube_player)
+    ImageView btnYoutube_player;
+
     @Bind(R.id.userpostDescription_tv)
     TextView userpostDescription_tv;
 
@@ -116,6 +119,17 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
         post_vid.setVisibility(View.VISIBLE);
 
         gettingIntentData();
+
+        if (btnYoutube_player != null) {
+            btnYoutube_player.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent mIntentToInstaVid = new Intent(PostDetailsTextImg.this, InstaGramVideo.class);
+                    mIntentToInstaVid.putExtra("videoUrl", post_video);
+                    startActivity(mIntentToInstaVid);
+                }
+            });
+        }
 
 //        Constant.showToast("POst Details Called", PostDetailsTextImg.this);
 
@@ -432,21 +446,25 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                     post_iv.setVisibility(View.GONE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
                                     post_vid.setVisibility(View.GONE);
+                                    btnYoutube_player.setVisibility(View.GONE);
 
                                 } else if (view_type.equalsIgnoreCase("TEXT_WITH_IMAGE")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.VISIBLE);
                                     post_vid.setVisibility(View.GONE);
+                                    btnYoutube_player.setVisibility(View.GONE);
 
                                 } else if (view_type.equalsIgnoreCase("IMAGE_ONLY")) {
                                     post_iv.setVisibility(View.VISIBLE);
                                     userpostDescription_tv.setVisibility(View.GONE);
                                     post_vid.setVisibility(View.GONE);
+                                    btnYoutube_player.setVisibility(View.GONE);
 
                                 } else if (view_type.equalsIgnoreCase("VIDEO_ONLY") || view_type.equalsIgnoreCase("TEXT_WITH_VIDEO")) {
 
                                     if (source.equalsIgnoreCase("YOUTUBE")) {
                                         post_iv.setVisibility(View.GONE);
+                                        btnYoutube_player.setVisibility(View.GONE);
                                         post_vid.setVisibility(View.VISIBLE);
                                         userpostDescription_tv.setVisibility(View.VISIBLE);
                                         post_vid.initialize(Constant.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
@@ -468,6 +486,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                                         });
                                     } else {
                                         post_vid.setVisibility(View.GONE);
+                                        btnYoutube_player.setVisibility(View.VISIBLE);
                                     }
 
                                 } else {
@@ -557,11 +576,12 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
         Intent returnIntent = new Intent();
         returnIntent.putExtra("applied", true);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
+        super.onBackPressed();
     }
 
     @Override

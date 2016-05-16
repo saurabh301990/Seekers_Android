@@ -1519,8 +1519,8 @@ public class MapView extends Fragment
                             urlConnection.setDoOutput(true);
                             urlConnection.setUseCaches(false);
                             urlConnection.setChunkedStreamingMode(1024);*/
-                            urlConnection.setConnectTimeout(80 * 1000);
-                            urlConnection.setReadTimeout(80 * 1000);
+                            urlConnection.setConnectTimeout(120 * 1000);
+                            urlConnection.setReadTimeout(120 * 1000);
                             urlConnection.setRequestProperty("Content-Type", "application/json");
                             urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             urlConnection.setRequestMethod("POST");
@@ -1760,7 +1760,9 @@ public class MapView extends Fragment
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY")) {
                                             bean.setType(4);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
-                                            bean.setType(2);
+                                            bean.setType(4);
+
+
                                         } else {
                                             bean.setType(1);
                                         }

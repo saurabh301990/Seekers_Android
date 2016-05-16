@@ -71,12 +71,13 @@
                     android:id="@+id/isFollow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="10dp"
-                    android:paddingBottom="10dp"
-                    android:paddingRight="5dp"
                     android:layout_marginTop="2dp"
                     android:layout_toLeftOf="@+id/user_imgType_iv"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="5dp"
                     android:src="@mipmap/grey" />
+
                 <ImageView
                     android:id="@+id/user_imgType_iv"
                     android:layout_width="wrap_content"
@@ -104,16 +105,25 @@
                         android:layout_height="220dp"
                         android:layout_centerHorizontal="true" />
 
+                    <ImageView
+                        android:id="@+id/btnYoutube_player"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:scaleType="center"
+                        android:src="@mipmap/ic_youtube_play_button"
+                        android:visibility="gone" />
+
                     <com.google.android.youtube.player.YouTubePlayerView
                         android:id="@+id/post_vid"
                         android:layout_width="280dp"
                         android:layout_height="240dp"
 
-                        android:visibility="gone"
-                        android:background="#fff"
                         android:layout_centerHorizontal="true"
+                        android:background="#fff"
+                        android:visibility="gone"
 
-                         />
+                        />
                 </RelativeLayout>
 
                 <TextView

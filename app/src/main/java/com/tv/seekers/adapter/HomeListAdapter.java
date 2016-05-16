@@ -43,6 +43,7 @@ import com.nostra13.universalimageloader.core.decode.BaseImageDecoder;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 import com.tv.seekers.R;
+import com.tv.seekers.activities.InstaGramVideo;
 import com.tv.seekers.activities.YoutubeVideoViewActivity;
 import com.tv.seekers.bean.HomeBean;
 import com.tv.seekers.constant.Constant;
@@ -207,11 +208,12 @@ public class HomeListAdapter extends BaseAdapter {
     public static final int TYPE_TEXT_IMG = 2;
     public static final int TYPE_IMG = 3;
     public static final int TYPE_VID = 4;
+    public static final int TYPE_VID_WITH_TEXT = 5;
 
 
     @Override
     public int getViewTypeCount() {
-        return 5;
+        return 6;
     }
 
     @Override
@@ -298,15 +300,17 @@ public class HomeListAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
 
-//                    Constant.showToast("playButton Called",context);
+                    if (bean.getSource().equalsIgnoreCase("YOUTUBE")) {
 
-                    Intent intToYoutubView = new Intent(context, YoutubeVideoViewActivity.class);
-                    intToYoutubView.putExtra("VIDEOID", bean.getPost_video());
-                    context.startActivity(intToYoutubView);
+                        Intent intToYoutubView = new Intent(context, YoutubeVideoViewActivity.class);
+                        intToYoutubView.putExtra("VIDEOID", bean.getPost_video());
+                        context.startActivity(intToYoutubView);
+                    } else if (bean.getSource().equalsIgnoreCase("INSTAGRAM")) {
 
-               /*     Intent intent = YouTubeStandalonePlayer.createVideoIntent((Activity) mContextDemo, Constant.YOUTUBE_API_KEY, bean.getPost_video());
-                    mContextDemo.startActivity(intent);*/
-//                    context.finish();
+                        Intent mIntentToInstaVid = new Intent(context, InstaGramVideo.class);
+                        mIntentToInstaVid.putExtra("videoUrl", bean.getPost_video());
+                        context.startActivity(mIntentToInstaVid);
+                    }
                 }
             });
         }
@@ -418,89 +422,10 @@ public class HomeListAdapter extends BaseAdapter {
                     Uri vidUri = Uri.parse(Constant.YOUTUBELINK + bean.getPost_video());
                     System.out.println("vidUri : " + vidUri);
 
-                    if (bean.getSource().equalsIgnoreCase("YOUTUBE")) {
+                    if (bean.getSource().equalsIgnoreCase("YOUTUBE") || bean.getSource().equalsIgnoreCase("INSTAGRAM")) {
                         if (view_holder.playButton != null) {
                             view_holder.playButton.setVisibility(View.VISIBLE);
                         }
-
-                        // TODO: 8/3/16 New Changes
-                      /*  mYoutubePlayerFragment = new YouTubePlayerFragment();
-                        mYoutubePlayerFragment.initialize(Constant.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
-                            @Override
-                            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                                *//** add listeners to YouTubePlayer instance **//*
-                                youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
-                                youTubePlayer.setPlaybackEventListener(playbackEventListener);
-
-                                *//** Start buffering **//*
-                                System.out.println("onInitializationSuccess");
-                                if (!b) {
-                                    System.out.println("onInitializationSuccess cueVideo");
-//                                    youTubePlayer.loadVideo(bean.getPost_video());
-                                    youTubePlayer.cueVideo(bean.getPost_video());
-                                }
-                            }
-
-                            @Override
-                            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                                System.out.println("onInitializationFailure");
-                            }
-                        });
-                        FragmentManager fragmentManager = context.getFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.youtubesupportfragment, mYoutubePlayerFragment);
-                        fragmentTransaction.commit();
-*/
-
-                        /*10 March NEW YOUTUBE*/
-/*
-                        final YouTubeThumbnailLoader.OnThumbnailLoadedListener onThumbnailLoadedListener = new YouTubeThumbnailLoader.OnThumbnailLoadedListener() {
-                            @Override
-                            public void onThumbnailError(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader.ErrorReason errorReason) {
-
-                            }
-
-                            @Override
-                            public void onThumbnailLoaded(YouTubeThumbnailView youTubeThumbnailView, String s) {
-                                youTubeThumbnailView.setVisibility(View.VISIBLE);
-                                if (view_holder.relativeLayoutOverYouTubeThumbnailView != null) {
-                                    view_holder.relativeLayoutOverYouTubeThumbnailView.setVisibility(View.VISIBLE);
-                                }
-
-                            }
-                        };
-
-
-                        if (view_holder.youTubeThumbnailView != null) {
-
-                            try {
-                                if (!bean.isInitYT()) {
-                                    view_holder.youTubeThumbnailView.initialize(Constant.YOUTUBE_API_KEY, new YouTubeThumbnailView.OnInitializedListener() {
-                                        @Override
-                                        public void onInitializationSuccess(YouTubeThumbnailView youTubeThumbnailView, YouTubeThumbnailLoader
-                                                youTubeThumbnailLoader) {
-
-                                            youTubeThumbnailLoader.setVideo(bean.getPost_video());
-                                            youTubeThumbnailLoader.setOnThumbnailLoadedListener(onThumbnailLoadedListener);
-
-                                            bean.setIsInitYT(true);
-                                            notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onInitializationFailure(YouTubeThumbnailView youTubeThumbnailView, YouTubeInitializationResult youTubeInitializationResult) {
-                                            //write something for failure
-                                        }
-                                    });
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                System.out.println("ERROR Crash Youtube");
-                            }
-
-
-                        }*/
 
 /*15 March new code*/
 

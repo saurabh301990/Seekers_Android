@@ -122,7 +122,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
     private TextView _header;
     private ImageView _ivRight;
     private ImageView _ivLeft;
-    private  int length = 0;
+    private int length = 0;
 
 
     @OnClick(R.id.map_btn)
@@ -154,7 +154,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
         list_btn.setTextColor(Color.BLACK);
         map_btn.setTextColor(ContextCompat.getColor(TrackMapFragment.this, R.color.grey_color));
 
-        if (length==0) {
+        if (length == 0) {
             no_post_tv.setVisibility(View.VISIBLE);
         } else {
             no_post_tv.setVisibility(View.GONE);
@@ -638,7 +638,7 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                 loc_tv.setText(" " + address);
                             }
                             JSONArray mJsonArrayposts = _resultJSONArray.getJSONArray("posts");
-                             length = mJsonArrayposts.length();
+                            length = mJsonArrayposts.length();
                             if (length > 0) {
 //                                MarkerOptions options = new MarkerOptions();
                                 for (int i = 0; i < length; i++) {
@@ -689,10 +689,12 @@ public class TrackMapFragment extends Activity implements XListView.IXListViewLi
                                             bean.setType(2);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("IMAGE_ONLY")) {
                                             bean.setType(3);
-                                        }  else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY")) {
+                                        } else if (_jSubObject.getString("postType").equalsIgnoreCase("VIDEO_ONLY")) {
                                             bean.setType(4);
                                         } else if (_jSubObject.getString("postType").equalsIgnoreCase("TEXT_WITH_VIDEO")) {
-                                            bean.setType(2);
+                                            bean.setType(4);
+
+
                                         } else {
                                             bean.setType(1);
                                         }
