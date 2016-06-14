@@ -1,9 +1,11 @@
 package com.tv.seekers.adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -192,6 +194,7 @@ public class HomeListAdapter extends BaseAdapter {
         ImageView userImage = null;
         ImageView userTypeImage = null;
         ImageView postImage = null;
+        ImageView report_post_iv = null;
         VideoView videoView = null;
         //        YouTubePlayerView post_vid_yt = null;
         ImageView isFollow = null;
@@ -248,6 +251,7 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.isFollow = (ImageView) convertView.findViewById(R.id.isFollow);
+                view_holder.report_post_iv = (ImageView) convertView.findViewById(R.id.report_post_iv);
 
 
             } else if (listViewItemType == TYPE_TEXT_IMG) {
@@ -258,6 +262,7 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.date_time_tv = (TextView) convertView.findViewById(R.id.date_time_tv);
                 view_holder.userImage = (ImageView) convertView.findViewById(R.id.user_img_iv);
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
+                view_holder.report_post_iv = (ImageView) convertView.findViewById(R.id.report_post_iv);
                 view_holder.postImage = (ImageView) convertView.findViewById(R.id.post_iv);
                 view_holder.isFollow = (ImageView) convertView.findViewById(R.id.isFollow);
             } else if (listViewItemType == TYPE_IMG) {
@@ -269,6 +274,7 @@ public class HomeListAdapter extends BaseAdapter {
                 view_holder.userTypeImage = (ImageView) convertView.findViewById(R.id.user_imgType_iv);
                 view_holder.postImage = (ImageView) convertView.findViewById(R.id.post_iv);
                 view_holder.isFollow = (ImageView) convertView.findViewById(R.id.isFollow);
+                view_holder.report_post_iv = (ImageView) convertView.findViewById(R.id.report_post_iv);
             } else if (listViewItemType == TYPE_VID) {
                 convertView = context.getLayoutInflater().inflate(R.layout.home_list_item_row_vid, null);
                 view_holder.tvUserType = (TextView) convertView.findViewById(R.id.userType_tv);
@@ -281,6 +287,7 @@ public class HomeListAdapter extends BaseAdapter {
 //                view_holder.post_vid_yt = (YouTubePlayerView) convertView.findViewById(R.id.post_vid_yt);
                 view_holder.isFollow = (ImageView) convertView.findViewById(R.id.isFollow);
                 view_holder.playButton = (ImageView) convertView.findViewById(R.id.btnYoutube_player);
+                view_holder.report_post_iv = (ImageView) convertView.findViewById(R.id.report_post_iv);
 
                 view_holder.youTubeThumbnailView = (ImageView) convertView.findViewById(R.id.youtube_thumbnail);
                 view_holder.relativeLayoutOverYouTubeThumbnailView = (RelativeLayout) convertView.findViewById(R.id.relativeLayout_over_youtube_thumbnail);
@@ -291,6 +298,156 @@ public class HomeListAdapter extends BaseAdapter {
 
         } else {
             view_holder = (ViewHolder) convertView.getTag();
+        }
+
+        if (view_holder.report_post_iv != null) {
+            view_holder.report_post_iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                            context);
+
+                    // set dialog message
+                    alertDialogBuilder
+                            .setMessage(context.getString(R.string.areUSureWantToBlockThis))
+                            .setCancelable(false)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    if (NetworkAvailablity.checkNetworkStatus(context)) {
+                                        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+                                        {
+                                            String _responseMain = "";
+
+                                            @Override
+                                            protected void onPreExecute() {
+
+
+                                                Constant.showLoader(context);
+
+                /*builder = new Uri.Builder()
+                        .appendQueryParameter("id", mPostId);*/
+                                            }
+
+                                            @Override
+                                            protected String doInBackground(String... arg0) {
+
+                                                if (NetworkAvailablity.checkNetworkStatus(context)) {
+
+                                                    try {
+
+                                                        URL url;
+                                                        HttpURLConnection urlConnection = null;
+
+                                                        try {
+                                                            System.out.println("Request of BLOCK_POST: " + WebServiceConstants.getMethodUrl
+                                                                    (WebServiceConstants.BLOCK_POST) + "?id=" + bean.getPost_id());
+                                                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.BLOCK_POST) + "?id=" + bean.getPost_id());
+                                                            urlConnection = (HttpURLConnection) url.openConnection();
+                                                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                                                            int responseCode = urlConnection.getResponseCode();
+
+                                                            if (responseCode == 200) {
+                                                                _responseMain = readStream(urlConnection.getInputStream());
+                                                                System.out.println("RESPONSE of BLOCK_POST: " + _responseMain);
+
+                                                            } else {
+                                                                Log.v("BLOCK_POST", "Response code:" + responseCode);
+                                                            }
+
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        } finally {
+                                                            if (urlConnection != null)
+                                                                urlConnection.disconnect();
+                                                        }
+
+
+                                                    } catch (Exception e) {
+                                                        // TODO: handle exception
+                                                        e.printStackTrace();
+
+                                                        context.runOnUiThread(new Runnable() {
+                                                            public void run() {
+                                                                Constant.showToast("Server Error ", context);
+                                                            }
+                                                        });
+
+                                                    }
+
+
+                                                } else {
+                                                    context.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            // TODO Auto-generated method stub
+                                                            Constant.showToast("Server Error ", context);
+                                                        }
+                                                    });
+                                                }
+                                                return null;
+
+                                            }
+
+                                            @Override
+                                            protected void onPostExecute(String result) {
+                                                Constant.hideLoader();
+                                                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                                                    try {
+
+                                                        JSONObject mJsonObject = new JSONObject(_responseMain);
+                                                        if (mJsonObject.has("status")) {
+                                                            int status = mJsonObject.getInt("status");
+                                                            if (status == 1) {
+                                                                list.remove(position);
+                                                                notifyDataSetChanged();
+
+                                                            } else {
+                                                                Constant.showToast("Server Error ", context);
+                                                            }
+                                                        } else {
+                                                            Constant.showToast("Server Error ", context);
+                                                        }
+
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                        Constant.showToast("Server Error ", context);
+                                                        Constant.hideLoader();
+                                                    }
+                                                } else {
+                                                    Constant.showToast("Server Error ", context);
+                                                    Constant.hideLoader();
+                                                }
+                                            }
+                                        };
+
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+                                        } else {
+                                            _Task.execute((String[]) null);
+                                        }
+                                    } else {
+                                        Constant.showToast(context.getResources().getString(R.string.internet), context);
+                                    }
+
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    // if this button is clicked, just close
+                                    // the dialog box and do nothing
+                                    dialog.cancel();
+                                }
+                            });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+                }
+            });
         }
 
         view_holder.tvUserType.setText(bean.getUser_name());

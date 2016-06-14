@@ -9,15 +9,18 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
 import com.tv.seekers.R;
+import com.tv.seekers.activities.EulaActivity;
 import com.tv.seekers.activities.ForgotPass;
 import com.tv.seekers.activities.TermsAndConditions;
 import com.tv.seekers.constant.Constant;
@@ -69,6 +72,19 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
     @Bind(R.id.term_tv)
     TextView term_tv;
 
+    @Bind(R.id.eula_tv)
+    TextView eula_tv;
+
+
+    @OnClick(R.id.eula_tv)
+    public void eula_tv(View view) {
+        startActivity(new Intent(LoginActivity.this, EulaActivity.class));
+    }
+
+
+    @Bind(R.id.eula_cb)
+    CheckBox eula_cb;
+
     @OnClick(R.id.term_tv)
     public void term_tv(View view) {
         startActivity(new Intent(LoginActivity.this, TermsAndConditions.class));
@@ -102,6 +118,7 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
         Constant.setFont(LoginActivity.this, email_et, 0);
         Constant.setFont(LoginActivity.this, pswd_et, 0);
         Constant.setFont(LoginActivity.this, term_tv, 0);
+        Constant.setFont(LoginActivity.this, eula_tv, 0);
 
         sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
         editor = sPref.edit();
@@ -327,7 +344,12 @@ public class LoginActivity extends Activity implements View.OnClickListener, Vie
                 if (validData()) {
 
                     if (NetworkAvailablity.checkNetworkStatus(LoginActivity.this)) {
-                        callLoginWS();
+                        if (eula_cb.isChecked()) {
+                            callLoginWS();
+                        } else {
+                            Constant.showToast(getResources().getString(R.string.pleaseagreeforEULA), LoginActivity.this);
+                        }
+
                     } else {
                         Constant.showToast(getResources().getString(R.string.internet), LoginActivity.this);
                     }

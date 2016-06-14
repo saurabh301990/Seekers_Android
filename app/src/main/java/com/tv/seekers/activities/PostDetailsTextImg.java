@@ -1,7 +1,9 @@
 package com.tv.seekers.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -24,6 +26,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.tv.seekers.R;
 import com.tv.seekers.bean.HomeBean;
+import com.tv.seekers.bean.MyKeywordsBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.date.DateTime;
@@ -80,6 +83,9 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
 
     @Bind(R.id.btnYoutube_player)
     ImageView btnYoutube_player;
+
+    @Bind(R.id.report_post_iv)
+    ImageView report_post_iv;
 
     @Bind(R.id.userpostDescription_tv)
     TextView userpostDescription_tv;
@@ -500,6 +506,9 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                         } else if (status == -1) {
                             //Redirect to Login
                             Constant.alertForLogin(PostDetailsTextImg.this);
+                        } else if (status == -2) {
+                            Constant.showToast("This post is blocked.", PostDetailsTextImg.this);
+                            finish();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -556,6 +565,7 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     private void setOnClick() {
         tgl_menu.setOnClickListener(this);
         isFollow.setOnClickListener(this);
+        report_post_iv.setOnClickListener(this);
     }
 
     private void setData() {
@@ -587,6 +597,38 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.report_post_iv:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        PostDetailsTextImg.this);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage(getResources().getString(R.string.areUSureWantToBlockThis))
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                if (NetworkAvailablity.checkNetworkStatus(PostDetailsTextImg.this)) {
+                                    callDeletePost();
+                                } else {
+                                    Constant.showToast(getResources().getString(R.string.internet), PostDetailsTextImg.this);
+                                }
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // if this button is clicked, just close
+                                // the dialog box and do nothing
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+                break;
             case R.id.tgl_menu:
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("applied", true);
@@ -604,6 +646,123 @@ public class PostDetailsTextImg extends YouTubeBaseActivity implements View.OnCl
                 break;
             default:
                 break;
+        }
+    }
+
+    private void callDeletePost() {
+        AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
+
+        {
+            String _responseMain = "";
+
+            @Override
+            protected void onPreExecute() {
+
+
+                Constant.showLoader(PostDetailsTextImg.this);
+
+                /*builder = new Uri.Builder()
+                        .appendQueryParameter("id", mPostId);*/
+            }
+
+            @Override
+            protected String doInBackground(String... arg0) {
+
+                if (NetworkAvailablity.checkNetworkStatus(PostDetailsTextImg.this)) {
+
+                    try {
+
+                        URL url;
+                        HttpURLConnection urlConnection = null;
+
+                        try {
+                            System.out.println("Request of BLOCK_POST: " + WebServiceConstants.getMethodUrl
+                                    (WebServiceConstants.BLOCK_POST) + "?id=" + mPostId);
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.BLOCK_POST) + "?id=" + mPostId);
+                            urlConnection = (HttpURLConnection) url.openConnection();
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            int responseCode = urlConnection.getResponseCode();
+
+                            if (responseCode == 200) {
+                                _responseMain = readStream(urlConnection.getInputStream());
+                                System.out.println("RESPONSE of BLOCK_POST: " + _responseMain);
+
+                            } else {
+                                Log.v("BLOCK_POST", "Response code:" + responseCode);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (urlConnection != null)
+                                urlConnection.disconnect();
+                        }
+
+
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                            }
+                        });
+
+                    }
+
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // TODO Auto-generated method stub
+                            Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                        }
+                    });
+                }
+                return null;
+
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                Constant.hideLoader();
+                if (_responseMain != null && !_responseMain.equalsIgnoreCase("")) {
+
+                    try {
+
+                        JSONObject mJsonObject = new JSONObject(_responseMain);
+                        if (mJsonObject.has("status")) {
+                            int status = mJsonObject.getInt("status");
+                            if (status == 1) {
+                                Intent returnIntent = new Intent();
+                                returnIntent.putExtra("applied", true);
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                finish();
+                            } else {
+                                Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                            }
+                        } else {
+                            Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                        Constant.hideLoader();
+                    }
+                } else {
+                    Constant.showToast("Server Error ", PostDetailsTextImg.this);
+                    Constant.hideLoader();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            _Task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (String[]) null);
+        } else {
+            _Task.execute((String[]) null);
         }
     }
 

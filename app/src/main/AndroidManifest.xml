@@ -88,7 +88,6 @@
             android:name=".menu.TrackMapFragment"
             android:screenOrientation="portrait"
             android:theme="@style/MyMaterialTheme" />
-
         <activity
             android:name=".activities.InstaGramVideo"
             android:screenOrientation="landscape"
@@ -124,7 +123,11 @@
 
         <activity
             android:name=".activities.YoutubeVideoViewActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activities.EulaActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyMaterialTheme" />
     </application>
 
 </manifest>

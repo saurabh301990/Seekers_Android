@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 break;
             case 1:
 
-                fragment = new DemoMapFrag();
+                fragment = new DrawOnMapFrag();
                 _header.setText("Draw Area");
                 _rightIcon.setVisibility(View.VISIBLE);
                 _rightIcon.setImageResource(R.mipmap.save);

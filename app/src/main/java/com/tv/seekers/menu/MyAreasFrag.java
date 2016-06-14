@@ -10,8 +10,6 @@ import android.location.Address;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,20 +18,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.util.TypedValue;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import android.widget.AutoCompleteTextView;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -53,7 +44,6 @@ import com.tv.seekers.R;
 import com.tv.seekers.adapter.AutoCompleteAdaperSavedAreas;
 import com.tv.seekers.adapter.MyAreaAdapter;
 import com.tv.seekers.bean.MyAreasBean;
-import com.tv.seekers.bean.MyKeywordsBean;
 import com.tv.seekers.constant.Constant;
 import com.tv.seekers.constant.WebServiceConstants;
 import com.tv.seekers.gpsservice.GPSTracker;
@@ -61,7 +51,6 @@ import com.tv.seekers.swipemenulistview.SwipeMenu;
 import com.tv.seekers.swipemenulistview.SwipeMenuCreator;
 import com.tv.seekers.swipemenulistview.SwipeMenuItem;
 import com.tv.seekers.swipemenulistview.SwipeMenuListView;
-import com.tv.seekers.utils.CustomAutoCompletetextview;
 import com.tv.seekers.utils.GeocodingLocation;
 import com.tv.seekers.utils.NetworkAvailablity;
 
@@ -1850,7 +1839,7 @@ public class MyAreasFrag extends Fragment implements
     }
 
     private void replaceFragmentPlotArea() {
-        DemoMapFrag fragment = new DemoMapFrag();
+        DrawOnMapFrag fragment = new DrawOnMapFrag();
         if (fragment != null) {
 
 

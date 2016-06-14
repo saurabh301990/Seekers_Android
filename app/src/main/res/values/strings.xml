@@ -11,6 +11,8 @@
     <string name="enterUsernameText">Please enter your username.</string>
     <string name="enterPswrdText">Please enter your password.</string>
     <string name="pswrdMustContainsText">The password must contain 8-32 characters </string>
+    <string name="eula"><u>EULA</u></string>
+    <string name="eula_header">EULA</string>
 
 
     <!--Change Password-->
@@ -24,6 +26,7 @@
     <string name="enterConfirmPass">Please enter confirm password</string>
     <string name="passwordNotMatch">Password not matched.</string>
     <string name="currentAndNewPssNotSame">Current and New password should not be same.</string>
+    <string name="pleaseagreeforEULA">Kindly agree end user license agreement(EULA).</string>
 
 
     <!--Map View-->
@@ -130,10 +133,13 @@
 
     <!--Post Details Screen-->
     <string name="postText">Post</string>
+    <string name="areUSureWantToBlockThis">Are you sure want to block this post?</string>
 
     <!--Crash-->
     <string name="CrashReport_MailSubject">Crash Exceptions</string>
     <string name="CrashReport_MailBody">Hello Developer</string>
     <string name="somethingWentWrongText">Oops something went wrong. Please drop an email to Developer.</string>
     <string name="okText">Okay</string>
+
+
 </resources>

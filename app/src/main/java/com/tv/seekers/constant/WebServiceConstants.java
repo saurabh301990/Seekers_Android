@@ -28,6 +28,7 @@ public class WebServiceConstants {
     public static final String LEGAL_CONTENT = "legal/legal_support/get";
     public static final String HELP = "legal/help/get";
     public static final String GET_ALL_POSTS = "post/get_posts";
+    public static final String BLOCK_POST = "post/block_post";
     public static final String START_THREAD = "post/initiate";
     public static final String UPDATE_USER_FILTER = "updateUserFilter";
     public static final String GET_USER_FILTER = "getUserFilter";
@@ -48,6 +49,7 @@ public class WebServiceConstants {
 
 
     public static final String TERMS = "legal/terms/get";
+    public static final String EULA = "legal/eula/get";
     public static final String UPDATE_USER_PROF = "user/update_porfile_pic";
 
     public static final String GET_POST_DETAILS = "post/get";

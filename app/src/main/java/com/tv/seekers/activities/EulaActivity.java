@@ -1,16 +1,17 @@
-package com.tv.seekers.menu;
+package com.tv.seekers.activities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 
 import com.tv.seekers.R;
 import com.tv.seekers.constant.Constant;
@@ -23,52 +24,60 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-/**
- * Created by shoeb on 5/11/15.
- */
-public class HelpAndSupport extends Fragment {
+public class EulaActivity extends Activity {
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Constant.hideKeyBoard(getActivity());
-    }
-
-    @Bind(R.id.web_view_helpsupport)
-    WebView help_wv;
-
+    @Bind(R.id.web_vew_terms)
+    WebView web_vew_terms;
     final String mimeType = "text/html";
     final String encoding = "UTF-8";
     private String webviewtxt = "";
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    /*Header*/
+    @Bind(R.id.tgl_menu)
+    ImageView tgl_menu;
 
-        View view = inflater.inflate(R.layout.helpandsupport,container,false);
-//        ErrorReporter.getInstance().Init(getActivity());
-        ButterKnife.bind(this, view);
-        if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
-            callHelpSupportWS();
-        } else {
-            Constant.showToast(getActivity().getResources().getString(R.string.internet), getActivity());
-        }
-
-        ImageView menu;
-        menu = (ImageView) getActivity().findViewById(R.id.tgl_menu);
-        menu.setVisibility(View.VISIBLE);
-        MainActivity.drawerFragment.setDrawerState(true);
-        return view;
+    @OnClick(R.id.tgl_menu)
+    public void tgl_menu(View view) {
+        finish();
     }
 
-    private void callHelpSupportWS() {
+    @Bind(R.id.hdr_title)
+    TextView hdr_title;
+
+    @Bind(R.id.hdr_fltr)
+    ImageView hdr_fltr;
+
+    private SharedPreferences sPref;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.terms_and_cond);
+
+        sPref = getSharedPreferences("LOGINPREF", Context.MODE_PRIVATE);
+
+//        ErrorReporter.getInstance().Init(EulaActivity.this);
+        ButterKnife.bind(this);
+        hdr_title.setText(getResources().getString(R.string.eula_header));
+        Constant.setFont(this, hdr_title, 0);
+        tgl_menu.setImageResource(R.mipmap.back);
+        hdr_fltr.setVisibility(View.GONE);
+        if (NetworkAvailablity.checkNetworkStatus(EulaActivity.this)) {
+            calltermsWS();
+        } else {
+            Constant.showToast(getResources().getString(R.string.internet), EulaActivity.this);
+        }
+    }
+
+    private void calltermsWS() {
         AsyncTask<String, String, String> _Task = new AsyncTask<String, String, String>()
 
         {
@@ -79,7 +88,7 @@ public class HelpAndSupport extends Fragment {
             protected void onPreExecute() {
 
 
-                Constant.showLoader(getActivity());
+                Constant.showLoader(EulaActivity.this);
 
 
             }
@@ -87,7 +96,7 @@ public class HelpAndSupport extends Fragment {
             @Override
             protected String doInBackground(String... arg0) {
 
-                if (NetworkAvailablity.checkNetworkStatus(getActivity())) {
+                if (NetworkAvailablity.checkNetworkStatus(EulaActivity.this)) {
 
                     try {
                         URL url;
@@ -95,25 +104,24 @@ public class HelpAndSupport extends Fragment {
 
 
                         try {
-                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.HELP));
+                            url = new URL(WebServiceConstants.getMethodUrl(WebServiceConstants.EULA));
                             urlConnection = (HttpURLConnection) url.openConnection();
-
-                            //                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
+                            urlConnection.setRequestProperty(Constant.Cookie, sPref.getString(Constant.Cookie, ""));
                             int responseCode = urlConnection.getResponseCode();
 
                             if (responseCode == 200) {
                                 _responseMain = readStream(urlConnection.getInputStream());
-                                System.out.println("Response of TERMS : " + _responseMain);
+//                                System.out.println("Response of EULA : " + _responseMain);
 
                             } else {
-                                Log.v("TERMS", "Response code:" + responseCode);
+                                Log.v("EULA", "Response code:" + responseCode);
                             }
 
                         } catch (Exception e) {
                             e.printStackTrace();
-                            getActivity().runOnUiThread(new Runnable() {
+                            runOnUiThread(new Runnable() {
                                 public void run() {
-                                    Constant.showToast("Server Error ", getActivity());
+                                    Constant.showToast("Server Error ", EulaActivity.this);
                                 }
                             });
                         } finally {
@@ -125,9 +133,9 @@ public class HelpAndSupport extends Fragment {
                         // TODO: handle exception
                         e.printStackTrace();
 
-                        getActivity().runOnUiThread(new Runnable() {
+                        runOnUiThread(new Runnable() {
                             public void run() {
-                                Constant.showToast("Server Error ", getActivity());
+                                Constant.showToast("Server Error ", EulaActivity.this);
                             }
                         });
 
@@ -135,11 +143,11 @@ public class HelpAndSupport extends Fragment {
 
 
                 } else {
-                    getActivity().runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             // TODO Auto-generated method stub
-                            Constant.showToast("Server Error ", getActivity());
+                            Constant.showToast("Server Error ", EulaActivity.this);
                         }
                     });
                 }
@@ -161,13 +169,14 @@ public class HelpAndSupport extends Fragment {
                             JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                             String id = jsonObject1.getString("id");
                             webviewtxt = jsonObject1.getString("text");
-                            help_wv.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
+                            web_vew_terms.loadDataWithBaseURL("", webviewtxt, mimeType, encoding, "");
                         }else if (status == 0) {
-                            Constant.showToast("Server Error    ", getActivity());
+                            Constant.showToast("Server Error    ", EulaActivity.this);
                         } else if (status == -1) {
                             //Redirect to Login
-                            Constant.alertForLogin(getActivity());
+                            Constant.alertForLogin(EulaActivity.this);
                         }
+
 
                     } catch (Exception e) {
 
@@ -210,4 +219,6 @@ public class HelpAndSupport extends Fragment {
         }
         return response.toString();
     }
+
+
 }
