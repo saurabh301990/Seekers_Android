@@ -68,10 +68,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/pwrd_et"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <CheckBox
                         android:id="@+id/eula_cb"
+                        android:checked="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
 
@@ -80,6 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="7dp"
+                        android:textSize="15sp"
                         android:text="@string/eula"
                         android:textColor="#000" />
                 </LinearLayout>
@@ -91,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/eula_ll"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="10dp"
                     android:background="@color/login_btn_bg_color"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp"

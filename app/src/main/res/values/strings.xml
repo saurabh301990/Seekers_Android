@@ -11,8 +11,8 @@
     <string name="enterUsernameText">Please enter your username.</string>
     <string name="enterPswrdText">Please enter your password.</string>
     <string name="pswrdMustContainsText">The password must contain 8-32 characters </string>
-    <string name="eula"><u>EULA</u></string>
-    <string name="eula_header">EULA</string>
+    <string name="eula">I agree to the terms and conditions of service.</string>
+    <string name="eula_header">Terms &amp; conditions</string>
 
 
     <!--Change Password-->
@@ -26,7 +26,7 @@
     <string name="enterConfirmPass">Please enter confirm password</string>
     <string name="passwordNotMatch">Password not matched.</string>
     <string name="currentAndNewPssNotSame">Current and New password should not be same.</string>
-    <string name="pleaseagreeforEULA">Kindly agree end user license agreement(EULA).</string>
+    <string name="pleaseagreeforEULA">Kindly agree to the terms and conditions of service.</string>
 
 
     <!--Map View-->
@@ -101,7 +101,7 @@
     <string name="emailText">Email</string>
     <string name="userNameText">Username</string>
     <string name="currentLocationText">Current Location</string>
-    <string name="termAndConditionsTExt"><u>Terms &amp; Conditions</u></string>
+    <string name="termAndConditionsTExt"><u>Privacy Policy</u></string>
     <string name="pleaseAgreeTermsText">Please agree to Terms &amp; Conditions.</string>
     <string name="uploading">Profile updating.</string>
     <string name="upload_success">Upload completed successfully</string>
